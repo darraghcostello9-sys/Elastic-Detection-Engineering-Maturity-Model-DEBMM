@@ -543,6 +543,74 @@ h1 span{color:var(--ac)}
   .crit-body{display:block!important}
   body::before{display:none}
 }
+
+/* ── PROGRESS SECTION ───────────────────────────────────────────────────── */
+.prog-toolbar{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.prog-btn{padding:8px 14px;border:1px solid var(--b1);background:var(--s1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s}
+.prog-btn:hover{border-color:var(--b2);color:var(--tx)}
+.prog-btn-primary{border-color:rgba(0,229,200,.35);color:var(--ac);background:var(--acd)}
+.prog-btn-primary:hover{background:rgba(0,229,200,.18)}
+.prog-btn-import{display:inline-flex;align-items:center}
+.prog-section-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.prog-section-label::after{content:'';flex:1;height:1px;background:var(--b1)}
+.prog-timeline-wrap{margin-bottom:24px}
+.prog-timeline-empty{font-size:11px;color:var(--b3);padding:20px 0;line-height:1.7}
+.prog-timeline{display:flex;gap:8px;flex-wrap:wrap}
+.prog-snap-card{background:var(--s1);border:1px solid var(--b1);padding:12px 14px;min-width:130px;cursor:pointer;transition:all .15s;position:relative}
+.prog-snap-card:hover{border-color:var(--b2)}
+.prog-snap-card.snap-a{border-color:var(--t1);background:rgba(61,126,255,.08)}
+.prog-snap-card.snap-b{border-color:var(--ac);background:var(--acd)}
+.prog-snap-num{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:4px}
+.prog-snap-score{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--txb);line-height:1}
+.prog-snap-tier{font-size:10px;margin-top:3px}
+.prog-snap-date{font-size:9px;color:var(--tx3);margin-top:4px}
+.prog-snap-scope{font-size:9px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px}
+.prog-snap-label{position:absolute;top:-1px;right:-1px;font-size:8px;padding:2px 6px;letter-spacing:.08em}
+.label-a{background:rgba(61,126,255,.3);color:#7aa8ff}
+.label-b{background:var(--acd);color:var(--ac);border:1px solid rgba(0,229,200,.3)}
+.prog-snap-del{position:absolute;bottom:6px;right:8px;font-size:9px;color:var(--tx3);cursor:pointer;opacity:0;transition:opacity .15s}
+.prog-snap-card:hover .prog-snap-del{opacity:1}
+.prog-snap-del:hover{color:var(--danger)}
+.prog-chart-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;margin-bottom:20px}
+.prog-compare-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px}
+.prog-picker-row{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.prog-picker-field{display:flex;flex-direction:column;gap:5px;flex:1;min-width:180px}
+.prog-picker-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3)}
+.prog-select{background:var(--s2);border:1px solid var(--b1);color:var(--tx);font-family:'DM Mono',monospace;font-size:11px;padding:7px 10px;outline:none;cursor:pointer;transition:border-color .15s;width:100%}
+.prog-select:focus{border-color:var(--ac)}
+.prog-picker-arrow{font-size:16px;color:var(--tx3);padding-top:20px;flex-shrink:0}
+.prog-delta-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:4px}
+.prog-delta-card{background:var(--s2);border:1px solid var(--b1);padding:12px 14px}
+.prog-delta-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
+.prog-delta-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1}
+.prog-delta-sub{font-size:10px;color:var(--tx3);margin-top:3px}
+.delta-pos{color:var(--ok)} .delta-neg{color:var(--danger)} .delta-zero{color:var(--tx3)}
+.prog-tier-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.prog-tier-name{font-size:10px;width:110px;flex-shrink:0;letter-spacing:.04em}
+.prog-tier-bars-wrap{flex:1;display:flex;flex-direction:column;gap:3px}
+.prog-bar-row{display:flex;align-items:center;gap:6px}
+.prog-bar-label{font-size:9px;color:var(--tx3);width:32px;flex-shrink:0}
+.prog-bar-bg{flex:1;height:5px;background:var(--b1);position:relative}
+.prog-bar-fill{position:absolute;left:0;top:0;height:100%;transition:width .5s cubic-bezier(.4,0,.2,1)}
+.prog-bar-pct{font-size:9px;color:var(--tx3);width:32px;text-align:right;flex-shrink:0}
+.prog-diff-legend{display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.prog-diff-tag{font-size:10px;padding:2px 8px;border-radius:2px}
+.dt-up{background:rgba(34,197,94,.12);color:var(--ok);border:1px solid rgba(34,197,94,.25)}
+.dt-dn{background:rgba(239,68,68,.1);color:var(--danger);border:1px solid rgba(239,68,68,.2)}
+.dt-eq{background:var(--s2);color:var(--tx3);border:1px solid var(--b1)}
+.dt-new{background:rgba(61,126,255,.12);color:#7aa8ff;border:1px solid rgba(61,126,255,.25)}
+.prog-diff-tier{margin-bottom:16px}
+.prog-diff-tier-hdr{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;padding:7px 12px;margin-bottom:6px;border-left:3px solid}
+.prog-diff-row{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--s2);border:1px solid var(--b1);margin-bottom:4px;font-size:11px}
+.prog-diff-row.diff-up{border-left:3px solid var(--ok)}
+.prog-diff-row.diff-dn{border-left:3px solid var(--danger)}
+.prog-diff-row.diff-new{border-left:3px solid var(--t1)}
+.prog-diff-title{flex:1;color:var(--tx2);line-height:1.4}
+.prog-diff-from{font-size:10px;color:var(--tx3)}
+.prog-diff-arrow{font-size:12px;flex-shrink:0}
+.prog-diff-to{font-size:10px;font-weight:500}
+.prog-toast{position:fixed;bottom:80px;right:24px;background:var(--s2);border:1px solid var(--ok);color:var(--ok);font-family:'DM Mono',monospace;font-size:11px;padding:10px 16px;z-index:600;opacity:0;transition:opacity .3s;pointer-events:none}
+.prog-toast.visible{opacity:1}
 </style>
 </head>
 <body>
@@ -555,6 +623,7 @@ h1 span{color:var(--ac)}
       <button class="nav-link active" onclick="navScrollTo('sec-assessment')">Assessment</button>
       <button class="nav-link" onclick="navScrollTo('sec-results')">Results</button>
       <button class="nav-link" onclick="navScrollTo('sec-metrics')">Metrics</button>
+      <button class="nav-link" onclick="navScrollTo('sec-progress')">Progress</button>
       <button class="nav-link" onclick="navScrollTo('sec-questionnaire')">Questionnaire</button>
     </div>
     <div class="nav-score-pill">
@@ -791,6 +860,58 @@ h1 span{color:var(--ac)}
   </div>
 </section>
 
+<!-- ══ SECTION: PROGRESS ══════════════════════════════════════════════════ -->
+<hr class="section-sep">
+<section id="sec-progress">
+  <div class="sec-title">Team Progress &amp; Trends</div>
+  <div class="sec-sub">Track maturity over time, compare snapshots, and share assessment data with teammates. Save a snapshot after each assessment cycle to build your trend history.</div>
+
+  <div class="prog-toolbar">
+    <button class="prog-btn prog-btn-primary" onclick="saveSnapshot()">📷 Save snapshot</button>
+    <button class="prog-btn" onclick="exportSnapshots()">↓ Export snapshots (.json)</button>
+    <label class="prog-btn prog-btn-import">↑ Import snapshots
+      <input type="file" accept=".json" style="display:none" onchange="importSnapshots(event)">
+    </label>
+    <div style="margin-left:auto;font-size:10px;color:var(--tx3)" id="prog-snap-count">No snapshots yet</div>
+  </div>
+
+  <div class="prog-timeline-wrap" id="prog-timeline-wrap">
+    <div class="prog-timeline-empty" id="prog-timeline-empty">Save your first snapshot above to start tracking progress. Each snapshot captures your full criterion-level scores so you can compare them over time.</div>
+    <div class="prog-timeline" id="prog-timeline"></div>
+  </div>
+
+  <div class="prog-chart-wrap" id="prog-chart-wrap" style="display:none">
+    <div class="prog-section-label">Score trend</div>
+    <svg id="prog-trend-svg" width="100%" viewBox="0 0 800 120" style="display:block;overflow:visible"></svg>
+  </div>
+
+  <div class="prog-compare-wrap" id="prog-compare-wrap" style="display:none">
+    <div class="prog-section-label">Compare two snapshots</div>
+    <div class="prog-picker-row">
+      <div class="prog-picker-field">
+        <div class="prog-picker-label">Baseline</div>
+        <select class="prog-select" id="compare-a" onchange="renderComparison()"></select>
+      </div>
+      <div class="prog-picker-arrow">→</div>
+      <div class="prog-picker-field">
+        <div class="prog-picker-label">Latest / Current</div>
+        <select class="prog-select" id="compare-b" onchange="renderComparison()"></select>
+      </div>
+    </div>
+    <div class="prog-delta-cards" id="prog-delta-cards"></div>
+    <div class="prog-section-label" style="margin-top:24px">Tier scores</div>
+    <div id="prog-tier-bars"></div>
+    <div class="prog-section-label" style="margin-top:24px">Criterion-level changes</div>
+    <div class="prog-diff-legend">
+      <span class="prog-diff-tag dt-up">↑ Improved</span>
+      <span class="prog-diff-tag dt-dn">↓ Regressed</span>
+      <span class="prog-diff-tag dt-eq">— Unchanged</span>
+      <span class="prog-diff-tag dt-new">◦ Newly assessed</span>
+    </div>
+    <div id="prog-crit-diff"></div>
+  </div>
+</section>
+
 </div><!-- /.shell -->
 
 <!-- REPORT MODAL -->
@@ -809,9 +930,8 @@ h1 span{color:var(--ac)}
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════════════════ -->
-<!-- DATA + LOGIC                                                             -->
-<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- IMPORT TOAST -->
+<div class="prog-toast" id="prog-toast"></div>
 <script>
 // ── API KEY ───────────────────────────────────────────────────────────────
 // Replace the empty string with your Anthropic API key to enable AI report
@@ -1138,6 +1258,7 @@ function buildUI(){
   buildGrouping();
   buildApplySteps();
   buildHistory();
+  buildProgressSection();
   updateDashboard();
 }
 
@@ -1988,10 +2109,360 @@ function toggleGlossary(){
 function saveSnapshot(){
   const{confScore,tierStats}=getStats();
   const currentTier=determineTier(tierStats);
-  assessHistory.push({date:new Date().toLocaleDateString('en-IE'),score:Math.round(confScore/4*100),tier:currentTier,scope:metaState.scope||''});
-  if(assessHistory.length>10)assessHistory=assessHistory.slice(-10);
-  try{localStorage.setItem('debmm-history',JSON.stringify(assessHistory))}catch(e){}  buildHistory();
+  // Capture full per-criterion state so comparisons can be done later
+  const criteriaSnapshot={};
+  TIERS.forEach(tier=>tier.criteria.forEach(crit=>{
+    const s=state[crit.id];
+    if(s?.level!==undefined) criteriaSnapshot[crit.id]={level:s.level,conf:s.conf||'self'};
+  }));
+  const snap={
+    date:new Date().toLocaleDateString('en-IE'),
+    isoDate:new Date().toISOString(),
+    score:Math.round(confScore/4*100),
+    tier:currentTier,
+    scope:metaState.scope||'',
+    team:metaState.team||'',
+    assessor:metaState.assessor||'',
+    criteria:criteriaSnapshot
+  };
+  assessHistory.push(snap);
+  if(assessHistory.length>20)assessHistory=assessHistory.slice(-20);
+  try{localStorage.setItem('debmm-history',JSON.stringify(assessHistory))}catch(e){}
+  buildHistory();
+  buildProgressSection();
   updateDashboard();
+  showToast('Snapshot saved');
+}
+
+// ── PROGRESS SECTION ─────────────────────────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('prog-toast');
+  if(!t)return;
+  t.textContent=msg;t.classList.add('visible');
+  setTimeout(()=>t.classList.remove('visible'),2800);
+}
+
+function buildProgressSection(){
+  const count=document.getElementById('prog-snap-count');
+  const empty=document.getElementById('prog-timeline-empty');
+  const timeline=document.getElementById('prog-timeline');
+  const chartWrap=document.getElementById('prog-chart-wrap');
+  const compareWrap=document.getElementById('prog-compare-wrap');
+  if(!count)return;
+
+  count.textContent=assessHistory.length===0?'No snapshots yet':`${assessHistory.length} snapshot${assessHistory.length!==1?'s':''}`;
+  empty.style.display=assessHistory.length===0?'block':'none';
+
+  // Build timeline cards
+  timeline.innerHTML='';
+  assessHistory.forEach((snap,i)=>{
+    const card=document.createElement('div');
+    card.className='prog-snap-card';
+    card.id='snap-card-'+i;
+    const pctDiff=i>0?snap.score-assessHistory[i-1].score:null;
+    const diffStr=pctDiff!==null?(pctDiff>0?`<span style="color:var(--ok);font-size:10px">+${pctDiff}%</span>`:pctDiff<0?`<span style="color:var(--danger);font-size:10px">${pctDiff}%</span>`:`<span style="color:var(--tx3);font-size:10px">—</span>`):'';
+    card.innerHTML=`
+      <div class="prog-snap-num">Snapshot ${i+1}</div>
+      <div class="prog-snap-score">${snap.score}%</div>
+      <div class="prog-snap-tier" style="color:${TIER_COLORS[snap.tier]}">T${snap.tier}: ${TIER_NAMES[snap.tier]}</div>
+      <div class="prog-snap-date">${snap.date} ${diffStr}</div>
+      ${snap.scope?`<div class="prog-snap-scope">${snap.scope}</div>`:''}
+      <div class="prog-snap-del" onclick="event.stopPropagation();deleteSnapshot(${i})" title="Delete">✕</div>`;
+    card.onclick=()=>selectSnapCard(i);
+    timeline.appendChild(card);
+  });
+
+  if(assessHistory.length>=2){
+    chartWrap.style.display='block';
+    compareWrap.style.display='block';
+    drawTrendChart();
+    populateComparePickers();
+    renderComparison();
+  }else{
+    chartWrap.style.display='none';
+    compareWrap.style.display='none';
+  }
+}
+
+// Click on a timeline card to set it as compare-b (latest selected)
+let compareAIdx=null,compareBIdx=null;
+function selectSnapCard(i){
+  if(assessHistory.length<2)return;
+  const selA=document.getElementById('compare-a');
+  const selB=document.getElementById('compare-b');
+  if(selA&&selB){
+    // If clicking already-selected B, swap to A
+    if(compareBIdx===i){
+      compareAIdx=i;selA.value=i;
+    }else{
+      // Auto-set: if A not set or same as clicked, set B
+      if(compareAIdx===null||compareAIdx===i){compareAIdx=Math.max(0,i-1);selA.value=compareAIdx;}
+      compareBIdx=i;selB.value=i;
+    }
+    renderComparison();
+  }
+}
+
+function deleteSnapshot(i){
+  if(!confirm(`Delete Snapshot ${i+1}? This cannot be undone.`))return;
+  assessHistory.splice(i,1);
+  try{localStorage.setItem('debmm-history',JSON.stringify(assessHistory))}catch(e){}
+  buildProgressSection();
+  buildHistory();
+}
+
+function populateComparePickers(){
+  const selA=document.getElementById('compare-a');
+  const selB=document.getElementById('compare-b');
+  if(!selA||!selB)return;
+  const opts=assessHistory.map((s,i)=>`<option value="${i}">Snapshot ${i+1} — ${s.date} (${s.score}%)</option>`).join('');
+  selA.innerHTML=opts;
+  selB.innerHTML=opts;
+  // Default: compare first vs last
+  const ai=compareAIdx!==null?Math.min(compareAIdx,assessHistory.length-1):0;
+  const bi=compareBIdx!==null?Math.min(compareBIdx,assessHistory.length-1):assessHistory.length-1;
+  selA.value=ai;selB.value=bi;
+  compareAIdx=ai;compareBIdx=bi;
+  // Highlight timeline cards
+  refreshSnapCardHighlights();
+}
+
+function refreshSnapCardHighlights(){
+  document.querySelectorAll('.prog-snap-card').forEach(c=>{
+    c.classList.remove('snap-a','snap-b');
+    c.querySelectorAll('.prog-snap-label').forEach(l=>l.remove());
+  });
+  const ai=parseInt(document.getElementById('compare-a')?.value);
+  const bi=parseInt(document.getElementById('compare-b')?.value);
+  const ca=document.getElementById('snap-card-'+ai);
+  const cb=document.getElementById('snap-card-'+bi);
+  if(ca&&!isNaN(ai)){ca.classList.add('snap-a');const l=document.createElement('div');l.className='prog-snap-label label-a';l.textContent='A';ca.appendChild(l);}
+  if(cb&&!isNaN(bi)){cb.classList.add('snap-b');const l=document.createElement('div');l.className='prog-snap-label label-b';l.textContent='B';cb.appendChild(l);}
+}
+
+function drawTrendChart(){
+  const svg=document.getElementById('prog-trend-svg');
+  if(!svg||assessHistory.length<2)return;
+  const W=800,H=100,pad={l:40,r:20,t:16,b:28};
+  const scores=assessHistory.map(s=>s.score);
+  const minS=Math.max(0,Math.min(...scores)-10);
+  const maxS=Math.min(100,Math.max(...scores)+10);
+  const n=scores.length;
+  const xStep=(W-pad.l-pad.r)/(n-1);
+  const yScale=(H-pad.t-pad.b)/(maxS-minS);
+  const px=(i)=>pad.l+i*xStep;
+  const py=(s)=>H-pad.b-(s-minS)*yScale;
+
+  const ns='http://www.w3.org/2000/svg';
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.innerHTML='';
+
+  // Grid lines
+  [0,25,50,75,100].forEach(v=>{
+    if(v<minS||v>maxS)return;
+    const y=py(v);
+    const line=document.createElementNS(ns,'line');
+    line.setAttribute('x1',pad.l);line.setAttribute('x2',W-pad.r);
+    line.setAttribute('y1',y);line.setAttribute('y2',y);
+    line.setAttribute('stroke','#1e2530');line.setAttribute('stroke-width','0.5');
+    svg.appendChild(line);
+    const t=document.createElementNS(ns,'text');
+    t.setAttribute('x',pad.l-4);t.setAttribute('y',y+4);
+    t.setAttribute('text-anchor','end');t.setAttribute('fill','#3a4a60');
+    t.setAttribute('font-size','9');t.setAttribute('font-family','DM Mono,monospace');
+    t.textContent=v+'%';svg.appendChild(t);
+  });
+
+  // Fill area
+  const pts=scores.map((s,i)=>`${px(i)},${py(s)}`).join(' ');
+  const fillPts=`${px(0)},${py(minS)} ${pts} ${px(n-1)},${py(minS)}`;
+  const fill=document.createElementNS(ns,'polygon');
+  fill.setAttribute('points',fillPts);
+  fill.setAttribute('fill','rgba(0,229,200,0.07)');
+  svg.appendChild(fill);
+
+  // Line
+  const polyline=document.createElementNS(ns,'polyline');
+  polyline.setAttribute('points',pts);
+  polyline.setAttribute('fill','none');
+  polyline.setAttribute('stroke','rgba(0,229,200,0.7)');
+  polyline.setAttribute('stroke-width','1.5');
+  polyline.setAttribute('stroke-linejoin','round');
+  svg.appendChild(polyline);
+
+  // Points + labels
+  scores.forEach((s,i)=>{
+    const cx=px(i),cy=py(s);
+    const circle=document.createElementNS(ns,'circle');
+    circle.setAttribute('cx',cx);circle.setAttribute('cy',cy);circle.setAttribute('r','4');
+    circle.setAttribute('fill',TIER_COLORS[assessHistory[i].tier]);
+    circle.setAttribute('stroke','#0a0c10');circle.setAttribute('stroke-width','1.5');
+    svg.appendChild(circle);
+    // Date label
+    const tl=document.createElementNS(ns,'text');
+    tl.setAttribute('x',cx);tl.setAttribute('y',H-pad.b+14);
+    tl.setAttribute('text-anchor','middle');tl.setAttribute('fill','#5a6a7a');
+    tl.setAttribute('font-size','8');tl.setAttribute('font-family','DM Mono,monospace');
+    tl.textContent=assessHistory[i].date.split(' ').slice(0,2).join(' ');
+    svg.appendChild(tl);
+    // Score label above point
+    const ts=document.createElementNS(ns,'text');
+    ts.setAttribute('x',cx);ts.setAttribute('y',cy-8);
+    ts.setAttribute('text-anchor','middle');ts.setAttribute('fill','#c8d4e0');
+    ts.setAttribute('font-size','9');ts.setAttribute('font-family','Syne,sans-serif');
+    ts.setAttribute('font-weight','700');
+    ts.textContent=s+'%';svg.appendChild(ts);
+  });
+
+  // Highlight A and B comparison points
+  const ai=parseInt(document.getElementById('compare-a')?.value);
+  const bi=parseInt(document.getElementById('compare-b')?.value);
+  [ai,bi].forEach((idx,j)=>{
+    if(isNaN(idx)||idx<0||idx>=n)return;
+    const ring=document.createElementNS(ns,'circle');
+    ring.setAttribute('cx',px(idx));ring.setAttribute('cy',py(scores[idx]));ring.setAttribute('r','7');
+    ring.setAttribute('fill','none');
+    ring.setAttribute('stroke',j===0?'#3d7eff':'rgba(0,229,200,.9)');
+    ring.setAttribute('stroke-width','1.5');
+    svg.appendChild(ring);
+  });
+}
+
+function renderComparison(){
+  const ai=parseInt(document.getElementById('compare-a')?.value);
+  const bi=parseInt(document.getElementById('compare-b')?.value);
+  if(isNaN(ai)||isNaN(bi)||!assessHistory[ai]||!assessHistory[bi])return;
+  compareAIdx=ai;compareBIdx=bi;
+  refreshSnapCardHighlights();
+  drawTrendChart();
+
+  const sA=assessHistory[ai];
+  const sB=assessHistory[bi];
+  const scoreDelta=sB.score-sA.score;
+  const tierDelta=sB.tier-sA.tier;
+
+  // Delta cards
+  const dc=document.getElementById('prog-delta-cards');
+  const deltaCard=(label,val,sub,cls)=>
+    `<div class="prog-delta-card"><div class="prog-delta-label">${label}</div><div class="prog-delta-val ${cls}">${val}</div><div class="prog-delta-sub">${sub}</div></div>`;
+
+  dc.innerHTML=
+    deltaCard('Score (A)',`${sA.score}%`,`T${sA.tier}: ${TIER_NAMES[sA.tier]}`,'delta-zero')+
+    deltaCard('Score (B)',`${sB.score}%`,`T${sB.tier}: ${TIER_NAMES[sB.tier]}`,'delta-zero')+
+    deltaCard('Change',`${scoreDelta>0?'+':''}${scoreDelta}%`,scoreDelta>0?'improvement':scoreDelta<0?'regression':'no change',
+      scoreDelta>0?'delta-pos':scoreDelta<0?'delta-neg':'delta-zero')+
+    deltaCard('Tier shift',tierDelta>0?`+${tierDelta}`:tierDelta===0?'—':`${tierDelta}`,
+      tierDelta>0?`T${sA.tier} → T${sB.tier}`:tierDelta===0?'same tier':`T${sA.tier} → T${sB.tier}`,
+      tierDelta>0?'delta-pos':tierDelta<0?'delta-neg':'delta-zero')+
+    deltaCard('Snapshots',`${assessHistory.length}`,`${sA.date} → ${sB.date}`,'delta-zero');
+
+  // Tier bars
+  const tb=document.getElementById('prog-tier-bars');
+  tb.innerHTML='';
+  TIERS.forEach(tier=>{
+    const critA=tier.criteria.filter(c=>sA.criteria?.[c.id]?.level!==undefined);
+    const critB=tier.criteria.filter(c=>sB.criteria?.[c.id]?.level!==undefined);
+    const avgA=critA.length>0?Math.round(critA.reduce((s,c)=>s+(sA.criteria[c.id].level),0)/critA.length/4*100):null;
+    const avgB=critB.length>0?Math.round(critB.reduce((s,c)=>s+(sB.criteria[c.id].level),0)/critB.length/4*100):null;
+    tb.innerHTML+=`<div class="prog-tier-row">
+      <div class="prog-tier-name" style="color:${TIER_COLORS[tier.id]}">T${tier.id}: ${TIER_NAMES[tier.id]}</div>
+      <div class="prog-tier-bars-wrap">
+        <div class="prog-bar-row">
+          <div class="prog-bar-label" style="color:#7aa8ff">A</div>
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${avgA||0}%;background:#3d7eff;opacity:.7"></div></div>
+          <div class="prog-bar-pct">${avgA!==null?avgA+'%':'—'}</div>
+        </div>
+        <div class="prog-bar-row">
+          <div class="prog-bar-label" style="color:var(--ac)">B</div>
+          <div class="prog-bar-bg"><div class="prog-bar-fill" style="width:${avgB||0}%;background:var(--ac)"></div></div>
+          <div class="prog-bar-pct">${avgB!==null?avgB+'%':'—'}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  // Per-criterion diff
+  const diffEl=document.getElementById('prog-crit-diff');
+  diffEl.innerHTML='';
+  TIERS.forEach(tier=>{
+    let tierHtml='';
+    let hasChanges=false;
+    tier.criteria.forEach(crit=>{
+      const lvA=sA.criteria?.[crit.id]?.level;
+      const lvB=sB.criteria?.[crit.id]?.level;
+      if(lvA===undefined&&lvB===undefined)return;
+      const diff=lvB!==undefined&&lvA!==undefined?lvB-lvA:null;
+      let rowClass='',arrow='→',toColor='var(--tx2)';
+      if(lvA===undefined&&lvB!==undefined){rowClass='diff-new';arrow='◦';toColor='#7aa8ff';}
+      else if(diff>0){rowClass='diff-up';arrow='↑';toColor='var(--ok)';}
+      else if(diff<0){rowClass='diff-dn';arrow='↓';toColor='var(--danger)';}
+      hasChanges=true;
+      const fromStr=lvA!==undefined?`${lvA} ${LEVELS[lvA]}`:'—';
+      const toStr=lvB!==undefined?`${lvB} ${LEVELS[lvB]}`:'—';
+      const diffStr=diff!==null&&diff!==0?(diff>0?`<span style="color:var(--ok)">+${diff}</span>`:`<span style="color:var(--danger)">${diff}</span>`):'';
+      tierHtml+=`<div class="prog-diff-row ${rowClass}">
+        <div class="prog-diff-title">${crit.title}</div>
+        <div class="prog-diff-from">${fromStr}</div>
+        <div class="prog-diff-arrow" style="color:${toColor}">${arrow}</div>
+        <div class="prog-diff-to" style="color:${toColor}">${toStr} ${diffStr}</div>
+      </div>`;
+    });
+    if(hasChanges){
+      diffEl.innerHTML+=`<div class="prog-diff-tier">
+        <div class="prog-diff-tier-hdr" style="border-left-color:${TIER_COLORS[tier.id]};color:${TIER_COLORS[tier.id]};background:var(--s2)">T${tier.id}: ${TIER_NAMES[tier.id]}</div>
+        ${tierHtml}
+      </div>`;
+    }
+  });
+  if(!diffEl.innerHTML){
+    diffEl.innerHTML=`<div style="font-size:11px;color:var(--tx3);padding:10px 0">No criterion-level changes between these two snapshots.</div>`;
+  }
+}
+
+// ── EXPORT / IMPORT SNAPSHOTS ─────────────────────────────────────────────
+function exportSnapshots(){
+  if(assessHistory.length===0){showToast('No snapshots to export');return;}
+  const payload={
+    tool:'DEBMM Self-Assessment',
+    version:'1.0',
+    exportedAt:new Date().toISOString(),
+    team:metaState.team||'',
+    scope:metaState.scope||'',
+    snapshots:assessHistory
+  };
+  const blob=new Blob([JSON.stringify(payload,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`debmm-snapshots-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();URL.revokeObjectURL(url);
+  showToast('Snapshots exported');
+}
+
+function importSnapshots(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      // Accept either an array of snapshots directly, or the wrapped format
+      const incoming=Array.isArray(data)?data:(data.snapshots||[]);
+      if(!Array.isArray(incoming)||incoming.length===0){showToast('No snapshots found in file');return;}
+      // Merge: deduplicate by isoDate if present, otherwise append
+      const existingDates=new Set(assessHistory.map(s=>s.isoDate||s.date));
+      let added=0;
+      incoming.forEach(snap=>{
+        const key=snap.isoDate||snap.date;
+        if(!existingDates.has(key)){assessHistory.push(snap);existingDates.add(key);added++;}
+      });
+      if(assessHistory.length>20)assessHistory=assessHistory.slice(-20);
+      try{localStorage.setItem('debmm-history',JSON.stringify(assessHistory))}catch(err){}
+      buildProgressSection();buildHistory();
+      showToast(`Imported ${added} new snapshot${added!==1?'s':''}`);
+    }catch(err){showToast('Invalid file — could not parse JSON');}
+  };
+  reader.readAsText(file);
+  event.target.value=''; // reset so same file can be re-imported
 }
 
 function resetAll(){
@@ -2075,12 +2546,11 @@ function exportReport(){
       <div class="ai-key-label">How to enable AI reports</div>
       <div class="ai-key-steps">
         <div class="ai-key-step"><span class="ai-key-num">1</span>Get a free API key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></div>
-        <div class="ai-key-step"><span class="ai-key-num">2</span>Open <code>debmm-assessment.html</code> in a text editor</div>
+        <div class="ai-key-step"><span class="ai-key-num">2</span>Download <code>debmm-assessment.html</code> from the <a href="https://github.com/darraghcostello9-sys/Elastic-Detection-Engineering-Maturity-Model-DEBMM/blob/main/debmm-assessment.template.html" target="_blank">GitHub repository</a> and open it in a text editor</div>
         <div class="ai-key-step"><span class="ai-key-num">3</span>Find line ~740 and set: <code>const ANTHROPIC_API_KEY = 'sk-ant-...';</code></div>
         <div class="ai-key-step"><span class="ai-key-num">4</span>Save and reload — the AI report option will be enabled. Keep this file in a <strong>private</strong> repository.</div>
       </div>
     </div>`:''}`;
-}
 
 // ── LOCAL REPORT ──────────────────────────────────────────────────────────
 function levelBadge(lv){
@@ -2358,7 +2828,8 @@ function runLocalReport(){
 
   // ── FOOTER ────────────────────────────────────────────────────────────────
   h+=`<div style="border-top:1px solid var(--b1);margin-top:24px;padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-    <div style="font-size:10px;color:var(--b3)">Based on the Elastic Detection Engineering Behavior Maturity Model — elastic.co/security-labs/elastic-releases-debmm</div>
+    <div style="font-size:10px;color:var(--b3)">Based on the Elastic Detection Engineering Behavior Maturity Model — <a href="https://www.elastic.co/security-labs/elastic-releases-debmm" target="_blank" style="color:var(--b3)">elastic.co/security-labs/elastic-releases-debmm</a></div>
+    <div style="font-size:10px;color:var(--b3)">Tool: <a href="https://github.com/darraghcostello9-sys/Elastic-Detection-Engineering-Maturity-Model-DEBMM/blob/main/" target="_blank" style="color:var(--b3)">github.com/darraghcostello9-sys/Elastic-Detection-Engineering-Maturity-Model-DEBMM</a></div>
     <div style="font-size:10px;color:var(--b3)">Generated ${now}</div>
   </div>`;
   h+=`</div>`; // lr-body
@@ -2577,6 +3048,7 @@ function buildFallbackReport(){
   }
   lines.push('---');
   lines.push('Reference: https://www.elastic.co/security-labs/elastic-releases-debmm');
+  lines.push('Tool: https://github.com/darraghcostello9-sys/Elastic-Detection-Engineering-Maturity-Model-DEBMM/blob/main/');
   return lines.filter(l=>l!=='').join('\n');
 }
 
@@ -2673,7 +3145,7 @@ function buildReportContext(){
 }
 
 // ── SCROLL-SPY ───────────────────────────────────────────────────────────
-const sections=['sec-assessment','sec-results','sec-metrics','sec-questionnaire'];
+const sections=['sec-assessment','sec-results','sec-metrics','sec-progress','sec-questionnaire'];
 const navLinks=document.querySelectorAll('.nav-link');
 window.addEventListener('scroll',()=>{
   const navH=56;
