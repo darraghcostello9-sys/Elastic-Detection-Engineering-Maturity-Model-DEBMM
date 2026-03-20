@@ -223,9 +223,132 @@ All content — tier names, criteria, qualitative descriptors, quantitative thre
 
 ---
 
-## Reference
+## How scoring works
 
-- [Elastic DEBMM — Full model documentation](https://www.elastic.co/security-labs/elastic-releases-debmm)
+This section documents the exact formulas used so you can interpret your results accurately, defend them to stakeholders, and understand the limitations.
+
+### Criterion levels
+
+Each of the 16 criteria is scored on a 0–4 integer scale drawn directly from the DEBMM:
+
+| Level | Label | What it means |
+|-------|-------|---------------|
+| 0 | Initial | No formal process; ad hoc and undocumented |
+| 1 | Repeatable | Basic activity exists but is inconsistent or reactive |
+| 2 | Defined | Standardised, documented processes are in place |
+| 3 | Managed | Processes are measured, tracked, and improving |
+| 4 | Optimized | Continuous improvement; automation and best practices embedded |
+
+Level 2 (Defined) is the significance threshold — it is the minimum a criterion must reach to be considered "passing" for tier progression purposes.
+
+### Confidence weights
+
+Every criterion score is marked with a confidence level that reflects how well-evidenced the claim is. The tool applies a multiplier before including the score in the adjusted total:
+
+| Confidence | Multiplier | When to use |
+|------------|-----------|-------------|
+| Self | 0.8× | Your own assessment, no supporting evidence or review |
+| Peer-reviewed | 0.9× | A colleague or internal reviewer has validated the score |
+| Data-evidenced | 1.0× | You have metrics, logs, or documented proof |
+| Externally validated | 1.0× | Red team, third party, or audit has confirmed the level |
+
+A criterion scored 4 (Optimized) marked Self-assessed contributes `4 × 0.8 = 3.2` to the adjusted average. The same score marked Data-evidenced contributes `4 × 1.0 = 4.0`. This matters most at the top of the scale — it is designed to prevent over-claiming at Tier 3 and Tier 4 without external validation.
+
+Any criterion with no confidence selection defaults to Self (0.8×).
+
+### Raw score
+
+The raw score is the unweighted average across all answered criteria, expressed as a percentage of the maximum possible score of 4:
+
+```
+raw score = (sum of all criterion levels) / (number of answered criteria)
+raw score % = (raw score / 4) × 100
+```
+
+Example: 10 criteria answered, levels of 0, 1, 1, 2, 2, 2, 3, 3, 2, 1 → sum = 17 → raw score = 17/10 = 1.7 → raw score % = 43%
+
+### Confidence-adjusted score
+
+The confidence-adjusted score applies the weight for each criterion before averaging:
+
+```
+adjusted score = (sum of level × confidence weight for each answered criterion) / (number of answered criteria)
+adjusted score % = (adjusted score / 4) × 100
+```
+
+Using the same example, if all 10 criteria above were marked Self-assessed (weight 0.8):
+- adjusted sum = 17 × 0.8 = 13.6
+- adjusted score = 13.6 / 10 = 1.36
+- adjusted score % = 34%
+
+The adjusted score is the primary number shown in the dashboard and nav bar. The raw score is shown alongside it for comparison. If your adjusted score is significantly lower than your raw score, it means you have high-claimed but self-assessed criteria that would benefit from gathering evidence or external validation.
+
+### Tier score (per tier)
+
+Each tier also has its own average score, calculated from only the criteria within that tier:
+
+```
+tier score % = (sum of criterion levels within tier) / (criteria answered within tier) / 4 × 100
+```
+
+This is what the tier breakdown bar chart and radar chart display. Unanswered criteria within a tier are excluded from the average (not counted as zero). A tier with 3 of 6 criteria answered shows an average across those 3, not across 6.
+
+### Current tier determination
+
+Your **current tier** is the highest tier where the pass condition is met, evaluated sequentially from Tier 0 upward. The assessment stops advancing as soon as a tier fails.
+
+**Pass condition for a tier:** ≥ 50% of that tier's criteria are scored at level 2 (Defined) or above.
+
+```
+tier passes if: (criteria in tier with level ≥ 2) / (total criteria in tier) ≥ 0.5
+```
+
+Tier scores are evaluated in order — T0, then T1, then T2, and so on. If T1 passes but T2 fails, your current tier is T1 regardless of how well you scored on T3 or T4. This mirrors the DEBMM's sequential progression model: higher-tier practices are less meaningful without solid foundations.
+
+Note that unanswered criteria count as level 0 for this calculation, not as absent — if you have not answered a criterion, it pulls toward failing the pass condition for that tier.
+
+**Example:**
+
+| Tier | Criteria | ≥ Level 2 | Pass? |
+|------|----------|-----------|-------|
+| T0 | 4 | 3 (75%) | ✓ Pass |
+| T1 | 6 | 4 (67%) | ✓ Pass |
+| T2 | 3 | 1 (33%) | ✗ Fail |
+| T3 | 3 | 2 (67%) | — not evaluated |
+| T4 | 2 | 2 (100%) | — not evaluated |
+
+**Current tier: T1 — Basic**
+
+Even though T3 and T4 look strong, they are not evaluated because T2 failed. The current tier is always the highest *consecutive* passing tier from T0 upward.
+
+### Blocking criteria
+
+The criteria flagged amber in the assessment ("Blocking tier progression") are the criteria in the *next* tier that currently score below level 2 — i.e. the specific things preventing you from advancing. Fixing any one of them raises the pass count for the next tier; fix enough and the next tier unlocks.
+
+```
+blocking = criteria in (current tier + 1) where level < 2
+```
+
+### Evidence quality %
+
+The evidence quality percentage shown in the dashboard is:
+
+```
+evidence quality % = (criteria answered with confidence = Data-evidenced or Externally validated) / (total criteria answered) × 100
+```
+
+It does not affect the tier determination or adjusted score directly — it is an indicator of how defensible your overall score is. A team at 70% adjusted score with 10% evidence quality has a very different risk profile than one at 65% with 80% evidence quality.
+
+### What the scores don't capture
+
+- **Partial credit within a level** — if you are almost at level 3 on a criterion, the tool records level 2. There is no fractional scoring.
+- **Relative importance of criteria** — all 16 criteria are weighted equally in the averages. A team lead may reasonably argue that "Triaging False Negatives" (T3) matters more to their organisation than "Driving Features with Product Owners" (T1).
+- **Scope** — the scores apply to the ruleset scope you defined in the session metadata. A team with a mature endpoint ruleset and a nascent cloud ruleset should run two separate assessments, not average them together.
+- **Point in time** — the tier determination is a snapshot. Threat landscapes, tooling, and team capability change. The snapshot history feature exists specifically to track movement over successive assessments.
+
+---
+
+## Reference
 - [Elastic Detection Rules (public)](https://github.com/elastic/detection-rules)
 - [Detections as Code reference](https://dac-reference.readthedocs.io/en/latest/)
 - [MITRE ATT&CK Framework](https://attack.mitre.org/)
