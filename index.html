@@ -143,12 +143,12 @@ h1 span{color:var(--ac)}
 .criterion{background:var(--s1);border:1px solid var(--b1);margin-bottom:10px;overflow:hidden;transition:border-color .15s}
 .criterion:hover{border-color:var(--b2)}
 .criterion.answered{border-color:rgba(0,229,200,.18)}
-.criterion.blocking{border-color:rgba(245,158,11,.35)}
+.criterion.incomplete{border-color:rgba(61,126,255,.2)}
 .crit-hdr{padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none}
 .crit-hdr:hover{background:var(--s2)}
 .crit-num{font-size:10px;color:var(--tx3);min-width:22px;flex-shrink:0}
 .crit-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--txb);flex:1}
-.blocking-flag{font-size:9px;color:var(--warn);border:1px solid rgba(245,158,11,.3);padding:1px 6px;letter-spacing:.08em;flex-shrink:0}
+.incomplete-flag{font-size:9px;color:var(--tx3);border:1px solid var(--b2);padding:1px 6px;letter-spacing:.08em;flex-shrink:0}
 .crit-score-pill{font-size:10px;padding:2px 8px;border:1px solid var(--b1);color:var(--tx3);min-width:72px;text-align:center;transition:all .2s;white-space:nowrap;flex-shrink:0}
 .criterion.answered .crit-score-pill{border-color:rgba(0,229,200,.4);color:var(--ac);background:var(--acd)}
 .crit-conf{font-size:9px;color:var(--tx3);padding:2px 7px;border:1px solid var(--b1);flex-shrink:0}
@@ -418,6 +418,12 @@ h1 span{color:var(--ac)}
 .rsbg-3{background:rgba(245,158,11,.2);color:#f59e0b}
 .rsbg-4{background:rgba(192,38,211,.2);color:#d946ef}
 .report-generating{padding:40px 20px;text-align:center}
+.report-completeness-warn{margin:16px 20px 0;padding:12px 16px;background:rgba(61,126,255,.08);border:1px solid rgba(61,126,255,.25);font-size:11px;color:var(--tx2);line-height:1.8}
+.report-completeness-warn strong{color:var(--t1);font-weight:500}
+.report-completeness-list{margin:8px 0 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px}
+.report-completeness-list li{display:flex;gap:8px;align-items:center;font-size:10px;color:var(--tx3)}
+.report-completeness-list li::before{content:'○';color:var(--b3);flex-shrink:0}
+.report-completeness-list li.warn-item::before{content:'◐';color:var(--t1)}
 .report-spinner{width:32px;height:32px;border:2px solid var(--b2);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .report-actions{display:flex;gap:8px;padding:16px 20px;border-top:1px solid var(--b1);background:var(--s2)}
@@ -995,26 +1001,44 @@ function getStats(){
 }
 
 function determineTier(tierStats){
+  // Returns the highest tier where ≥50% of ANSWERED criteria score ≥2.
+  // This is advisory only — users can work any tier regardless of this result.
   let cur=0;
   for(let t=0;t<=4;t++){
     const ts=tierStats[t];
     if(!ts||ts.answered===0)break;
-    // Only count criteria that have actually been answered
     const answeredCrits=TIERS[t].criteria.filter(c=>state[c.id]?.level!==undefined);
     const good=answeredCrits.filter(c=>state[c.id].level>=2).length;
-    // Need at least half of answered criteria at level 2+, and at least 1 answered
     if(answeredCrits.length>0&&good/answeredCrits.length>=0.5)cur=t;else break;
   }
   return cur;
 }
 
-function blockingCriteria(tierStats,currentTier){
-  const nextT=Math.min(currentTier+1,4);
-  // Only flag criteria that have been answered AND are below level 2
-  // Unanswered criteria are "not yet assessed", not "failing"
-  return TIERS[nextT].criteria
-    .filter(c=>state[c.id]?.level!==undefined&&state[c.id].level<2)
-    .map(c=>c.id);
+// Returns unanswered criteria across all tiers for completeness warnings
+function getMissingCriteria(){
+  const missing=[];
+  TIERS.forEach(tier=>{
+    tier.criteria.forEach(crit=>{
+      if(state[crit.id]?.level===undefined){
+        missing.push({tier:tier.id,tierName:TIER_NAMES[tier.id],title:crit.title,id:crit.id});
+      }
+    });
+  });
+  return missing;
+}
+
+// Returns criteria answered below level 2 (for recommendations only — not blocking)
+function getLowScoringCriteria(){
+  const low=[];
+  TIERS.forEach(tier=>{
+    tier.criteria.forEach(crit=>{
+      const lv=state[crit.id]?.level;
+      if(lv!==undefined&&lv<2){
+        low.push({tier:tier.id,tierName:TIER_NAMES[tier.id],title:crit.title,id:crit.id,level:lv});
+      }
+    });
+  });
+  return low;
 }
 
 // ── BUILD UI ─────────────────────────────────────────────────────────────
@@ -1077,7 +1101,7 @@ function buildCriterion(crit,tier,ci){
       <span class="crit-num">${ci+1}</span>
       <span class="crit-title">${crit.title}</span>
       <span class="start-here" id="start-${crit.id}" style="display:none">↓ Start here</span>
-      <span class="blocking-flag" id="blk-${crit.id}" style="display:none">Blocking tier progression</span>
+      <span class="incomplete-flag" id="blk-${crit.id}" style="display:none">Not yet answered</span>
       <span class="crit-score-pill" id="sp-${crit.id}">${scoreText}</span>
       <span class="crit-conf" id="cf-${crit.id}" style="${lv===undefined?'display:none':''}">${confText}</span>
       <span class="crit-chevron">▶</span>
@@ -1456,11 +1480,12 @@ function buildHistory(){
 function updateDashboard(){
   const{total,answered,rawScore,confScore,tierStats,ownedCount,highConf}=getStats();
   const currentTier=determineTier(tierStats);
-  const blocking=blockingCriteria(tierStats,currentTier);
+  const missing=getMissingCriteria();
   const pct=total>0?Math.round(answered/total*100):0;
   const rawPct=Math.round(rawScore/4*100);
   const confPct=Math.round(confScore/4*100);
   const confQuality=answered>0?Math.round(highConf/answered*100):0;
+  const isPartial=answered<total;
 
   // Nav pills
   document.getElementById('nav-score').textContent=answered>0?confPct+'%':'—%';
@@ -1469,8 +1494,11 @@ function updateDashboard(){
   // Dashboard cards
   document.getElementById('d-score').textContent=answered>0?confPct+'%':'—%';
   document.getElementById('d-raw').textContent=answered>0?rawPct+'%':'—%';
+  // Show partial caveat on tier if assessment is incomplete
   document.getElementById('d-tier').textContent=answered>0?`T${currentTier}: ${TIER_NAMES[currentTier]}`:'Not assessed';
-  document.getElementById('d-tier-sub').textContent=answered>0?`based on ${answered} criteria`:'answer criteria to calculate';
+  document.getElementById('d-tier-sub').textContent=answered===0?'answer criteria to calculate':
+    isPartial?`based on ${answered}/${total} criteria — partial`:
+    `based on all ${total} criteria`;
   document.getElementById('d-answered').textContent=`${answered} / ${total}`;
   document.getElementById('d-owned').textContent=`${ownedCount} with owner assigned`;
   document.getElementById('d-conf').textContent=answered>0?confQuality+'%':'—%';
@@ -1495,75 +1523,92 @@ function updateDashboard(){
     else pip.style.background='var(--b1)';
   });
 
-  // Tab badges
+  // Tab badges — show score if complete, progress if partial, nothing if untouched
   TIERS.forEach(t=>{
     const ts=tierStats[t.id];
     const badge=document.getElementById('tbadge'+t.id);
     if(ts.answered===ts.total&&ts.answered>0){
       badge.textContent=ts.avgScore.toFixed(1);
+      badge.style.color='';badge.style.fontFamily='';badge.style.fontSize='';
     }else if(ts.answered>0){
       badge.textContent=`${ts.answered}/${ts.total}`;
       badge.style.color='var(--tx3)';badge.style.fontFamily='\'DM Mono\',monospace';badge.style.fontSize='10px';
     }else{badge.textContent=''}
   });
 
-  // Blocking flags + start-here
-  const allAnswered=answered===total;
+  // Mark criteria as incomplete (unanswered) — no amber blocking, just a subtle note
   TIERS.forEach(t=>{
     t.criteria.forEach((crit,ci)=>{
       const card=document.getElementById('crit-'+crit.id);
       if(!card)return;
+      const isUnanswered=state[crit.id]?.level===undefined;
+      card.classList.remove('blocking');
+      card.classList.toggle('incomplete',isUnanswered);
+      // Remove any blocking flags — replace with unanswered indicator
       const blk=document.getElementById('blk-'+crit.id);
+      if(blk)blk.style.display='none';
       const sh=document.getElementById('start-'+crit.id);
-      const isBlocking=blocking.includes(crit.id);
-      card.classList.toggle('blocking',isBlocking);
-      if(blk)blk.style.display=isBlocking?'':'none';
-      // Start here: first unanswered
-      if(sh)sh.style.display=(state[crit.id]?.level===undefined&&answered<total&&ci===0&&t.id===0&&answered===0)?'':'none';
+      if(sh)sh.style.display=(isUnanswered&&answered===0&&ci===0&&t.id===0)?'':'none';
     });
   });
 
-  updateResults(tierStats,currentTier,confScore,rawScore);
+  updateResults(tierStats,currentTier,confScore,rawScore,missing);
   drawRadar(tierStats);
   buildHeatmap(tierStats);
   buildHistogram();
 }
 
-function updateResults(tierStats,currentTier,confScore,rawScore){
+function updateResults(tierStats,currentTier,confScore,rawScore,missing){
+  missing=missing||getMissingCriteria();
   // Breakdown
   const brows=document.getElementById('breakdown-rows');
   brows.innerHTML='';
   TIERS.forEach(tier=>{
     const ts=tierStats[tier.id];
     const pct=ts.answered>0?Math.round(ts.avgScore/4*100):0;
-    // Pass = ≥50% of answered criteria are at level 2+
     const answeredCrits=TIERS[tier.id].criteria.filter(c=>state[c.id]?.level!==undefined);
     const goodCount=answeredCrits.filter(c=>state[c.id].level>=2).length;
+    const unansweredCount=TIERS[tier.id].criteria.length-ts.answered;
     const passed=answeredCrits.length>0&&goodCount/answeredCrits.length>=0.5;
+    // Status: incomplete if any unanswered, otherwise pass/needs work
+    let statusHtml='';
+    if(ts.answered===0){
+      statusHtml='';
+    }else if(unansweredCount>0){
+      statusHtml=`<span class="bkd-pass" style="color:var(--tx3);border:1px solid var(--b2);background:none;padding:1px 6px">◐ ${unansweredCount} unanswered</span>`;
+    }else{
+      statusHtml=`<span class="bkd-pass ${passed?'ok':'no'}">${passed?'✓ Pass':'↑ Needs work'}</span>`;
+    }
     brows.innerHTML+=`
       <div class="bkd-row">
         <div class="bkd-label" style="color:${TIER_COLORS[tier.id]}">T${tier.id}: ${TIER_NAMES[tier.id]}</div>
         <div class="bkd-bar-bg"><div class="bkd-bar-fill" style="width:${pct}%;background:${TIER_COLORS[tier.id]}"></div></div>
         <div class="bkd-pct">${ts.answered>0?pct+'%':'—'}</div>
-        ${ts.answered>0?`<span class="bkd-pass ${passed?'ok':'no'}">${passed?'✓ Pass':'↑ Needs work'}</span>`:''}
+        ${statusHtml}
       </div>`;
     if(ts.answered>0){
-      const critDetail=TIERS[tier.id].criteria.map(c=>{const lv=state[c.id]?.level;return lv!==undefined?`${c.title.split(' ')[0]}: ${lv}`:null}).filter(Boolean).join(' · ');
+      const critDetail=TIERS[tier.id].criteria.map(c=>{
+        const lv=state[c.id]?.level;
+        return lv!==undefined?`${c.title.split(' ')[0]}: ${lv}`:`<span style="color:var(--b3)">${c.title.split(' ')[0]}: ?</span>`;
+      }).join(' · ');
       brows.innerHTML+=`<div class="bkd-crit-detail">${critDetail}</div>`;
     }
   });
 
-  // Next priority — only show answered criteria below level 2 as unmet
+  // Next priority — show both low-scoring answered criteria AND unanswered ones in next tier
   const nextT=Math.min(currentTier+1,4);
-  const unmet=TIERS[nextT].criteria.filter(c=>state[c.id]?.level!==undefined&&state[c.id].level<2);
+  const nextTierCrits=TIERS[nextT].criteria;
+  const unmet=nextTierCrits.filter(c=>state[c.id]?.level!==undefined&&state[c.id].level<2);
+  const unans=nextTierCrits.filter(c=>state[c.id]?.level===undefined);
   let pt='';
-  if(unmet.length>0){
-    pt=`<strong style="color:${TIER_COLORS[nextT]}">T${nextT} — ${TIER_NAMES[nextT]}:</strong> Focus on `;
-    pt+=unmet.slice(0,2).map(c=>`"${c.title}"`).join(' and ');
-    if(unmet.length>2)pt+=` (+${unmet.length-2} more)`;
-    pt+='.';
+  if(unmet.length>0||unans.length>0){
+    pt=`<strong style="color:${TIER_COLORS[nextT]}">T${nextT} — ${TIER_NAMES[nextT]}:</strong> `;
+    const parts=[];
+    if(unmet.length>0)parts.push(`improve ${unmet.slice(0,2).map(c=>`"${c.title}"`).join(', ')}${unmet.length>2?` +${unmet.length-2} more`:''}`);
+    if(unans.length>0)parts.push(`answer ${unans.length} unanswered criteria`);
+    pt+=parts.join(' · ')+'.';
   }else{
-    pt=`All T${nextT} criteria met. Advance toward T${Math.min(nextT+1,4)} — ${TIER_NAMES[Math.min(nextT+1,4)]}.`;
+    pt=`All T${nextT} criteria scored ≥ Defined. Advance to T${Math.min(nextT+1,4)} — ${TIER_NAMES[Math.min(nextT+1,4)]}.`;
   }
   document.getElementById('next-priority').innerHTML=pt;
 
@@ -1918,10 +1963,17 @@ function buildReportContext(){
   ctx+=`OVERALL RESULTS:\n`;
   ctx+=`- Confidence-adjusted score: ${Math.round(confScore/4*100)}%\n`;
   ctx+=`- Raw self-assessed score: ${Math.round(rawScore/4*100)}%\n`;
-  ctx+=`- Current maturity tier: T${currentTier} — ${TIER_NAMES[currentTier]}\n`;
-  ctx+=`- Criteria answered: ${answered}/${total}\n`;
+  ctx+=`- Current maturity tier (based on answered criteria): T${currentTier} — ${TIER_NAMES[currentTier]}\n`;
+  ctx+=`- Criteria answered: ${answered}/${total}${answered<total?' (PARTIAL ASSESSMENT — see unanswered criteria below)':''}\n`;
   ctx+=`- Criteria with owner assigned: ${ownedCount}\n`;
-  ctx+=`- Criteria with data/external validation: ${highConf}\n\n`;
+  ctx+=`- Criteria with data/external validation: ${highConf}\n`;
+
+  const missing=getMissingCriteria();
+  if(missing.length>0){
+    ctx+=`\nUNANSWERED CRITERIA (${missing.length}) — treat these as gaps in the assessment, not as scored zero:\n`;
+    missing.forEach(m=>ctx+=`- T${m.tier} ${m.tierName}: ${m.title}\n`);
+  }
+  ctx+='\n';
 
   ctx+=`TIER SCORES:\n`;
   TIERS.forEach(tier=>{
@@ -1990,7 +2042,6 @@ function buildReportContext(){
 }
 
 async function exportReport(){
-  // Open modal immediately with spinner
   const overlay=document.getElementById('report-overlay');
   const body=document.getElementById('report-modal-body');
   const title=document.getElementById('report-modal-title');
@@ -1998,11 +2049,6 @@ async function exportReport(){
   overlay.classList.remove('hidden');
   title.textContent='Generating Report…';
   actions.style.display='none';
-  body.innerHTML=`<div class="report-generating">
-    <div class="report-spinner"></div>
-    <div style="font-size:12px;color:var(--tx3);margin-bottom:6px">Analysing your assessment and building report…</div>
-    <div style="font-size:10px;color:var(--b3)">This uses the Anthropic API and takes ~15 seconds</div>
-  </div>`;
 
   if(!ANTHROPIC_API_KEY){
     body.innerHTML=`<div class="report-generating">
@@ -2017,16 +2063,43 @@ async function exportReport(){
     return;
   }
 
+  // Check completeness and show warning if anything is missing
+  const missing=getMissingCriteria();
+  const{total,answered}=getStats();
+  let warningHtml='';
+  if(missing.length>0){
+    const byTier={};
+    missing.forEach(m=>{
+      if(!byTier[m.tier])byTier[m.tier]={name:m.tierName,items:[]};
+      byTier[m.tier].items.push(m.title);
+    });
+    const tierLines=Object.entries(byTier).map(([tid,t])=>
+      `<li class="warn-item">T${tid} ${t.name}: ${t.items.join(', ')}</li>`
+    ).join('');
+    warningHtml=`<div class="report-completeness-warn">
+      <strong>${missing.length} of ${total} criteria unanswered</strong> — the report will note these gaps and treat missing criteria as unassessed rather than scored. For a more accurate report, complete the outstanding criteria first.
+      <ul class="report-completeness-list">${tierLines}</ul>
+    </div>`;
+  }
 
-  const{total,answered,rawScore,confScore,tierStats}=getStats();
+  body.innerHTML=`${warningHtml}<div class="report-generating" style="padding-top:${missing.length?'24px':'40px'}">
+    <div class="report-spinner"></div>
+    <div style="font-size:12px;color:var(--tx3);margin-bottom:6px">Analysing your assessment and building report…</div>
+    <div style="font-size:10px;color:var(--b3)">This uses the Anthropic API and takes ~15 seconds</div>
+  </div>`;
+
+  const{rawScore,confScore,tierStats}=getStats();
   const currentTier=determineTier(tierStats);
   const confPct=Math.round(confScore/4*100);
+  const context=buildReportContext();
 
   const prompt=`You are a senior detection engineering consultant and security maturity assessor. You have been given the results of a DEBMM (Detection Engineering Behavior Maturity Model) self-assessment for a security team.
 
 Your task is to produce a comprehensive, professional maturity report in Markdown. The report must be structured for two audiences:
 1. A **management audience** (CISO, Head of Security, VP Engineering) who need a clear executive summary, risk narrative, and strategic recommendations without deep technical detail.
 2. A **technical audience** (Detection Engineering team lead, SOC Manager, Security Architects) who need specific criterion-level gaps, measurable targets, and a concrete implementation roadmap.
+
+**Important:** If the assessment is partial (some criteria unanswered), clearly note this in the report. Do NOT treat unanswered criteria as scoring zero — treat them as gaps in the assessment data that need to be completed. Flag them explicitly as "Not yet assessed" in findings. The overall scores and tier reflect only what has been answered.
 
 ---
 
