@@ -406,10 +406,10 @@ h1 span{color:var(--ac)}
   <div class="nav-inner">
     <div class="nav-brand">DEBMM</div>
     <div class="nav-links">
-      <button class="nav-link active" onclick="scrollTo('sec-assessment')">Assessment</button>
-      <button class="nav-link" onclick="scrollTo('sec-results')">Results</button>
-      <button class="nav-link" onclick="scrollTo('sec-metrics')">Metrics</button>
-      <button class="nav-link" onclick="scrollTo('sec-questionnaire')">Questionnaire</button>
+      <button class="nav-link active" onclick="navScrollTo('sec-assessment')">Assessment</button>
+      <button class="nav-link" onclick="navScrollTo('sec-results')">Results</button>
+      <button class="nav-link" onclick="navScrollTo('sec-metrics')">Metrics</button>
+      <button class="nav-link" onclick="navScrollTo('sec-questionnaire')">Questionnaire</button>
     </div>
     <div class="nav-score-pill">
       <span class="pill-score" id="nav-score">—%</span>
@@ -513,7 +513,10 @@ h1 span{color:var(--ac)}
   </div>
 
   <!-- Assessment history -->
-  <div class="history-bar" id="history-bar"></div>
+  <div style="display:flex;align-items:stretch;gap:8px;margin-bottom:28px">
+    <div class="history-bar" id="history-bar" style="flex:1;display:flex;gap:8px;align-items:stretch;min-height:52px"></div>
+    <button class="btn-print" style="white-space:nowrap;font-size:10px;align-self:stretch" onclick="saveSnapshot()">📷 Save Snapshot</button>
+  </div>
 
   <!-- Tier tabs -->
   <div class="tier-nav" id="tier-nav">
@@ -849,7 +852,7 @@ let metaState={team:'',assessor:'',scope:'',date:''};
 let metricsState={};
 let attckState={};
 let qReviewed={};
-let history=[];
+let assessHistory=[];
 
 function loadState(){
   try{
@@ -858,8 +861,8 @@ function loadState(){
     metricsState=JSON.parse(localStorage.getItem('debmm-metrics')||'{}');
     attckState=JSON.parse(localStorage.getItem('debmm-attck')||'{}');
     qReviewed=JSON.parse(localStorage.getItem('debmm-qrev')||'{}');
-    history=JSON.parse(localStorage.getItem('debmm-history')||'[]');
-  }catch(e){state={};metaState={};metricsState={};attckState={};qReviewed={};history=[]}
+    assessHistory=JSON.parse(localStorage.getItem('debmm-history')||'[]');
+  }catch(e){state={};metaState={};metricsState={};attckState={};qReviewed={};assessHistory=[]}
 }
 function saveState(){try{localStorage.setItem('debmm-state',JSON.stringify(state))}catch(e){}}
 function saveMeta(){
@@ -1013,7 +1016,7 @@ function buildCriterion(crit,tier,ci){
         <div class="conf-row">
           <span class="conf-label">Validated by:</span>
           <div class="conf-btns">
-            ${Object.entries(CONF_LABELS).map(([k,v])=>`<button class="conf-btn${conf===k?' selected':''}" onclick="selectConf('${crit.id}','${k}')">${v}</button>`).join('')}
+            ${Object.entries(CONF_LABELS).map(([k,v])=>`<button class="conf-btn${conf===k?' selected':''}" data-key="${k}" onclick="selectConf('${crit.id}','${k}')">${v}</button>`).join('')}
           </div>
         </div>
 
@@ -1098,21 +1101,22 @@ function updateMetric(id,val){
 function renderMetricThreshold(m,val){
   const el=document.getElementById('mthresh-'+m.id);
   if(!el)return;
-  if(!val||val===''){el.innerHTML='<span class="mt-none">Enter a value to see threshold guidance</span>';return}
+  if(!val||val===''){
+    el.innerHTML='<span class="mt-none" style="font-size:10px;color:var(--tx3)">Enter a value to see threshold guidance</span>';
+    return;
+  }
   const thresholds=m.threshold;
-  let matched=1;
-  const v=parseFloat(val);
-  // Simple threshold match — compare to tier 3 and 4 thresholds
-  el.innerHTML=`<div style="font-size:10px;color:var(--tx3);line-height:1.6">
-    <span class="mt-none">T2 target: ${thresholds[2]||'—'}</span><br>
-    <span class="mt-none">T3 target: ${thresholds[3]||'—'}</span>
+  el.innerHTML=`<div style="font-size:10px;line-height:1.7;margin-top:4px">
+    <span style="color:var(--tx3)">T2 target: </span><span style="color:var(--t2)">${thresholds[2]||'—'}</span><br>
+    <span style="color:var(--tx3)">T3 target: </span><span style="color:var(--t3)">${thresholds[3]||'—'}</span>
   </div>`;
 }
 
 function updateAttck(k,v){
   attckState[k]=v;
   saveAttck();
-  document.getElementById('bar-'+k).style.width=Math.min(v,100)+'%';
+  const bar=document.getElementById('bar-'+k);
+  if(bar)bar.style.width=Math.min(Math.max(parseFloat(v)||0,0),100)+'%';
   updateAttckBarColor(k,v);
 }
 
@@ -1205,18 +1209,18 @@ function buildApplySteps(){
 
 function buildHistory(){
   const bar=document.getElementById('history-bar');
-  if(history.length===0){
-    bar.innerHTML='<div style="font-size:10px;color:var(--b3);padding:8px 0">No previous assessments recorded. Complete and save an assessment to track progress over time.</div>';
+  if(!bar)return;
+  if(assessHistory.length===0){
+    bar.innerHTML='<div style="font-size:10px;color:var(--b3);padding:10px 0;align-self:center">No snapshots yet — click Save Snapshot after completing the assessment to track progress over time.</div>';
     return;
   }
-  const toShow=history.slice(-3);
+  const toShow=assessHistory.slice(-3);
   bar.innerHTML=toShow.map((h,i)=>`
     <div class="hist-card">
-      <div class="hist-label">Assessment ${history.length-toShow.length+i+1}</div>
+      <div class="hist-label">Snapshot ${assessHistory.length-toShow.length+i+1}</div>
       <div class="hist-val">${Math.round(h.score)}%</div>
-      <div class="hist-date">${h.date} · Tier ${h.tier}</div>
-    </div>`).join('')+
-    `<div style="display:flex;align-items:center;padding:0 4px"><button class="btn-print" style="white-space:nowrap;font-size:10px" onclick="saveSnapshot()">Save Snapshot</button></div>`;
+      <div class="hist-date">${h.date} · T${h.tier}${h.scope?' · '+h.scope:''}</div>
+    </div>`).join('');
 }
 
 // ── UPDATE DASHBOARD ─────────────────────────────────────────────────────
@@ -1243,8 +1247,8 @@ function updateDashboard(){
   document.getElementById('d-conf').textContent=answered>0?confQuality+'%':'—%';
 
   // History delta
-  if(history.length>0){
-    const last=history[history.length-1];
+  if(assessHistory.length>0){
+    const last=assessHistory[assessHistory.length-1];
     const delta=confPct-Math.round(last.score);
     const delEl=document.getElementById('d-delta');
     if(delta>0)delEl.innerHTML=`<span class="delta-up">↑ +${delta}% vs last</span>`;
@@ -1391,7 +1395,11 @@ function buildHeatmap(tierStats){
   TIERS.forEach(tier=>{
     const row=document.createElement('div');
     row.className='hm-row';
-    row.innerHTML=`<div class="hm-tier-label" style="color:${TIER_COLORS[tier.id]}">T${tier.id}: ${TIER_NAMES[tier.id]}</div><div class="hm-cells">`;
+    const label=document.createElement('div');
+    label.className='hm-tier-label';
+    label.style.color=TIER_COLORS[tier.id];
+    label.textContent=`T${tier.id}: ${TIER_NAMES[tier.id]}`;
+    row.appendChild(label);
     const cells=document.createElement('div');
     cells.className='hm-cells';
     tier.criteria.forEach(crit=>{
@@ -1402,8 +1410,8 @@ function buildHeatmap(tierStats){
       if(lv!==undefined){cell.dataset.level=lv;cell.textContent=lv;}
       else{cell.classList.add('unanswered');cell.textContent='?'}
       cell.onclick=()=>{
-        const tier=TIERS.find(t=>t.criteria.some(c=>c.id===crit.id));
-        if(tier){switchTier(tier.id);setTimeout(()=>{const c=document.getElementById('crit-'+crit.id);if(c){c.classList.add('open');c.scrollIntoView({behavior:'smooth',block:'center'})}},200)}
+        const t=TIERS.find(t=>t.criteria.some(c=>c.id===crit.id));
+        if(t){switchTier(t.id);navScrollTo('sec-assessment');setTimeout(()=>{const c=document.getElementById('crit-'+crit.id);if(c){c.classList.add('open');c.scrollIntoView({behavior:'smooth',block:'center'})}},300)}
       };
       cells.appendChild(cell);
     });
@@ -1485,7 +1493,7 @@ function switchTier(id){
   document.querySelectorAll('.tier-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('tp-'+id).classList.add('active');
   document.querySelector(`.tier-tab[data-tier="${id}"]`).classList.add('active');
-  // Auto-open first unanswered
+  // Auto-open first unanswered criterion in this tier
   const firstUnanswered=TIERS[id].criteria.find(c=>state[c.id]?.level===undefined);
   if(firstUnanswered){
     const card=document.getElementById('crit-'+firstUnanswered.id);
@@ -1524,7 +1532,8 @@ function selectLevel(critId,level){
 
 function updateTableHighlight(critId,level,prefix){
   for(let li=0;li<5;li++){
-    const rows=document.querySelectorAll(`.${prefix}-${critId}-${li}`);
+    const cls=CSS.escape(`${prefix}-${critId}-${li}`);
+    const rows=document.querySelectorAll(`.${cls}`);
     rows.forEach(row=>{
       row.classList.toggle('row-selected',li===level);
       row.classList.toggle('row-muted',li!==level);
@@ -1538,7 +1547,10 @@ function toggleShowAll(critId,type){
   const lv=state[critId]?.level;
   const isHidden=btn.textContent.includes('Show');
   if(isHidden){
-    for(let li=0;li<5;li++){document.querySelectorAll(`.${prefix}-${critId}-${li}`).forEach(r=>r.classList.remove('row-muted'))}
+    for(let li=0;li<5;li++){
+      const cls=CSS.escape(`${prefix}-${critId}-${li}`);
+      document.querySelectorAll(`.${cls}`).forEach(r=>r.classList.remove('row-muted'));
+    }
     btn.textContent='Show selected only';
   }else{
     if(lv!==undefined)updateTableHighlight(critId,lv,prefix);
@@ -1551,7 +1563,7 @@ function selectConf(critId,conf){
   state[critId].conf=conf;
   saveState();
   const card=document.getElementById('crit-'+critId);
-  card.querySelectorAll('.conf-btn').forEach(b=>b.classList.toggle('selected',b.textContent===CONF_LABELS[conf]));
+  card.querySelectorAll('.conf-btn').forEach(b=>b.classList.toggle('selected',b.dataset.key===conf));
   document.getElementById('cf-'+critId).textContent=CONF_LABELS[conf];
   updateDashboard();
 }
@@ -1585,7 +1597,7 @@ function markReviewed(i){
 }
 
 function scrollToQStep(i){
-  document.getElementById('sec-questionnaire').scrollIntoView({behavior:'smooth'});
+  navScrollTo('sec-questionnaire');
   setTimeout(()=>highlightPS(i),400);
 }
 
@@ -1593,14 +1605,14 @@ function jumpToCrit(id){
   const tier=TIERS.find(t=>t.criteria.some(c=>c.id===id));
   if(!tier)return;
   switchTier(tier.id);
-  document.getElementById('sec-assessment').scrollIntoView({behavior:'smooth'});
+  navScrollTo('sec-assessment');
   setTimeout(()=>{
     const card=document.getElementById('crit-'+id);
     if(card){card.classList.add('open');card.scrollIntoView({behavior:'smooth',block:'center'})}
   },400);
 }
 
-function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function navScrollTo(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
 
 function dismissOnboard(){
   document.getElementById('onboard-banner').classList.add('hidden');
@@ -1622,15 +1634,14 @@ function toggleGlossary(){
 function saveSnapshot(){
   const{confScore,tierStats}=getStats();
   const currentTier=determineTier(tierStats);
-  history.push({date:new Date().toLocaleDateString('en-IE'),score:Math.round(confScore/4*100),tier:currentTier,scope:metaState.scope||''});
-  if(history.length>10)history=history.slice(-10);
-  try{localStorage.setItem('debmm-history',JSON.stringify(history))}catch(e){}
-  buildHistory();
+  assessHistory.push({date:new Date().toLocaleDateString('en-IE'),score:Math.round(confScore/4*100),tier:currentTier,scope:metaState.scope||''});
+  if(assessHistory.length>10)assessHistory=assessHistory.slice(-10);
+  try{localStorage.setItem('debmm-history',JSON.stringify(assessHistory))}catch(e){}  buildHistory();
   updateDashboard();
 }
 
 function resetAll(){
-  if(confirm('Reset all assessment data? This cannot be undone.')){{state={};saveState();loadState();buildUI()}}
+  if(confirm('Reset all assessment data? This cannot be undone.')){state={};saveState();loadState();buildUI()}
 }
 
 // ── EXPORT ───────────────────────────────────────────────────────────────
@@ -1694,11 +1705,14 @@ function exportReport(){
 const sections=['sec-assessment','sec-results','sec-metrics','sec-questionnaire'];
 const navLinks=document.querySelectorAll('.nav-link');
 window.addEventListener('scroll',()=>{
-  const y=window.scrollY+80;
+  const navH=56;
+  const y=window.scrollY+navH+32;
   let active=0;
-  sections.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.offsetTop<=y)active=i});
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el&&el.getBoundingClientRect().top+window.scrollY<=y)active=i;
+  });
   navLinks.forEach((l,i)=>l.classList.toggle('active',i===active));
-  // Back to top
   document.getElementById('back-top').classList.toggle('visible',window.scrollY>400);
 },{passive:true});
 
