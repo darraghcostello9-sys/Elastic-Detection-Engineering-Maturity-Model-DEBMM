@@ -1,0 +1,29 @@
+# ── DEBMM API KEY GUARD ──────────────────────────────────────────────────────
+#
+# The working file debmm-assessment.html is ignored so that your local copy
+# (which contains your Anthropic API key) is never accidentally committed.
+#
+# The file you edit and use locally:
+debmm-assessment.html
+
+# The safe template (no key) IS tracked — commit and share this freely:
+# debmm-assessment.template.html  ← tracked, no key, safe to push publicly
+
+# ── ENVIRONMENT FILES ─────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+.dev.vars
+
+# ── OS & EDITOR NOISE ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── NODE (if you add a proxy server later) ───────────────────────────────────
+node_modules/
+dist/
+.wrangler/
