@@ -25,7 +25,6 @@
 html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 16px)}
 body{background:var(--bg);color:var(--tx);font-family:'DM Mono',monospace;font-size:13px;line-height:1.6;min-height:100vh}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4}
-
 /* ── STICKY NAV ──────────────────────────────────────────────────────────── */
 .sticky-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(10,12,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1);z-index:500;display:flex;align-items:center}
 .nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:0;width:100%}
@@ -37,10 +36,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .nav-score-pill{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
 .pill-score{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--txb);background:var(--s2);border:1px solid var(--b2);padding:4px 12px;border-radius:2px}
 .pill-tier{font-size:10px;color:var(--tx3);padding:4px 10px;border:1px solid var(--b1);border-radius:2px}
-
 /* ── LAYOUT ──────────────────────────────────────────────────────────────── */
 .shell{max-width:1200px;margin:0 auto;padding:calc(var(--nav-h) + 32px) 24px 80px}
-
 /* ── TYPOGRAPHY ──────────────────────────────────────────────────────────── */
 .tag{display:inline-block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);background:var(--acd);border:1px solid rgba(0,229,200,.3);padding:3px 10px;border-radius:2px;margin-bottom:14px}
 h1{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,48px);font-weight:800;color:var(--txb);line-height:1.1;letter-spacing:-.02em;margin-bottom:10px}
@@ -49,7 +46,6 @@ h1 span{color:var(--ac)}
 .sec-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--txb);margin-bottom:6px}
 .sec-sub{font-size:11px;color:var(--tx3);line-height:1.7;margin-bottom:24px;max-width:700px}
 .section-sep{border:none;border-top:1px solid var(--b1);margin:56px 0 48px}
-
 /* ── GETTING STARTED BANNER ─────────────────────────────────────────────── */
 .onboard{background:var(--s1);border:1px solid var(--b1);border-left:3px solid var(--ac);padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;gap:14px}
 .onboard.hidden{display:none}
@@ -57,19 +53,15 @@ h1 span{color:var(--ac)}
 .onboard-text strong{color:var(--ac);font-weight:500}
 .onboard-close{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:14px;padding:2px 6px;font-family:'DM Mono',monospace;transition:color .15s}
 .onboard-close:hover{color:var(--danger)}
-
 /* ── SESSION META ────────────────────────────────────────────────────────── */
 .meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px}
-@media(max-width:700px){.meta-grid{grid-template-columns:1fr 1fr}}
 .meta-field{background:var(--s1);border:1px solid var(--b1);padding:10px 12px}
 .meta-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
 .meta-input{width:100%;background:none;border:none;color:var(--txb);font-family:'DM Mono',monospace;font-size:12px;outline:none}
 .meta-input::placeholder{color:var(--tx3)}
-
 /* ── DASHBOARD ───────────────────────────────────────────────────────────── */
 .dashboard{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
 @media(max-width:900px){.dashboard{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:560px){.dashboard{grid-template-columns:1fr 1fr}}
 .dash-card{background:var(--s1);border:1px solid var(--b1);padding:14px 16px;position:relative;overflow:hidden}
 .dash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac)}
 .dash-card.dc-warn::before{background:var(--warn)}
@@ -78,8 +70,9 @@ h1 span{color:var(--ac)}
 .dash-value.sm{font-size:16px}
 .dash-sub{font-size:10px;color:var(--tx3);margin-top:4px}
 .dash-delta{font-size:10px;margin-top:4px}
-.delta-up{color:var(--ok)} .delta-dn{color:var(--danger)} .delta-eq{color:var(--tx3)}
-
+.delta-up{color:var(--ok)}
+.delta-dn{color:var(--danger)}
+.delta-eq{color:var(--tx3)}
 /* Progress */
 .prog-wrap{background:var(--s1);border:1px solid var(--b1);padding:16px 20px;margin-bottom:28px}
 .prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
@@ -90,7 +83,6 @@ h1 span{color:var(--ac)}
 .tier-pips{display:flex;gap:6px}
 .tier-pip{flex:1;height:3px;background:var(--b1);transition:background .3s}
 .tier-pip.answered{background:var(--b3)}
-
 /* ── HISTORY SNAPSHOTS ───────────────────────────────────────────────────── */
 .history-bar{display:flex;gap:8px;margin-bottom:28px;align-items:stretch}
 .hist-card{background:var(--s1);border:1px solid var(--b1);padding:10px 14px;flex:1;min-width:0}
@@ -98,7 +90,6 @@ h1 span{color:var(--ac)}
 .hist-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--tx2)}
 .hist-date{font-size:9px;color:var(--tx3);margin-top:2px}
 .hist-empty{color:var(--b2);font-size:9px;font-style:italic;padding-top:4px}
-
 /* ── TIER TABS ───────────────────────────────────────────────────────────── */
 .tier-nav{display:flex;gap:4px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
 .tier-nav::-webkit-scrollbar{display:none}
@@ -123,7 +114,6 @@ h1 span{color:var(--ac)}
 .tier-tab[data-tier="3"] .tab-badge{color:var(--t3)}
 .tier-tab[data-tier="4"] .tab-badge{color:var(--t4)}
 .tab-partial{font-size:9px;color:var(--tx3)}
-
 /* Tier panel */
 .tier-panel{display:none}
 .tier-panel.active{display:block;animation:fadeIn .25s ease}
@@ -138,7 +128,6 @@ h1 span{color:var(--ac)}
 .tier-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--txb);margin-bottom:4px}
 .tier-desc{font-size:11px;color:var(--tx3);line-height:1.7}
 .tier-time{font-size:9px;color:var(--tx3);border:1px solid var(--b1);padding:3px 8px;white-space:nowrap;align-self:flex-start;flex-shrink:0}
-
 /* ── CRITERION CARDS ─────────────────────────────────────────────────────── */
 .criterion{background:var(--s1);border:1px solid var(--b1);margin-bottom:10px;overflow:hidden;transition:border-color .15s}
 .criterion:hover{border-color:var(--b2)}
@@ -156,16 +145,13 @@ h1 span{color:var(--ac)}
 .criterion.open .crit-chevron{transform:rotate(90deg)}
 .start-here{font-size:9px;color:var(--ac);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-
 .crit-body{display:none;border-top:1px solid var(--b1)}
 .criterion.open .crit-body{display:block}
-
 /* Inside criterion */
 .crit-inner{padding:16px 18px 20px}
 .crit-context{font-size:11px;color:var(--tx2);line-height:1.8;padding:10px 12px;background:var(--s2);border-left:2px solid var(--b2);margin-bottom:16px}
 .field-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
 .field-label::after{content:'';flex:1;height:1px;background:var(--b1)}
-
 /* Level buttons */
 .level-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:14px}
 @media(max-width:560px){.level-grid{grid-template-columns:1fr 1fr}}
@@ -174,7 +160,6 @@ h1 span{color:var(--ac)}
 .level-btn.selected{border-color:var(--ac);background:var(--acd);color:var(--ac)}
 .level-num{display:block;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:2px}
 .level-name{display:block;font-size:9px;letter-spacing:.06em}
-
 /* Level description table — smart highlight */
 .level-table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:4px}
 .level-table th{text-align:left;padding:5px 9px;background:var(--s2);color:var(--tx3);font-weight:400;letter-spacing:.1em;text-transform:uppercase;font-size:9px;border:1px solid var(--b1)}
@@ -189,10 +174,8 @@ h1 span{color:var(--ac)}
 .lb-4{background:rgba(192,38,211,.2);color:#d946ef}
 .show-all-btn{font-size:10px;color:var(--tx3);background:none;border:1px solid var(--b1);padding:3px 10px;cursor:pointer;font-family:'DM Mono',monospace;margin-top:4px;transition:all .15s}
 .show-all-btn:hover{color:var(--ac);border-color:var(--ac)}
-
 /* Structured notes */
 .notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-@media(max-width:600px){.notes-grid{grid-template-columns:1fr}}
 .note-field{background:var(--s2);border:1px solid var(--b1)}
 .note-flabel{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);padding:6px 10px;border-bottom:1px solid var(--b1)}
 .note-ta{width:100%;background:none;border:none;color:var(--tx);font-family:'DM Mono',monospace;font-size:11px;padding:8px 10px;resize:vertical;min-height:52px;outline:none}
@@ -207,7 +190,6 @@ h1 span{color:var(--ac)}
 .related-link{font-size:10px;color:var(--tx3);margin-top:10px;padding:7px 10px;border:1px solid var(--b1);background:var(--s2);display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .15s}
 .related-link:hover{color:var(--ac);border-color:rgba(0,229,200,.3)}
 .related-arrow{font-size:9px;color:var(--ac)}
-
 /* ── RESULTS ─────────────────────────────────────────────────────────────── */
 .results-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap}
 .results-actions{display:flex;gap:8px}
@@ -217,11 +199,9 @@ h1 span{color:var(--ac)}
 .btn-print:hover{border-color:var(--b2);color:var(--tx)}
 .btn-reset{background:none;border:1px solid var(--b1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;padding:6px 12px;transition:all .15s}
 .btn-reset:hover{border-color:var(--danger);color:var(--danger)}
-
 /* Scoring explainer */
 .scoring-info{background:var(--s1);border:1px solid var(--b1);padding:12px 16px;margin-bottom:20px;font-size:11px;color:var(--tx3);line-height:1.8}
 .scoring-info strong{color:var(--tx2);font-weight:500}
-
 /* Heat map */
 .heatmap-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;margin-bottom:16px}
 .heatmap-title{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px}
@@ -240,11 +220,8 @@ h1 span{color:var(--ac)}
 .hm-legend{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
 .hm-leg-item{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--tx3)}
 .hm-leg-dot{width:10px;height:10px;border-radius:1px}
-
 /* Results grid */
 .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-@media(max-width:700px){.results-grid{grid-template-columns:1fr}}
-
 .radar-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;display:flex;flex-direction:column;align-items:center}
 .tier-breakdown{background:var(--s1);border:1px solid var(--b1);padding:20px}
 .bkd-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
@@ -256,7 +233,6 @@ h1 span{color:var(--ac)}
 .bkd-pass.ok{background:rgba(34,197,94,.15);color:var(--ok)}
 .bkd-pass.no{background:rgba(245,158,11,.15);color:var(--warn)}
 .bkd-crit-detail{font-size:10px;color:var(--tx3);margin-top:4px;padding-left:108px;line-height:1.6}
-
 /* Recommendations */
 .recs-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;grid-column:1/-1}
 .rec-item{display:flex;gap:10px;padding:10px 12px;border:1px solid var(--b1);margin-bottom:8px;background:var(--s2);transition:border-color .15s}
@@ -267,7 +243,6 @@ h1 span{color:var(--ac)}
 .rec-text{font-size:11px;color:var(--tx2);line-height:1.6}
 .rec-target{font-size:10px;color:var(--ac);margin-top:4px}
 .rec-action{font-size:10px;color:var(--tx3);margin-top:3px}
-
 /* Histogram */
 .histogram-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;margin-bottom:16px}
 .hist-bars{display:flex;gap:8px;align-items:flex-end;height:80px;margin-top:12px}
@@ -275,12 +250,10 @@ h1 span{color:var(--ac)}
 .hist-bar{width:100%;background:var(--s2);border:1px solid var(--b1);transition:height .5s cubic-bezier(.4,0,.2,1);min-height:4px}
 .hist-bar-label{font-size:9px;color:var(--tx3);letter-spacing:.06em}
 .hist-bar-count{font-size:11px;font-family:'Syne',sans-serif;font-weight:700;color:var(--tx2)}
-
 /* Metrics section */
 .metrics-section{margin-top:0}
 .metrics-intro{font-size:11px;color:var(--tx3);line-height:1.8;margin-bottom:20px;padding:12px 16px;background:var(--s1);border:1px solid var(--b1);border-left:3px solid var(--ac)}
 .metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
-@media(max-width:800px){.metrics-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:500px){.metrics-grid{grid-template-columns:1fr}}
 .metric-card{background:var(--s1);border:1px solid var(--b1);padding:14px}
 .metric-card-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
@@ -295,8 +268,9 @@ h1 span{color:var(--ac)}
 .spark-bar{position:absolute;bottom:0;width:12px;border-radius:1px 1px 0 0}
 .metric-desc{font-size:10px;color:var(--tx3);margin-top:8px;line-height:1.6;border-top:1px solid var(--b1);padding-top:8px}
 .metric-threshold{font-size:10px;margin-top:5px}
-.mt-met{color:var(--ok)} .mt-gap{color:var(--warn)} .mt-none{color:var(--tx3)}
-
+.mt-met{color:var(--ok)}
+.mt-gap{color:var(--warn)}
+.mt-none{color:var(--tx3)}
 /* ATT&CK coverage */
 .attck-section{background:var(--s1);border:1px solid var(--b1);padding:20px;margin-bottom:20px}
 .attck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:14px}
@@ -308,7 +282,6 @@ h1 span{color:var(--ac)}
 .attck-bar-bg{flex:1;height:5px;background:var(--b1);position:relative}
 .attck-bar-fill{position:absolute;left:0;top:0;height:100%;transition:width .4s}
 .attck-tier-color{background:var(--b2)}
-
 /* Glossary */
 .glossary-wrap{background:var(--s1);border:1px solid var(--b1);overflow:hidden;margin-bottom:20px}
 .glossary-hdr{padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;border-bottom:1px solid var(--b1)}
@@ -319,7 +292,6 @@ h1 span{color:var(--ac)}
 .glos-term{font-size:10px;font-weight:500;color:var(--ac);margin-bottom:2px}
 .glos-def{font-size:10px;color:var(--tx3);line-height:1.6}
 .glos-item{padding:8px 10px;background:var(--s2);border:1px solid var(--b1)}
-
 /* Questionnaire section */
 .q-section{margin-top:0}
 .q-intro{font-size:11px;color:var(--tx3);max-width:680px;line-height:1.8;margin-bottom:24px}
@@ -335,7 +307,6 @@ h1 span{color:var(--ac)}
 .ps.reviewed .ps-tier-ref{color:var(--ok);opacity:.7}
 .ps-tick{font-size:9px;color:var(--ok);display:none}
 .ps.reviewed .ps-tick{display:block}
-
 .q-areas{display:flex;flex-direction:column;gap:10px}
 .q-area{background:var(--s1);border:1px solid var(--b1);overflow:hidden;transition:border-color .15s}
 .q-area:hover{border-color:var(--b2)}
@@ -352,7 +323,6 @@ h1 span{color:var(--ac)}
 .q-body{display:none;border-top:1px solid var(--b1)}
 .q-area.qa-open .q-body{display:block}
 .q-body-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
-@media(max-width:700px){.q-body-grid{grid-template-columns:1fr}}
 .q-col{padding:18px 20px}
 .q-col.q-steps{background:var(--s2)}
 .q-col-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
@@ -366,7 +336,6 @@ h1 span{color:var(--ac)}
 .step-marker{flex-shrink:0;width:15px;height:15px;background:var(--acd);border:1px solid rgba(0,229,200,.3);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--ac);margin-top:1px}
 .q-related{font-size:10px;color:var(--tx3);margin-top:12px;padding:7px 10px;border:1px solid var(--b1);background:var(--s2);display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .15s}
 .q-related:hover{color:var(--ac);border-color:rgba(0,229,200,.3)}
-
 /* Interactive question rows */
 .q-question-row{display:flex;flex-direction:column;gap:5px;padding:9px 10px;background:var(--s2);border:1px solid var(--b1);transition:border-color .15s}
 .q-question-row.answered{border-color:rgba(0,229,200,.25)}
@@ -381,7 +350,6 @@ h1 span{color:var(--ac)}
 .q-phase-bar-bg{flex:1;height:3px;background:var(--b1)}
 .q-phase-bar-fill{height:100%;background:var(--ac);transition:width .4s}
 .q-phase-count{white-space:nowrap;flex-shrink:0}
-
 /* Step completion checkbox */
 .step-row{display:flex;gap:10px;padding:8px 10px;background:var(--s1);border:1px solid var(--b1);font-size:11px;color:var(--tx3);line-height:1.5;align-items:flex-start;transition:all .15s;cursor:pointer}
 .step-row:hover{border-color:var(--b2);color:var(--tx)}
@@ -390,7 +358,6 @@ h1 span{color:var(--ac)}
 .step-check{flex-shrink:0;width:16px;height:16px;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:9px;color:transparent;background:var(--s2);transition:all .15s;margin-top:1px}
 .step-row.step-done .step-check{background:var(--ok);border-color:var(--ok);color:var(--bg)}
 .step-text{flex:1}
-
 /* Report modal */
 .report-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;backdrop-filter:blur(4px)}
 .report-modal-overlay.hidden{display:none}
@@ -414,10 +381,8 @@ h1 span{color:var(--ac)}
 .report-copy-btn:hover{background:rgba(0,229,200,.2)}
 .report-dl-btn{padding:7px 14px;background:var(--s1);border:1px solid var(--b1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s}
 .report-dl-btn:hover{border-color:var(--b2);color:var(--tx)}
-
 /* Mode picker */
 .mode-picker{display:grid;grid-template-columns:1fr 1fr;gap:0}
-@media(max-width:600px){.mode-picker{grid-template-columns:1fr}}
 .mode-card{padding:28px 28px 24px;cursor:pointer;border-right:1px solid var(--b1);transition:background .15s;display:flex;flex-direction:column;gap:10px}
 .mode-card:last-child{border-right:none}
 .mode-card:hover{background:var(--s2)}
@@ -444,7 +409,6 @@ h1 span{color:var(--ac)}
 .ai-key-num{width:18px;height:18px;border:1px solid var(--b2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--tx3);flex-shrink:0;margin-top:1px}
 .ai-key-step code{color:var(--ac);background:rgba(0,229,200,.06);padding:1px 5px;border-radius:2px;font-family:'DM Mono',monospace}
 .ai-key-step a{color:var(--ac);text-decoration:none}
-
 /* Local report content */
 .lr-body{padding:32px 32px 28px}
 @media(max-width:600px){.lr-body{padding:20px 16px}}
@@ -505,14 +469,12 @@ h1 span{color:var(--ac)}
 .lr-action{display:flex;gap:10px;padding:9px 12px;background:var(--s2);border:1px solid var(--b1);margin-bottom:5px;font-size:11px;color:var(--tx2);line-height:1.5;align-items:flex-start}
 .lr-action-num{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--b3);flex-shrink:0;min-width:18px;line-height:1.4}
 .lr-missing-note{padding:10px 14px;background:rgba(61,126,255,.06);border:1px solid rgba(61,126,255,.2);font-size:10px;color:var(--tx3);line-height:1.7;margin-bottom:14px}
-
 @media print{
   .report-modal-overlay{position:static!important;background:none!important;padding:0!important;display:block!important}
   .report-modal{border:none!important;max-width:none!important;margin:0!important}
   .report-modal-header,.report-actions,.mode-picker,.ai-key-setup{display:none!important}
   .lr-body{padding:20px!important}
 }
-
 /* Apply steps */
 .apply-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:20px}
 .apply-step{background:var(--s1);border:1px solid var(--b1);padding:16px;display:flex;gap:12px;transition:border-color .15s}
@@ -520,7 +482,6 @@ h1 span{color:var(--ac)}
 .as-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--b1);line-height:1;flex-shrink:0;min-width:32px}
 .as-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--txb);margin-bottom:4px}
 .as-desc{font-size:11px;color:var(--tx3);line-height:1.7}
-
 /* Grouping cards */
 .grouping-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:14px}
 .gc{background:var(--s1);border:1px solid var(--b1);border-left:3px solid var(--ac);padding:12px 14px}
@@ -529,12 +490,10 @@ h1 span{color:var(--ac)}
 .gc:nth-child(4){border-left-color:var(--t3)}
 .gc-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--txb);margin-bottom:6px}
 .gc-items{font-size:10px;color:var(--tx3);line-height:1.9}
-
 /* Back to top */
 .back-top{position:fixed;bottom:28px;right:24px;background:var(--s2);border:1px solid var(--b2);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;transition:all .2s;opacity:0;pointer-events:none;z-index:400}
 .back-top.visible{opacity:1;pointer-events:auto}
 .back-top:hover{border-color:var(--ac);color:var(--ac)}
-
 /* Print */
 @media print{
   .sticky-nav,.back-top,.btn-export,.btn-print,.btn-reset,.onboard,.tier-nav{display:none!important}
@@ -543,7 +502,6 @@ h1 span{color:var(--ac)}
   .crit-body{display:block!important}
   body::before{display:none}
 }
-
 /* ── PROGRESS SECTION ───────────────────────────────────────────────────── */
 .prog-toolbar{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
 .prog-btn{padding:8px 14px;border:1px solid var(--b1);background:var(--s1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s}
@@ -584,7 +542,9 @@ h1 span{color:var(--ac)}
 .prog-delta-label{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
 .prog-delta-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1}
 .prog-delta-sub{font-size:10px;color:var(--tx3);margin-top:3px}
-.delta-pos{color:var(--ok)} .delta-neg{color:var(--danger)} .delta-zero{color:var(--tx3)}
+.delta-pos{color:var(--ok)}
+.delta-neg{color:var(--danger)}
+.delta-zero{color:var(--tx3)}
 .prog-tier-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .prog-tier-name{font-size:10px;width:110px;flex-shrink:0;letter-spacing:.04em}
 .prog-tier-bars-wrap{flex:1;display:flex;flex-direction:column;gap:3px}
@@ -2510,47 +2470,53 @@ function exportReport(){
   const hasKey=!!ANTHROPIC_API_KEY;
   const{answered,total}=getStats();
   const missing=getMissingCriteria();
+
   const warnText=missing.length>0
-    ?`<div class="lr-missing-note"><strong style="color:var(--t1)">${missing.length} criteria unanswered.</strong> Both report types will mark these as "Not assessed" rather than zero.</div>`
+    ?'<div class="lr-missing-note"><strong style="color:var(--t1)">'+missing.length+' criteria unanswered.</strong> Both report types will mark these as “Not assessed” rather than zero.</div>'
     :'';
 
-  body.innerHTML=`
-    ${warnText}
-    <div class="mode-picker">
-      <div class="mode-card" onclick="runLocalReport()">
-        <div class="mode-card-icon">◈</div>
-        <div class="mode-card-title">Local Report <span class="mode-card-badge badge-instant">Instant</span></div>
-        <div class="mode-card-desc">Structured, visually formatted report built directly from your assessment data — no internet connection or API key needed.</div>
-        <div class="mode-card-features">
-          <div class="mcf-item mcf-ok">Works offline, no key required</div>
-          <div class="mcf-item mcf-ok">Scorecard, tier findings, metrics, ATT&CK</div>
-          <div class="mcf-item mcf-ok">90-day roadmap from your gap data</div>
-          <div class="mcf-item mcf-ok">Print to PDF directly from browser</div>
-        </div>
-        <button class="mode-card-cta" onclick="event.stopPropagation();runLocalReport()">Generate local report →</button>
-      </div>
-      <div class="mode-card mc-ai" onclick="${hasKey?'runAIReport()':'void(0)'}">
-        <div class="mode-card-icon">✦</div>
-        <div class="mode-card-title">AI Report <span class="mode-card-badge badge-ai">Claude Sonnet</span></div>
-        <div class="mode-card-desc">Full narrative report written by Claude — executive summary, risk assessment, questionnaire analysis, and strategic recommendations tailored to your specific data.</div>
-        <div class="mode-card-features">
-          <div class="mcf-item mcf-ac">CISO-ready executive summary</div>
-          <div class="mcf-item mcf-ac">Narrative risk assessment</div>
-          <div class="mcf-item mcf-ac">Contextual analysis of questionnaire answers</div>
-          <div class="mcf-item mcf-ac">Strategic 12-month roadmap with owner types</div>
-        </div>
-        <button class="mode-card-cta" onclick="event.stopPropagation();runAIReport()" ${hasKey?'':'disabled style="opacity:.5;cursor:not-allowed"'}>${hasKey?'Generate AI report →':'API key required'}</button>
-      </div>
-    </div>
-    ${!hasKey?`<div class="ai-key-setup">
-      <div class="ai-key-label">How to enable AI reports</div>
-      <div class="ai-key-steps">
-        <div class="ai-key-step"><span class="ai-key-num">1</span>Get a free API key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></div>
-        <div class="ai-key-step"><span class="ai-key-num">2</span>Download <code>debmm-assessment.html</code> from the <a href="https://github.com/darraghcostello9-sys/Elastic-Detection-Engineering-Maturity-Model-DEBMM/blob/main/debmm-assessment.template.html" target="_blank">GitHub repository</a> and open it in a text editor</div>
-        <div class="ai-key-step"><span class="ai-key-num">3</span>Find line ~740 and set: <code>const ANTHROPIC_API_KEY = 'sk-ant-...';</code></div>
-        <div class="ai-key-step"><span class="ai-key-num">4</span>Save and reload — the AI report option will be enabled. Keep this file in a <strong>private</strong> repository.</div>
-      </div>
-    </div>`:''}`;
+  const aiOnclick=hasKey?'runAIReport()':'void(0)';
+  const aiBtnDisabled=hasKey?'':'disabled style="opacity:.5;cursor:not-allowed"';
+  const aiBtnText=hasKey?'Generate AI report →':'API key required';
+
+  const keySetupHtml=hasKey?'':'<div class="ai-key-setup">'
+    +'<div class="ai-key-label">How to enable AI reports</div>'
+    +'<div class="ai-key-steps">'
+    +'<div class="ai-key-step"><span class="ai-key-num">1</span>Get a free API key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></div>'
+    +'<div class="ai-key-step"><span class="ai-key-num">2</span>Download <code>debmm-assessment.html</code> from the <a href="https://github.com/darraghcostello9-sys/Elastic-Detection-Engineering-Maturity-Model-DEBMM/blob/main/debmm-assessment.template.html" target="_blank">GitHub repository</a> and open it in a text editor</div>'
+    +'<div class="ai-key-step"><span class="ai-key-num">3</span>Find line ~740 and set: <code>const ANTHROPIC_API_KEY = \'sk-ant-...\';</code></div>'
+    +'<div class="ai-key-step"><span class="ai-key-num">4</span>Save and reload — the AI report option will be enabled. Keep this file in a <strong>private</strong> repository.</div>'
+    +'</div></div>';
+
+  body.innerHTML=warnText
+    +'<div class="mode-picker">'
+    +'<div class="mode-card" onclick="runLocalReport()">'
+    +'<div class="mode-card-icon">◈</div>'
+    +'<div class="mode-card-title">Local Report <span class="mode-card-badge badge-instant">Instant</span></div>'
+    +'<div class="mode-card-desc">Structured, visually formatted report built directly from your assessment data — no internet connection or API key needed.</div>'
+    +'<div class="mode-card-features">'
+    +'<div class="mcf-item mcf-ok">Works offline, no key required</div>'
+    +'<div class="mcf-item mcf-ok">Scorecard, tier findings, metrics, ATT&CK</div>'
+    +'<div class="mcf-item mcf-ok">90-day roadmap from your gap data</div>'
+    +'<div class="mcf-item mcf-ok">Print to PDF directly from browser</div>'
+    +'</div>'
+    +'<button class="mode-card-cta" onclick="event.stopPropagation();runLocalReport()">Generate local report →</button>'
+    +'</div>'
+    +'<div class="mode-card mc-ai" onclick="'+aiOnclick+'">'
+    +'<div class="mode-card-icon">✦</div>'
+    +'<div class="mode-card-title">AI Report <span class="mode-card-badge badge-ai">Claude Sonnet</span></div>'
+    +'<div class="mode-card-desc">Full narrative report written by Claude — executive summary, risk assessment, questionnaire analysis, and strategic recommendations tailored to your specific data.</div>'
+    +'<div class="mode-card-features">'
+    +'<div class="mcf-item mcf-ac">CISO-ready executive summary</div>'
+    +'<div class="mcf-item mcf-ac">Narrative risk assessment</div>'
+    +'<div class="mcf-item mcf-ac">Contextual analysis of questionnaire answers</div>'
+    +'<div class="mcf-item mcf-ac">Strategic 12-month roadmap with owner types</div>'
+    +'</div>'
+    +'<button class="mode-card-cta" onclick="event.stopPropagation();runAIReport()" '+aiBtnDisabled+'>'+aiBtnText+'</button>'
+    +'</div>'
+    +'</div>'
+    +keySetupHtml;
+}
 
 // ── LOCAL REPORT ──────────────────────────────────────────────────────────
 function levelBadge(lv){
