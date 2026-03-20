@@ -3,1645 +3,1707 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DEBMM Self-Assessment — Detection Engineering Maturity</title>
+<title>DEBMM — Detection Engineering Maturity</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0c10;
-    --surface: #0f1318;
-    --surface2: #151a22;
-    --border: #1e2530;
-    --border-bright: #2a3545;
-    --text: #c8d4e0;
-    --text-dim: #5a6a7a;
-    --text-bright: #e8f0f8;
-    --accent: #00e5c8;
-    --accent-dim: rgba(0,229,200,0.12);
-    --accent2: #ff6b35;
-    --accent3: #7c5cff;
-    --t0: #4a5568; --t0b: rgba(74,85,104,0.15);
-    --t1: #3d7eff; --t1b: rgba(61,126,255,0.12);
-    --t2: #00c9a7; --t2b: rgba(0,201,167,0.12);
-    --t3: #f59e0b; --t3b: rgba(245,158,11,0.12);
-    --t4: #c026d3; --t4b: rgba(192,38,211,0.12);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 13px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  /* Noise overlay */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 1000;
-    opacity: 0.4;
-  }
-
-  .shell {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
-
-  /* HEADER */
-  header {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 32px;
-    margin-bottom: 40px;
-    position: relative;
-  }
-
-  .tag {
-    display: inline-block;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--accent);
-    background: var(--accent-dim);
-    border: 1px solid rgba(0,229,200,0.3);
-    padding: 3px 10px;
-    border-radius: 2px;
-    margin-bottom: 16px;
-  }
-
-  h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(28px, 5vw, 52px);
-    font-weight: 800;
-    color: var(--text-bright);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin-bottom: 12px;
-  }
-
-  h1 span { color: var(--accent); }
-
-  .sub {
-    color: var(--text-dim);
-    font-size: 12px;
-    max-width: 600px;
-    line-height: 1.7;
-  }
-
-  .version-badge {
-    position: absolute;
-    top: 0;
-    right: 0;
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.1em;
-    border: 1px solid var(--border);
-    padding: 4px 8px;
-  }
-
-  /* SCORE DASHBOARD */
-  .dashboard {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 40px;
-  }
-
-  @media (max-width: 700px) { .dashboard { grid-template-columns: 1fr 1fr; } }
-
-  .dash-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .dash-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: var(--accent);
-  }
-
-  .dash-label {
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 8px;
-  }
-
-  .dash-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text-bright);
-    line-height: 1;
-  }
-
-  .dash-value.tier-val { font-size: 20px; }
-
-  .dash-sub {
-    font-size: 10px;
-    color: var(--text-dim);
-    margin-top: 4px;
-  }
-
-  .tier-indicator {
-    display: inline-block;
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    margin-right: 6px;
-    background: var(--accent);
-  }
-
-  /* PROGRESS BAR */
-  .progress-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 20px;
-    margin-bottom: 40px;
-  }
-
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .progress-title {
-    font-size: 10px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
-
-  .progress-pct {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--accent);
-  }
-
-  .progress-bar-bg {
-    background: var(--border);
-    height: 4px;
-    position: relative;
-  }
-
-  .progress-bar-fill {
-    position: absolute;
-    left: 0; top: 0; height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent3));
-    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
-  }
-
-  /* TIER TABS */
-  .tier-nav {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 24px;
-    overflow-x: auto;
-    padding-bottom: 4px;
-    scrollbar-width: none;
-  }
-
-  .tier-nav::-webkit-scrollbar { display: none; }
-
-  .tier-tab {
-    flex-shrink: 0;
-    padding: 8px 14px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-    color: var(--text-dim);
-    cursor: pointer;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.05em;
-    transition: all 0.2s;
-    position: relative;
-  }
-
-  .tier-tab:hover { border-color: var(--border-bright); color: var(--text); }
-  .tier-tab.active { color: var(--text-bright); }
-
-  .tier-tab[data-tier="0"].active { border-color: var(--t0); background: var(--t0b); }
-  .tier-tab[data-tier="1"].active { border-color: var(--t1); background: var(--t1b); }
-  .tier-tab[data-tier="2"].active { border-color: var(--t2); background: var(--t2b); }
-  .tier-tab[data-tier="3"].active { border-color: var(--t3); background: var(--t3b); }
-  .tier-tab[data-tier="4"].active { border-color: var(--t4); background: var(--t4b); }
-
-  .tier-dot {
-    display: inline-block;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    margin-right: 6px;
-    vertical-align: middle;
-  }
-
-  .tier-tab[data-tier="0"] .tier-dot { background: var(--t0); }
-  .tier-tab[data-tier="1"] .tier-dot { background: var(--t1); }
-  .tier-tab[data-tier="2"] .tier-dot { background: var(--t2); }
-  .tier-tab[data-tier="3"] .tier-dot { background: var(--t3); }
-  .tier-tab[data-tier="4"] .tier-dot { background: var(--t4); }
-
-  .tier-complete-badge {
-    font-size: 9px;
-    padding: 1px 5px;
-    margin-left: 6px;
-    background: rgba(0,229,200,0.2);
-    color: var(--accent);
-    border-radius: 2px;
-  }
-
-  /* TIER PANEL */
-  .tier-panel { display: none; }
-  .tier-panel.active { display: block; animation: fadeIn 0.3s ease; }
-
-  @keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform: translateY(0); } }
-
-  .tier-header {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 20px 24px;
-    margin-bottom: 16px;
-    border-left: 3px solid var(--accent);
-  }
-
-  .tier-header[data-tier="0"] { border-left-color: var(--t0); }
-  .tier-header[data-tier="1"] { border-left-color: var(--t1); }
-  .tier-header[data-tier="2"] { border-left-color: var(--t2); }
-  .tier-header[data-tier="3"] { border-left-color: var(--t3); }
-  .tier-header[data-tier="4"] { border-left-color: var(--t4); }
-
-  .tier-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-bright);
-    margin-bottom: 6px;
-  }
-
-  .tier-desc {
-    font-size: 12px;
-    color: var(--text-dim);
-    line-height: 1.7;
-  }
-
-  /* CRITERIA CARDS */
-  .criterion {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    margin-bottom: 12px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-
-  .criterion:hover { border-color: var(--border-bright); }
-  .criterion.answered { border-color: rgba(0,229,200,0.2); }
-
-  .criterion-header {
-    padding: 16px 20px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 12px;
-    user-select: none;
-  }
-
-  .criterion-header:hover { background: var(--surface2); }
-
-  .criterion-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-bright);
-    flex: 1;
-  }
-
-  .criterion-score {
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    white-space: nowrap;
-    transition: all 0.2s;
-    min-width: 60px;
-    text-align: center;
-  }
-
-  .criterion.answered .criterion-score {
-    border-color: rgba(0,229,200,0.4);
-    color: var(--accent);
-    background: var(--accent-dim);
-  }
-
-  .criterion-chevron {
-    color: var(--text-dim);
-    font-size: 10px;
-    transition: transform 0.2s;
-    padding-top: 2px;
-  }
-
-  .criterion.open .criterion-chevron { transform: rotate(90deg); }
-
-  .criterion-body {
-    display: none;
-    padding: 0 20px 20px;
-    border-top: 1px solid var(--border);
-  }
-
-  .criterion.open .criterion-body { display: block; }
-
-  .section-label {
-    font-size: 9px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin: 16px 0 8px;
-  }
-
-  .context-text {
-    font-size: 11px;
-    color: var(--text-dim);
-    line-height: 1.7;
-    margin-bottom: 12px;
-    padding: 10px 12px;
-    background: var(--surface2);
-    border-left: 2px solid var(--border-bright);
-  }
-
-  /* LEVEL SELECTOR */
-  .level-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 6px;
-    margin-bottom: 12px;
-  }
-
-  @media (max-width: 600px) { .level-grid { grid-template-columns: 1fr 1fr; } }
-
-  .level-btn {
-    padding: 10px 6px;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text-dim);
-    cursor: pointer;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    text-align: center;
-    transition: all 0.15s;
-    line-height: 1.4;
-  }
-
-  .level-btn:hover {
-    border-color: var(--border-bright);
-    color: var(--text);
-  }
-
-  .level-btn.selected {
-    border-color: var(--accent);
-    background: var(--accent-dim);
-    color: var(--accent);
-  }
-
-  .level-num {
-    display: block;
-    font-family: 'Syne', sans-serif;
-    font-size: 16px;
-    font-weight: 700;
-    margin-bottom: 2px;
-  }
-
-  .level-name {
-    display: block;
-    font-size: 9px;
-    letter-spacing: 0.08em;
-  }
-
-  /* QUANT TABLE */
-  .quant-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 10px;
-    margin-bottom: 8px;
-  }
-
-  .quant-table th {
-    text-align: left;
-    padding: 6px 10px;
-    background: var(--surface2);
-    color: var(--text-dim);
-    font-weight: 400;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-size: 9px;
-    border: 1px solid var(--border);
-  }
-
-  .quant-table td {
-    padding: 8px 10px;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    vertical-align: top;
-    line-height: 1.6;
-  }
-
-  .quant-table tr:hover td { background: var(--surface2); }
-
-  .level-badge {
-    display: inline-block;
-    width: 60px;
-    padding: 2px 6px;
-    text-align: center;
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border-radius: 1px;
-  }
-
-  .lb-initial { background: rgba(74,85,104,0.3); color: #888; }
-  .lb-repeatable { background: rgba(61,126,255,0.2); color: #7aa8ff; }
-  .lb-defined { background: rgba(0,229,200,0.15); color: #00c9a7; }
-  .lb-managed { background: rgba(245,158,11,0.2); color: #f59e0b; }
-  .lb-optimized { background: rgba(192,38,211,0.2); color: #d946ef; }
-
-  /* NOTES */
-  .notes-area {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    padding: 10px 12px;
-    resize: vertical;
-    min-height: 60px;
-    margin-top: 8px;
-    transition: border-color 0.2s;
-  }
-
-  .notes-area:focus { outline: none; border-color: var(--accent); }
-  .notes-area::placeholder { color: var(--text-dim); }
-
-  /* RESULTS */
-  .results-section {
-    margin-top: 48px;
-    border-top: 1px solid var(--border);
-    padding-top: 40px;
-  }
-
-  .results-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    flex-wrap: gap;
-    gap: 12px;
-  }
-
-  .results-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--text-bright);
-  }
-
-  .export-btn {
-    padding: 10px 20px;
-    background: var(--accent-dim);
-    border: 1px solid rgba(0,229,200,0.4);
-    color: var(--accent);
-    cursor: pointer;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-    transition: all 0.2s;
-  }
-
-  .export-btn:hover { background: rgba(0,229,200,0.2); }
-
-  .results-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-  }
-
-  @media (max-width: 700px) { .results-grid { grid-template-columns: 1fr; } }
-
-  /* RADAR */
-  .radar-wrap {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* TIER BREAKDOWN */
-  .tier-breakdown {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 24px;
-  }
-
-  .breakdown-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-
-  .breakdown-tier {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    width: 90px;
-    color: var(--text-dim);
-    flex-shrink: 0;
-  }
-
-  .breakdown-bar-bg {
-    flex: 1;
-    height: 6px;
-    background: var(--border);
-    position: relative;
-  }
-
-  .breakdown-bar-fill {
-    position: absolute;
-    left: 0; top: 0; height: 100%;
-    transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
-  }
-
-  .breakdown-pct {
-    font-size: 10px;
-    width: 35px;
-    text-align: right;
-    color: var(--text-dim);
-  }
-
-  /* RECOMMENDATIONS */
-  .recommendations {
-    margin-top: 24px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    padding: 24px;
-    grid-column: 1 / -1;
-  }
-
-  .rec-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-bright);
-    margin-bottom: 16px;
-  }
-
-  .rec-item {
-    display: flex;
-    gap: 12px;
-    padding: 12px;
-    border: 1px solid var(--border);
-    margin-bottom: 8px;
-    background: var(--surface2);
-  }
-
-  .rec-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-top: 5px;
-    flex-shrink: 0;
-  }
-
-  .rec-content { flex: 1; }
-  .rec-label {
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-    margin-bottom: 3px;
-  }
-  .rec-text { font-size: 11px; color: var(--text); line-height: 1.6; }
-
-  /* MATURITY METER */
-  .maturity-meter {
-    display: flex;
-    gap: 3px;
-    margin-bottom: 8px;
-  }
-
-  .meter-block {
-    flex: 1;
-    height: 8px;
-    background: var(--border);
-    transition: background 0.4s;
-  }
-
-  .meter-block.filled[data-tier="0"] { background: var(--t0); }
-  .meter-block.filled[data-tier="1"] { background: var(--t1); }
-  .meter-block.filled[data-tier="2"] { background: var(--t2); }
-  .meter-block.filled[data-tier="3"] { background: var(--t3); }
-  .meter-block.filled[data-tier="4"] { background: var(--t4); }
-
-  /* RESET BTN */
-  .reset-btn {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    cursor: pointer;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    padding: 6px 12px;
-    margin-top: 16px;
-    transition: all 0.2s;
-  }
-
-  .reset-btn:hover { border-color: var(--accent2); color: var(--accent2); }
-
-  hr.divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 8px 0;
-  }
-
-  /* Scrollbar */
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border-bright); }
-
-  /* Print */
-  @media print {
-    body { background: white; color: #111; }
-    .tier-tab, .export-btn, .reset-btn { display: none; }
-    .tier-panel { display: block !important; }
-  }
+/* ── TOKENS ─────────────────────────────────────────────────────────────── */
+:root {
+  --bg:#0a0c10; --s1:#0f1318; --s2:#151a22; --s3:#1a2030;
+  --b1:#1e2530; --b2:#2a3545; --b3:#3a4a60;
+  --tx:#c8d4e0; --tx2:#8090a0; --tx3:#5a6a7a; --txb:#e8f0f8;
+  --ac:#00e5c8; --acd:rgba(0,229,200,0.10); --ac2:rgba(0,229,200,0.25);
+  --warn:#f59e0b; --danger:#ef4444; --ok:#22c55e;
+  --t0:#4a5568; --t0b:rgba(74,85,104,0.15);
+  --t1:#3d7eff; --t1b:rgba(61,126,255,0.12);
+  --t2:#00c9a7; --t2b:rgba(0,201,167,0.12);
+  --t3:#f59e0b; --t3b:rgba(245,158,11,0.12);
+  --t4:#c026d3; --t4b:rgba(192,38,211,0.12);
+  --nav-h:56px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--nav-h) + 16px)}
+body{background:var(--bg);color:var(--tx);font-family:'DM Mono',monospace;font-size:13px;line-height:1.6;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4}
+
+/* ── STICKY NAV ──────────────────────────────────────────────────────────── */
+.sticky-nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);background:rgba(10,12,16,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--b1);z-index:500;display:flex;align-items:center}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:0;width:100%}
+.nav-brand{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--ac);letter-spacing:.04em;margin-right:32px;flex-shrink:0}
+.nav-links{display:flex;gap:2px;flex:1}
+.nav-link{padding:6px 14px;color:var(--tx3);font-size:11px;letter-spacing:.06em;cursor:pointer;border-radius:2px;transition:all .15s;border:none;background:none;font-family:'DM Mono',monospace}
+.nav-link:hover{color:var(--tx);background:var(--s2)}
+.nav-link.active{color:var(--ac);background:var(--acd)}
+.nav-score-pill{margin-left:auto;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.pill-score{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--txb);background:var(--s2);border:1px solid var(--b2);padding:4px 12px;border-radius:2px}
+.pill-tier{font-size:10px;color:var(--tx3);padding:4px 10px;border:1px solid var(--b1);border-radius:2px}
+
+/* ── LAYOUT ──────────────────────────────────────────────────────────────── */
+.shell{max-width:1200px;margin:0 auto;padding:calc(var(--nav-h) + 32px) 24px 80px}
+
+/* ── TYPOGRAPHY ──────────────────────────────────────────────────────────── */
+.tag{display:inline-block;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ac);background:var(--acd);border:1px solid rgba(0,229,200,.3);padding:3px 10px;border-radius:2px;margin-bottom:14px}
+h1{font-family:'Syne',sans-serif;font-size:clamp(26px,4vw,48px);font-weight:800;color:var(--txb);line-height:1.1;letter-spacing:-.02em;margin-bottom:10px}
+h1 span{color:var(--ac)}
+.sub{color:var(--tx3);font-size:12px;max-width:580px;line-height:1.8}
+.sec-title{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--txb);margin-bottom:6px}
+.sec-sub{font-size:11px;color:var(--tx3);line-height:1.7;margin-bottom:24px;max-width:700px}
+.section-sep{border:none;border-top:1px solid var(--b1);margin:56px 0 48px}
+
+/* ── GETTING STARTED BANNER ─────────────────────────────────────────────── */
+.onboard{background:var(--s1);border:1px solid var(--b1);border-left:3px solid var(--ac);padding:14px 18px;margin-bottom:28px;display:flex;align-items:center;gap:14px}
+.onboard.hidden{display:none}
+.onboard-text{flex:1;font-size:11px;color:var(--tx2);line-height:1.7}
+.onboard-text strong{color:var(--ac);font-weight:500}
+.onboard-close{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:14px;padding:2px 6px;font-family:'DM Mono',monospace;transition:color .15s}
+.onboard-close:hover{color:var(--danger)}
+
+/* ── SESSION META ────────────────────────────────────────────────────────── */
+.meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px}
+@media(max-width:700px){.meta-grid{grid-template-columns:1fr 1fr}}
+.meta-field{background:var(--s1);border:1px solid var(--b1);padding:10px 12px}
+.meta-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
+.meta-input{width:100%;background:none;border:none;color:var(--txb);font-family:'DM Mono',monospace;font-size:12px;outline:none}
+.meta-input::placeholder{color:var(--tx3)}
+
+/* ── DASHBOARD ───────────────────────────────────────────────────────────── */
+.dashboard{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:900px){.dashboard{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.dashboard{grid-template-columns:1fr 1fr}}
+.dash-card{background:var(--s1);border:1px solid var(--b1);padding:14px 16px;position:relative;overflow:hidden}
+.dash-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac)}
+.dash-card.dc-warn::before{background:var(--warn)}
+.dash-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px}
+.dash-value{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--txb);line-height:1}
+.dash-value.sm{font-size:16px}
+.dash-sub{font-size:10px;color:var(--tx3);margin-top:4px}
+.dash-delta{font-size:10px;margin-top:4px}
+.delta-up{color:var(--ok)} .delta-dn{color:var(--danger)} .delta-eq{color:var(--tx3)}
+
+/* Progress */
+.prog-wrap{background:var(--s1);border:1px solid var(--b1);padding:16px 20px;margin-bottom:28px}
+.prog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.prog-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3)}
+.prog-pct{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--ac)}
+.prog-bg{background:var(--b1);height:4px;position:relative;margin-bottom:12px}
+.prog-fill{position:absolute;left:0;top:0;height:100%;background:linear-gradient(90deg,var(--ac),#7c5cff);transition:width .6s cubic-bezier(.4,0,.2,1)}
+.tier-pips{display:flex;gap:6px}
+.tier-pip{flex:1;height:3px;background:var(--b1);transition:background .3s}
+.tier-pip.answered{background:var(--b3)}
+
+/* ── HISTORY SNAPSHOTS ───────────────────────────────────────────────────── */
+.history-bar{display:flex;gap:8px;margin-bottom:28px;align-items:stretch}
+.hist-card{background:var(--s1);border:1px solid var(--b1);padding:10px 14px;flex:1;min-width:0}
+.hist-label{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3);margin-bottom:4px}
+.hist-val{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--tx2)}
+.hist-date{font-size:9px;color:var(--tx3);margin-top:2px}
+.hist-empty{color:var(--b2);font-size:9px;font-style:italic;padding-top:4px}
+
+/* ── TIER TABS ───────────────────────────────────────────────────────────── */
+.tier-nav{display:flex;gap:4px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.tier-nav::-webkit-scrollbar{display:none}
+.tier-tab{flex-shrink:0;padding:8px 14px;border:1px solid var(--b1);background:var(--s1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.05em;transition:all .2s;position:relative;display:flex;align-items:center;gap:7px}
+.tier-tab:hover{border-color:var(--b2);color:var(--tx)}
+.tier-tab.active{color:var(--txb)}
+.tier-tab[data-tier="0"].active{border-color:var(--t0);background:var(--t0b)}
+.tier-tab[data-tier="1"].active{border-color:var(--t1);background:var(--t1b)}
+.tier-tab[data-tier="2"].active{border-color:var(--t2);background:var(--t2b)}
+.tier-tab[data-tier="3"].active{border-color:var(--t3);background:var(--t3b)}
+.tier-tab[data-tier="4"].active{border-color:var(--t4);background:var(--t4b)}
+.tier-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.tier-tab[data-tier="0"] .tier-dot{background:var(--t0)}
+.tier-tab[data-tier="1"] .tier-dot{background:var(--t1)}
+.tier-tab[data-tier="2"] .tier-dot{background:var(--t2)}
+.tier-tab[data-tier="3"] .tier-dot{background:var(--t3)}
+.tier-tab[data-tier="4"] .tier-dot{background:var(--t4)}
+.tab-badge{font-size:10px;padding:1px 6px;border-radius:2px;margin-left:2px;font-family:'Syne',sans-serif;font-weight:700}
+.tier-tab[data-tier="0"] .tab-badge{color:var(--t0)}
+.tier-tab[data-tier="1"] .tab-badge{color:var(--t1)}
+.tier-tab[data-tier="2"] .tab-badge{color:var(--t2)}
+.tier-tab[data-tier="3"] .tab-badge{color:var(--t3)}
+.tier-tab[data-tier="4"] .tab-badge{color:var(--t4)}
+.tab-partial{font-size:9px;color:var(--tx3)}
+
+/* Tier panel */
+.tier-panel{display:none}
+.tier-panel.active{display:block;animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.tier-hdr{background:var(--s1);border:1px solid var(--b1);border-left:3px solid;padding:16px 20px;margin-bottom:14px;display:flex;align-items:flex-start;gap:16px}
+.tier-hdr[data-tier="0"]{border-left-color:var(--t0)}
+.tier-hdr[data-tier="1"]{border-left-color:var(--t1)}
+.tier-hdr[data-tier="2"]{border-left-color:var(--t2)}
+.tier-hdr[data-tier="3"]{border-left-color:var(--t3)}
+.tier-hdr[data-tier="4"]{border-left-color:var(--t4)}
+.tier-hdr-info{flex:1}
+.tier-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--txb);margin-bottom:4px}
+.tier-desc{font-size:11px;color:var(--tx3);line-height:1.7}
+.tier-time{font-size:9px;color:var(--tx3);border:1px solid var(--b1);padding:3px 8px;white-space:nowrap;align-self:flex-start;flex-shrink:0}
+
+/* ── CRITERION CARDS ─────────────────────────────────────────────────────── */
+.criterion{background:var(--s1);border:1px solid var(--b1);margin-bottom:10px;overflow:hidden;transition:border-color .15s}
+.criterion:hover{border-color:var(--b2)}
+.criterion.answered{border-color:rgba(0,229,200,.18)}
+.criterion.blocking{border-color:rgba(245,158,11,.35)}
+.crit-hdr{padding:14px 18px;cursor:pointer;display:flex;align-items:center;gap:10px;user-select:none}
+.crit-hdr:hover{background:var(--s2)}
+.crit-num{font-size:10px;color:var(--tx3);min-width:22px;flex-shrink:0}
+.crit-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:600;color:var(--txb);flex:1}
+.blocking-flag{font-size:9px;color:var(--warn);border:1px solid rgba(245,158,11,.3);padding:1px 6px;letter-spacing:.08em;flex-shrink:0}
+.crit-score-pill{font-size:10px;padding:2px 8px;border:1px solid var(--b1);color:var(--tx3);min-width:72px;text-align:center;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.criterion.answered .crit-score-pill{border-color:rgba(0,229,200,.4);color:var(--ac);background:var(--acd)}
+.crit-conf{font-size:9px;color:var(--tx3);padding:2px 7px;border:1px solid var(--b1);flex-shrink:0}
+.crit-chevron{color:var(--tx3);font-size:10px;transition:transform .2s;flex-shrink:0}
+.criterion.open .crit-chevron{transform:rotate(90deg)}
+.start-here{font-size:9px;color:var(--ac);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.crit-body{display:none;border-top:1px solid var(--b1)}
+.criterion.open .crit-body{display:block}
+
+/* Inside criterion */
+.crit-inner{padding:16px 18px 20px}
+.crit-context{font-size:11px;color:var(--tx2);line-height:1.8;padding:10px 12px;background:var(--s2);border-left:2px solid var(--b2);margin-bottom:16px}
+.field-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin:14px 0 8px;display:flex;align-items:center;gap:8px}
+.field-label::after{content:'';flex:1;height:1px;background:var(--b1)}
+
+/* Level buttons */
+.level-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin-bottom:14px}
+@media(max-width:560px){.level-grid{grid-template-columns:1fr 1fr}}
+.level-btn{padding:10px 6px;border:1px solid var(--b1);background:var(--s2);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;text-align:center;transition:all .15s;line-height:1.4}
+.level-btn:hover{border-color:var(--b2);color:var(--tx)}
+.level-btn.selected{border-color:var(--ac);background:var(--acd);color:var(--ac)}
+.level-num{display:block;font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:2px}
+.level-name{display:block;font-size:9px;letter-spacing:.06em}
+
+/* Level description table — smart highlight */
+.level-table{width:100%;border-collapse:collapse;font-size:10px;margin-bottom:4px}
+.level-table th{text-align:left;padding:5px 9px;background:var(--s2);color:var(--tx3);font-weight:400;letter-spacing:.1em;text-transform:uppercase;font-size:9px;border:1px solid var(--b1)}
+.level-table td{padding:7px 9px;border:1px solid var(--b1);color:var(--tx3);vertical-align:top;line-height:1.6;transition:all .15s}
+.level-table tr.row-selected td{color:var(--txb);background:var(--s2);border-left:2px solid var(--ac)}
+.level-table tr.row-muted td{opacity:.35}
+.lb{display:inline-block;padding:1px 6px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;border-radius:1px}
+.lb-0{background:rgba(74,85,104,.3);color:#888}
+.lb-1{background:rgba(61,126,255,.2);color:#7aa8ff}
+.lb-2{background:rgba(0,229,200,.15);color:#00c9a7}
+.lb-3{background:rgba(245,158,11,.2);color:#f59e0b}
+.lb-4{background:rgba(192,38,211,.2);color:#d946ef}
+.show-all-btn{font-size:10px;color:var(--tx3);background:none;border:1px solid var(--b1);padding:3px 10px;cursor:pointer;font-family:'DM Mono',monospace;margin-top:4px;transition:all .15s}
+.show-all-btn:hover{color:var(--ac);border-color:var(--ac)}
+
+/* Structured notes */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+@media(max-width:600px){.notes-grid{grid-template-columns:1fr}}
+.note-field{background:var(--s2);border:1px solid var(--b1)}
+.note-flabel{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);padding:6px 10px;border-bottom:1px solid var(--b1)}
+.note-ta{width:100%;background:none;border:none;color:var(--tx);font-family:'DM Mono',monospace;font-size:11px;padding:8px 10px;resize:vertical;min-height:52px;outline:none}
+.note-ta::placeholder{color:var(--tx3)}
+.note-ta:focus{outline:1px solid var(--ac) inset}
+.conf-row{display:flex;align-items:center;gap:8px;margin-top:8px}
+.conf-label{font-size:10px;color:var(--tx3);flex-shrink:0}
+.conf-btns{display:flex;gap:4px}
+.conf-btn{padding:3px 9px;border:1px solid var(--b1);background:var(--s2);color:var(--tx3);cursor:pointer;font-size:10px;font-family:'DM Mono',monospace;transition:all .15s}
+.conf-btn:hover{border-color:var(--b2);color:var(--tx)}
+.conf-btn.selected{border-color:var(--ac);background:var(--acd);color:var(--ac)}
+.related-link{font-size:10px;color:var(--tx3);margin-top:10px;padding:7px 10px;border:1px solid var(--b1);background:var(--s2);display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .15s}
+.related-link:hover{color:var(--ac);border-color:rgba(0,229,200,.3)}
+.related-arrow{font-size:9px;color:var(--ac)}
+
+/* ── RESULTS ─────────────────────────────────────────────────────────────── */
+.results-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.results-actions{display:flex;gap:8px}
+.btn-export{padding:9px 16px;background:var(--acd);border:1px solid rgba(0,229,200,.4);color:var(--ac);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;transition:all .15s}
+.btn-export:hover{background:var(--ac2)}
+.btn-print{padding:9px 16px;background:var(--s1);border:1px solid var(--b1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.08em;transition:all .15s}
+.btn-print:hover{border-color:var(--b2);color:var(--tx)}
+.btn-reset{background:none;border:1px solid var(--b1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:10px;padding:6px 12px;transition:all .15s}
+.btn-reset:hover{border-color:var(--danger);color:var(--danger)}
+
+/* Scoring explainer */
+.scoring-info{background:var(--s1);border:1px solid var(--b1);padding:12px 16px;margin-bottom:20px;font-size:11px;color:var(--tx3);line-height:1.8}
+.scoring-info strong{color:var(--tx2);font-weight:500}
+
+/* Heat map */
+.heatmap-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;margin-bottom:16px}
+.heatmap-title{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px}
+.heatmap-grid{display:flex;flex-direction:column;gap:5px}
+.hm-row{display:flex;gap:5px;align-items:center}
+.hm-tier-label{font-size:10px;color:var(--tx3);width:110px;flex-shrink:0;letter-spacing:.04em}
+.hm-cells{display:flex;gap:4px;flex:1;flex-wrap:wrap}
+.hm-cell{width:36px;height:28px;border:1px solid var(--b1);display:flex;align-items:center;justify-content:center;font-size:9px;cursor:pointer;transition:all .15s;position:relative;flex-shrink:0}
+.hm-cell:hover{border-color:var(--b3);z-index:1;transform:scale(1.08)}
+.hm-cell[data-level="0"]{background:rgba(74,85,104,.15);color:var(--tx3)}
+.hm-cell[data-level="1"]{background:rgba(61,126,255,.2);color:#7aa8ff}
+.hm-cell[data-level="2"]{background:rgba(0,201,167,.2);color:#00c9a7}
+.hm-cell[data-level="3"]{background:rgba(245,158,11,.25);color:#f59e0b}
+.hm-cell[data-level="4"]{background:rgba(192,38,211,.25);color:#d946ef}
+.hm-cell.unanswered{background:var(--s2);color:var(--b2)}
+.hm-legend{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap}
+.hm-leg-item{display:flex;align-items:center;gap:5px;font-size:9px;color:var(--tx3)}
+.hm-leg-dot{width:10px;height:10px;border-radius:1px}
+
+/* Results grid */
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:700px){.results-grid{grid-template-columns:1fr}}
+
+.radar-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;display:flex;flex-direction:column;align-items:center}
+.tier-breakdown{background:var(--s1);border:1px solid var(--b1);padding:20px}
+.bkd-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.bkd-label{font-size:10px;color:var(--tx3);width:100px;flex-shrink:0;letter-spacing:.04em}
+.bkd-bar-bg{flex:1;height:5px;background:var(--b1);position:relative}
+.bkd-bar-fill{position:absolute;left:0;top:0;height:100%;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bkd-pct{font-size:10px;width:36px;text-align:right;color:var(--tx3)}
+.bkd-pass{font-size:9px;padding:1px 5px;border-radius:1px;flex-shrink:0}
+.bkd-pass.ok{background:rgba(34,197,94,.15);color:var(--ok)}
+.bkd-pass.no{background:rgba(245,158,11,.15);color:var(--warn)}
+.bkd-crit-detail{font-size:10px;color:var(--tx3);margin-top:4px;padding-left:108px;line-height:1.6}
+
+/* Recommendations */
+.recs-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;grid-column:1/-1}
+.rec-item{display:flex;gap:10px;padding:10px 12px;border:1px solid var(--b1);margin-bottom:8px;background:var(--s2);transition:border-color .15s}
+.rec-item:hover{border-color:var(--b2)}
+.rec-dot{width:5px;height:5px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.rec-content{flex:1}
+.rec-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);margin-bottom:3px}
+.rec-text{font-size:11px;color:var(--tx2);line-height:1.6}
+.rec-target{font-size:10px;color:var(--ac);margin-top:4px}
+.rec-action{font-size:10px;color:var(--tx3);margin-top:3px}
+
+/* Histogram */
+.histogram-wrap{background:var(--s1);border:1px solid var(--b1);padding:20px;margin-bottom:16px}
+.hist-bars{display:flex;gap:8px;align-items:flex-end;height:80px;margin-top:12px}
+.hist-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.hist-bar{width:100%;background:var(--s2);border:1px solid var(--b1);transition:height .5s cubic-bezier(.4,0,.2,1);min-height:4px}
+.hist-bar-label{font-size:9px;color:var(--tx3);letter-spacing:.06em}
+.hist-bar-count{font-size:11px;font-family:'Syne',sans-serif;font-weight:700;color:var(--tx2)}
+
+/* Metrics section */
+.metrics-section{margin-top:0}
+.metrics-intro{font-size:11px;color:var(--tx3);line-height:1.8;margin-bottom:20px;padding:12px 16px;background:var(--s1);border:1px solid var(--b1);border-left:3px solid var(--ac)}
+.metrics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:800px){.metrics-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:500px){.metrics-grid{grid-template-columns:1fr}}
+.metric-card{background:var(--s1);border:1px solid var(--b1);padding:14px}
+.metric-card-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.metric-name{font-size:11px;font-weight:500;color:var(--txb);line-height:1.4;flex:1}
+.metric-crit-tag{font-size:9px;color:var(--tx3);border:1px solid var(--b1);padding:1px 6px;letter-spacing:.06em;flex-shrink:0;margin-left:8px}
+.metric-input-row{display:flex;align-items:center;gap:8px}
+.metric-num-input{width:80px;background:var(--s2);border:1px solid var(--b1);color:var(--txb);font-family:'DM Mono',monospace;font-size:16px;font-weight:500;padding:6px 10px;text-align:center;outline:none;transition:border-color .15s;-moz-appearance:textfield}
+.metric-num-input::-webkit-outer-spin-button,.metric-num-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.metric-num-input:focus{border-color:var(--ac)}
+.metric-unit{font-size:11px;color:var(--tx3)}
+.metric-sparkline{margin-top:10px;height:24px;position:relative}
+.spark-bar{position:absolute;bottom:0;width:12px;border-radius:1px 1px 0 0}
+.metric-desc{font-size:10px;color:var(--tx3);margin-top:8px;line-height:1.6;border-top:1px solid var(--b1);padding-top:8px}
+.metric-threshold{font-size:10px;margin-top:5px}
+.mt-met{color:var(--ok)} .mt-gap{color:var(--warn)} .mt-none{color:var(--tx3)}
+
+/* ATT&CK coverage */
+.attck-section{background:var(--s1);border:1px solid var(--b1);padding:20px;margin-bottom:20px}
+.attck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:14px}
+.attck-row{display:flex;align-items:center;gap:8px}
+.attck-tactic{font-size:10px;color:var(--tx2);width:120px;flex-shrink:0;line-height:1.3}
+.attck-pct-input{width:52px;background:var(--s2);border:1px solid var(--b1);color:var(--txb);font-family:'DM Mono',monospace;font-size:11px;padding:3px 6px;text-align:center;outline:none;-moz-appearance:textfield}
+.attck-pct-input::-webkit-outer-spin-button,.attck-pct-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.attck-pct-input:focus{border-color:var(--ac)}
+.attck-bar-bg{flex:1;height:5px;background:var(--b1);position:relative}
+.attck-bar-fill{position:absolute;left:0;top:0;height:100%;transition:width .4s}
+.attck-tier-color{background:var(--b2)}
+
+/* Glossary */
+.glossary-wrap{background:var(--s1);border:1px solid var(--b1);overflow:hidden;margin-bottom:20px}
+.glossary-hdr{padding:12px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;user-select:none;border-bottom:1px solid var(--b1)}
+.glossary-hdr:hover{background:var(--s2)}
+.glossary-hdr-title{font-size:11px;font-weight:500;color:var(--tx2);letter-spacing:.06em}
+.glossary-body{display:none;padding:16px;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px}
+.glossary-body.open{display:grid}
+.glos-term{font-size:10px;font-weight:500;color:var(--ac);margin-bottom:2px}
+.glos-def{font-size:10px;color:var(--tx3);line-height:1.6}
+.glos-item{padding:8px 10px;background:var(--s2);border:1px solid var(--b1)}
+
+/* Questionnaire section */
+.q-section{margin-top:0}
+.q-intro{font-size:11px;color:var(--tx3);max-width:680px;line-height:1.8;margin-bottom:24px}
+.process-bar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:32px}
+@media(max-width:800px){.process-bar{grid-template-columns:repeat(4,1fr)}}
+.ps{background:var(--s1);border:1px solid var(--b1);padding:12px 10px;cursor:pointer;transition:all .15s}
+.ps:hover,.ps.active{border-color:var(--ac);background:var(--acd)}
+.ps.active .ps-num{color:var(--ac)}
+.ps.reviewed .ps-num{color:var(--ok)}
+.ps-num{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--b2);line-height:1;margin-bottom:4px;transition:color .15s}
+.ps-label{font-size:9px;color:var(--tx3);line-height:1.4;letter-spacing:.03em;margin-bottom:3px}
+.ps-tier-ref{font-size:9px;color:var(--b3);letter-spacing:.04em}
+.ps.reviewed .ps-tier-ref{color:var(--ok);opacity:.7}
+.ps-tick{font-size:9px;color:var(--ok);display:none}
+.ps.reviewed .ps-tick{display:block}
+
+.q-areas{display:flex;flex-direction:column;gap:10px}
+.q-area{background:var(--s1);border:1px solid var(--b1);overflow:hidden;transition:border-color .15s}
+.q-area:hover{border-color:var(--b2)}
+.q-area-hdr{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .15s}
+.q-area-hdr:hover{background:var(--s2)}
+.qa-num{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--b2);min-width:26px;flex-shrink:0;transition:color .15s}
+.q-area.qa-open .qa-num,.q-area.qa-reviewed .qa-num{color:var(--ac)}
+.q-area.qa-reviewed .qa-num{color:var(--ok)}
+.qa-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--txb);flex:1}
+.qa-tier-ref{font-size:9px;color:var(--tx3);border:1px solid var(--b1);padding:2px 7px;white-space:nowrap}
+.q-area.qa-open .qa-tier-ref{border-color:rgba(0,229,200,.3);color:var(--ac)}
+.qa-chevron{color:var(--tx3);font-size:10px;transition:transform .2s;flex-shrink:0}
+.q-area.qa-open .qa-chevron{transform:rotate(90deg)}
+.q-body{display:none;border-top:1px solid var(--b1)}
+.q-area.qa-open .q-body{display:block}
+.q-body-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media(max-width:700px){.q-body-grid{grid-template-columns:1fr}}
+.q-col{padding:18px 20px}
+.q-col.q-steps{background:var(--s2)}
+.q-col-label{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--tx3);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.q-col-label::after{content:'';flex:1;height:1px;background:var(--b1)}
+.q-col.q-questions{border-right:1px solid var(--b1)}
+@media(max-width:700px){.q-col.q-questions{border-right:none;border-bottom:1px solid var(--b1)}}
+.q-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.q-list li{display:flex;gap:8px;padding:7px 9px;background:var(--s2);border:1px solid var(--b1);font-size:11px;color:var(--tx3);line-height:1.6;align-items:flex-start}
+.q-col.q-steps .q-list li{background:var(--s1)}
+.q-marker{flex-shrink:0;width:15px;height:15px;border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--tx3);margin-top:1px}
+.step-marker{flex-shrink:0;width:15px;height:15px;background:var(--acd);border:1px solid rgba(0,229,200,.3);display:flex;align-items:center;justify-content:center;font-size:8px;color:var(--ac);margin-top:1px}
+.q-related{font-size:10px;color:var(--tx3);margin-top:12px;padding:7px 10px;border:1px solid var(--b1);background:var(--s2);display:flex;align-items:center;gap:6px;cursor:pointer;transition:all .15s}
+.q-related:hover{color:var(--ac);border-color:rgba(0,229,200,.3)}
+
+/* Apply steps */
+.apply-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:20px}
+.apply-step{background:var(--s1);border:1px solid var(--b1);padding:16px;display:flex;gap:12px;transition:border-color .15s}
+.apply-step:hover{border-color:var(--b2)}
+.as-num{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--b1);line-height:1;flex-shrink:0;min-width:32px}
+.as-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--txb);margin-bottom:4px}
+.as-desc{font-size:11px;color:var(--tx3);line-height:1.7}
+
+/* Grouping cards */
+.grouping-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:14px}
+.gc{background:var(--s1);border:1px solid var(--b1);border-left:3px solid var(--ac);padding:12px 14px}
+.gc:nth-child(2){border-left-color:var(--t1)}
+.gc:nth-child(3){border-left-color:var(--t2)}
+.gc:nth-child(4){border-left-color:var(--t3)}
+.gc-label{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--txb);margin-bottom:6px}
+.gc-items{font-size:10px;color:var(--tx3);line-height:1.9}
+
+/* Back to top */
+.back-top{position:fixed;bottom:28px;right:24px;background:var(--s2);border:1px solid var(--b2);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;padding:8px 14px;transition:all .2s;opacity:0;pointer-events:none;z-index:400}
+.back-top.visible{opacity:1;pointer-events:auto}
+.back-top:hover{border-color:var(--ac);color:var(--ac)}
+
+/* Print */
+@media print{
+  .sticky-nav,.back-top,.btn-export,.btn-print,.btn-reset,.onboard,.tier-nav{display:none!important}
+  .tier-panel{display:block!important}
+  .shell{padding-top:20px!important}
+  .crit-body{display:block!important}
+  body::before{display:none}
+}
 </style>
 </head>
 <body>
+
+<!-- STICKY NAV -->
+<nav class="sticky-nav" aria-label="Main navigation">
+  <div class="nav-inner">
+    <div class="nav-brand">DEBMM</div>
+    <div class="nav-links">
+      <button class="nav-link active" onclick="scrollTo('sec-assessment')">Assessment</button>
+      <button class="nav-link" onclick="scrollTo('sec-results')">Results</button>
+      <button class="nav-link" onclick="scrollTo('sec-metrics')">Metrics</button>
+      <button class="nav-link" onclick="scrollTo('sec-questionnaire')">Questionnaire</button>
+    </div>
+    <div class="nav-score-pill">
+      <span class="pill-score" id="nav-score">—%</span>
+      <span class="pill-tier" id="nav-tier">Not assessed</span>
+    </div>
+  </div>
+</nav>
+
+<button class="back-top" id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Top</button>
+
 <div class="shell">
 
-  <header>
-    <span class="version-badge">DEBMM v1.0 — Elastic Security Labs</span>
-    <div class="tag">Detection Engineering</div>
-    <h1>DEBMM <span>Self-Assessment</span></h1>
-    <p class="sub">Evaluate your organisation's detection engineering maturity across all five tiers — Foundation through Expert — based on the Elastic Detection Engineering Behavior Maturity Model.</p>
-  </header>
+<!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+<header style="border-bottom:1px solid var(--b1);padding-bottom:28px;margin-bottom:32px;position:relative">
+  <span style="position:absolute;top:0;right:0;font-size:10px;color:var(--tx3);border:1px solid var(--b1);padding:3px 8px">DEBMM v1.0 — Elastic Security Labs</span>
+  <div class="tag">Detection Engineering</div>
+  <h1>DEBMM <span>Self-Assessment</span></h1>
+  <p class="sub">Evaluate your team's detection engineering maturity across five tiers — Foundation through Expert — with integrated performance metrics and an improvement roadmap.</p>
+</header>
 
-  <!-- DASHBOARD -->
+<!-- ══ SECTION: ASSESSMENT ═════════════════════════════════════════════════ -->
+<section id="sec-assessment">
+
+  <!-- Onboarding banner -->
+  <div class="onboard" id="onboard-banner">
+    <div class="onboard-text">
+      <strong>Getting started:</strong> Work through Tier 0 first — each criterion takes ~5 minutes. Select your level (0–4) for each, add evidence, and your progress saves automatically to this browser. Complete all 16 criteria to unlock your full maturity report.
+    </div>
+    <button class="onboard-close" onclick="dismissOnboard()" title="Dismiss">✕</button>
+  </div>
+
+  <!-- Session metadata -->
+  <div class="meta-grid">
+    <div class="meta-field">
+      <div class="meta-label">Team / Organisation</div>
+      <input class="meta-input" id="meta-team" placeholder="e.g. Detection Engineering" oninput="saveMeta()">
+    </div>
+    <div class="meta-field">
+      <div class="meta-label">Assessor</div>
+      <input class="meta-input" id="meta-assessor" placeholder="e.g. Jane Smith" oninput="saveMeta()">
+    </div>
+    <div class="meta-field">
+      <div class="meta-label">Ruleset Scope</div>
+      <input class="meta-input" id="meta-scope" placeholder="e.g. Endpoint ruleset" oninput="saveMeta()">
+    </div>
+    <div class="meta-field">
+      <div class="meta-label">Assessment Date</div>
+      <input class="meta-input" id="meta-date" type="date" oninput="saveMeta()">
+    </div>
+  </div>
+
+  <!-- Dashboard -->
   <div class="dashboard">
     <div class="dash-card">
       <div class="dash-label">Overall Score</div>
-      <div class="dash-value" id="overall-score">0%</div>
-      <div class="dash-sub">across all criteria</div>
+      <div class="dash-value" id="d-score">—%</div>
+      <div class="dash-sub">adjusted for confidence</div>
+      <div class="dash-delta" id="d-delta"></div>
     </div>
     <div class="dash-card">
-      <div class="dash-label">Current Tier</div>
-      <div class="dash-value tier-val" id="current-tier"><span class="tier-indicator"></span>Foundation</div>
-      <div class="dash-sub" id="tier-sub">no criteria assessed</div>
+      <div class="dash-label">Raw Score</div>
+      <div class="dash-value" id="d-raw">—%</div>
+      <div class="dash-sub">self-assessed average</div>
+    </div>
+    <div class="dash-card dc-warn">
+      <div class="dash-label">Current Tier <span id="tier-info-btn" style="cursor:pointer;color:var(--ac);font-size:10px;margin-left:6px" onclick="toggleTierInfo()" title="How is this calculated?">?</span></div>
+      <div class="dash-value sm" id="d-tier">Not assessed</div>
+      <div class="dash-sub" id="d-tier-sub">answer criteria to calculate</div>
     </div>
     <div class="dash-card">
       <div class="dash-label">Criteria Answered</div>
-      <div class="dash-value" id="answered-count">0 / 16</div>
-      <div class="dash-sub">across all tiers</div>
+      <div class="dash-value" id="d-answered">0 / 16</div>
+      <div class="dash-sub" id="d-owned">0 with owner assigned</div>
     </div>
     <div class="dash-card">
-      <div class="dash-label">Maturity Level</div>
-      <div class="maturity-meter">
-        <div class="meter-block" id="m0" data-tier="0"></div>
-        <div class="meter-block" id="m1" data-tier="1"></div>
-        <div class="meter-block" id="m2" data-tier="2"></div>
-        <div class="meter-block" id="m3" data-tier="3"></div>
-        <div class="meter-block" id="m4" data-tier="4"></div>
-      </div>
-      <div class="dash-sub" id="level-desc">complete assessment to see level</div>
+      <div class="dash-label">Evidence Quality</div>
+      <div class="dash-value" id="d-conf">—%</div>
+      <div class="dash-sub">criteria with data/external validation</div>
     </div>
   </div>
 
-  <!-- PROGRESS -->
-  <div class="progress-wrap">
-    <div class="progress-header">
-      <div class="progress-title">Assessment Progress</div>
-      <div class="progress-pct" id="progress-pct">0%</div>
+  <!-- Tier explainer (toggled) -->
+  <div id="tier-info-box" style="display:none;background:var(--s1);border:1px solid var(--b2);padding:12px 16px;margin-bottom:12px;font-size:11px;color:var(--tx2);line-height:1.8">
+    <strong style="color:var(--txb)">How your tier is calculated:</strong> Your current tier is the highest tier where ≥50% of criteria score ≥2 (Defined level). Tiers are sequential — you must satisfy prior tiers before a higher tier counts. Criteria scoring above your claimed level but marked "Self-assessed" are downweighted by 20% in the confidence-adjusted score.
+  </div>
+
+  <!-- Progress -->
+  <div class="prog-wrap">
+    <div class="prog-top">
+      <span class="prog-label">Assessment Progress</span>
+      <span class="prog-pct" id="prog-pct">0%</span>
     </div>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+    <div class="prog-bg"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="tier-pips" id="tier-pips">
+      <div class="tier-pip" id="pip0" title="T0 Foundation"></div>
+      <div class="tier-pip" id="pip1" title="T1 Basic"></div>
+      <div class="tier-pip" id="pip2" title="T2 Intermediate"></div>
+      <div class="tier-pip" id="pip3" title="T3 Advanced"></div>
+      <div class="tier-pip" id="pip4" title="T4 Expert"></div>
     </div>
   </div>
 
-  <!-- TIER NAVIGATION -->
+  <!-- Assessment history -->
+  <div class="history-bar" id="history-bar"></div>
+
+  <!-- Tier tabs -->
   <div class="tier-nav" id="tier-nav">
-    <button class="tier-tab active" data-tier="0" onclick="switchTier(0)">
-      <span class="tier-dot"></span>T0: Foundation
-    </button>
-    <button class="tier-tab" data-tier="1" onclick="switchTier(1)">
-      <span class="tier-dot"></span>T1: Basic
-    </button>
-    <button class="tier-tab" data-tier="2" onclick="switchTier(2)">
-      <span class="tier-dot"></span>T2: Intermediate
-    </button>
-    <button class="tier-tab" data-tier="3" onclick="switchTier(3)">
-      <span class="tier-dot"></span>T3: Advanced
-    </button>
-    <button class="tier-tab" data-tier="4" onclick="switchTier(4)">
-      <span class="tier-dot"></span>T4: Expert
-    </button>
+    <button class="tier-tab active" data-tier="0" onclick="switchTier(0)"><span class="tier-dot"></span>T0: Foundation<span class="tab-badge" id="tbadge0"></span></button>
+    <button class="tier-tab" data-tier="1" onclick="switchTier(1)"><span class="tier-dot"></span>T1: Basic<span class="tab-badge" id="tbadge1"></span></button>
+    <button class="tier-tab" data-tier="2" onclick="switchTier(2)"><span class="tier-dot"></span>T2: Intermediate<span class="tab-badge" id="tbadge2"></span></button>
+    <button class="tier-tab" data-tier="3" onclick="switchTier(3)"><span class="tier-dot"></span>T3: Advanced<span class="tab-badge" id="tbadge3"></span></button>
+    <button class="tier-tab" data-tier="4" onclick="switchTier(4)"><span class="tier-dot"></span>T4: Expert<span class="tab-badge" id="tbadge4"></span></button>
   </div>
 
-  <!-- TIER PANELS -->
   <div id="panels"></div>
 
-  <!-- RESULTS -->
-  <div class="results-section">
-    <div class="results-header">
-      <div class="results-title">Assessment Results</div>
-      <button class="export-btn" onclick="exportReport()">↓ Export Report</button>
+</section>
+
+<!-- ══ SECTION: RESULTS ════════════════════════════════════════════════════ -->
+<hr class="section-sep">
+<section id="sec-results">
+  <div class="results-hdr">
+    <div>
+      <div class="sec-title">Results &amp; Analysis</div>
+      <div class="sec-sub">Your maturity snapshot. Share with stakeholders or export for reporting.</div>
     </div>
-
-    <div class="results-grid">
-      <div class="radar-wrap">
-        <div class="section-label" style="margin-top:0;margin-bottom:16px;align-self:flex-start">Maturity Radar</div>
-        <svg id="radar-svg" width="260" height="260" viewBox="0 0 260 260"></svg>
-      </div>
-
-      <div class="tier-breakdown">
-        <div class="section-label" style="margin-top:0;margin-bottom:16px">Tier Breakdown</div>
-        <div id="breakdown-rows"></div>
-        <hr class="divider" style="margin:16px 0">
-        <div class="section-label">Next Priority</div>
-        <div id="next-priority" style="font-size:11px;color:var(--text-dim);line-height:1.7;">Complete the assessment to see recommendations.</div>
-        <button class="reset-btn" onclick="resetAll()">⟳ Reset Assessment</button>
-      </div>
-
-      <div class="recommendations" id="recommendations">
-        <div class="rec-title">Improvement Recommendations</div>
-        <div id="rec-list" style="font-size:11px;color:var(--text-dim);">Answer the questions above to generate personalised recommendations.</div>
-      </div>
+    <div class="results-actions">
+      <button class="btn-print" onclick="window.print()">⎙ Print / PDF</button>
+      <button class="btn-export" onclick="exportReport()">↓ Export Report</button>
+      <button class="btn-reset" onclick="resetAll()">⟳ Reset</button>
     </div>
   </div>
 
-</div>
+  <!-- Scoring explanation -->
+  <div class="scoring-info" id="scoring-info">
+    <strong>Tier calculation:</strong> Current tier = highest tier where ≥50% of criteria score ≥2 (Defined). <strong>Confidence-adjusted score</strong> applies a 0.8× weight to self-assessed criteria, 0.9× to peer-reviewed, 1.0× to data-evidenced or externally validated. Criteria blocking tier progression are flagged in the assessment above.
+  </div>
 
+  <!-- Coverage heat map -->
+  <div class="heatmap-wrap">
+    <div class="heatmap-title">Coverage Heat Map — All 16 Criteria</div>
+    <div class="heatmap-grid" id="heatmap-grid"></div>
+    <div class="hm-legend">
+      <div class="hm-leg-item"><div class="hm-leg-dot" style="background:var(--s2);border:1px solid var(--b1)"></div>Unanswered</div>
+      <div class="hm-leg-item"><div class="hm-leg-dot" style="background:rgba(74,85,104,.35)"></div>0 Initial</div>
+      <div class="hm-leg-item"><div class="hm-leg-dot" style="background:rgba(61,126,255,.4)"></div>1 Repeatable</div>
+      <div class="hm-leg-item"><div class="hm-leg-dot" style="background:rgba(0,201,167,.4)"></div>2 Defined</div>
+      <div class="hm-leg-item"><div class="hm-leg-dot" style="background:rgba(245,158,11,.4)"></div>3 Managed</div>
+      <div class="hm-leg-item"><div class="hm-leg-dot" style="background:rgba(192,38,211,.4)"></div>4 Optimized</div>
+    </div>
+  </div>
+
+  <!-- Histogram -->
+  <div class="histogram-wrap">
+    <div class="heatmap-title">Criteria Distribution by Level</div>
+    <div class="hist-bars" id="hist-bars"></div>
+  </div>
+
+  <div class="results-grid">
+    <!-- Radar -->
+    <div class="radar-wrap">
+      <div class="heatmap-title" style="align-self:flex-start;margin-bottom:14px">Maturity Radar (Tier Averages)</div>
+      <svg id="radar-svg" width="280" height="280" viewBox="0 0 280 280"></svg>
+    </div>
+
+    <!-- Breakdown -->
+    <div class="tier-breakdown">
+      <div class="heatmap-title" style="margin-bottom:14px">Tier Breakdown</div>
+      <div id="breakdown-rows"></div>
+      <div style="border-top:1px solid var(--b1);margin:14px 0 10px"></div>
+      <div style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px">Next Priority</div>
+      <div id="next-priority" style="font-size:11px;color:var(--tx3);line-height:1.7"></div>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="recs-wrap">
+      <div class="heatmap-title" style="margin-bottom:14px">Improvement Recommendations</div>
+      <div id="rec-list"><span style="font-size:11px;color:var(--tx3)">Answer the assessment questions to generate personalised recommendations.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION: METRICS ════════════════════════════════════════════════════ -->
+<hr class="section-sep">
+<section id="sec-metrics">
+  <div class="sec-title">Team Performance Metrics</div>
+  <div class="sec-sub">Track your operational KPIs alongside the maturity assessment. Each metric maps to the DEBMM criterion it evidences. Values are saved locally.</div>
+
+  <div class="metrics-intro">
+    Enter your current period metrics below. These are used to validate your self-assessed maturity levels — where a metric meets the quantitative threshold for a higher level, it is noted in your recommendations. Trend arrows show movement vs last saved period.
+  </div>
+
+  <div class="metrics-grid" id="metrics-grid"></div>
+
+  <!-- ATT&CK coverage -->
+  <div class="attck-section">
+    <div class="heatmap-title" style="margin-bottom:4px">ATT&CK Tactic Coverage (%)</div>
+    <div style="font-size:11px;color:var(--tx3);margin-bottom:0">Enter your current detection coverage per ATT&CK tactic. Used to validate "Creating a Baseline Ruleset" scoring.</div>
+    <div class="attck-grid" id="attck-grid"></div>
+  </div>
+
+  <!-- Glossary -->
+  <div class="glossary-wrap">
+    <div class="glossary-hdr" onclick="toggleGlossary()">
+      <span class="glossary-hdr-title">Glossary — Key DEBMM Terms</span>
+      <span style="font-size:10px;color:var(--tx3)" id="glos-chevron">▶ Show</span>
+    </div>
+    <div class="glossary-body" id="glossary-body"></div>
+  </div>
+</section>
+
+<!-- ══ SECTION: QUESTIONNAIRE ══════════════════════════════════════════════ -->
+<hr class="section-sep">
+<section id="sec-questionnaire">
+  <div class="sec-title">Questionnaire &amp; Improvement Steps</div>
+  <p class="q-intro">Work through each of the 7 detection engineering lifecycle phases. Questions help audit your current state; improvement steps give you concrete actions. Each phase cross-references the relevant DEBMM tiers and criteria.</p>
+
+  <div class="process-bar" id="process-bar"></div>
+  <div class="q-areas" id="q-areas"></div>
+
+  <div style="border-top:1px solid var(--b1);margin:40px 0 28px"></div>
+  <div class="sec-title">Applying the DEBMM</div>
+  <p class="sec-sub">A structured seven-step process to translate your assessment results into a living improvement roadmap.</p>
+  <div class="apply-steps" id="apply-steps"></div>
+
+  <div style="margin-top:32px">
+    <div class="sec-title" style="font-size:15px">Grouping Criteria for Targeted Improvement</div>
+    <p class="sec-sub" style="margin-top:4px">Organise improvement work by category — especially useful for teams with multiple feature owners.</p>
+    <div class="grouping-grid" id="grouping-grid"></div>
+  </div>
+</section>
+
+</div><!-- /.shell -->
+
+<!-- ════════════════════════════════════════════════════════════════════════ -->
+<!-- DATA + LOGIC                                                             -->
+<!-- ════════════════════════════════════════════════════════════════════════ -->
 <script>
-// ===== DATA MODEL =====
-const LEVELS = ['Initial','Repeatable','Defined','Managed','Optimized'];
-const TIER_COLORS = ['#4a5568','#3d7eff','#00c9a7','#f59e0b','#c026d3'];
-const TIER_NAMES = ['Foundation','Basic','Intermediate','Advanced','Expert'];
+// ── CONSTANTS ────────────────────────────────────────────────────────────
+const LEVELS=['Initial','Repeatable','Defined','Managed','Optimized'];
+const TIER_NAMES=['Foundation','Basic','Intermediate','Advanced','Expert'];
+const TIER_COLORS=['#4a5568','#3d7eff','#00c9a7','#f59e0b','#c026d3'];
+const CONF_WEIGHTS={self:.8,peer:.9,data:1.0,external:1.0};
+const CONF_LABELS={self:'Self',peer:'Peer-reviewed',data:'Data-evidenced',external:'Externally validated'};
+const TIER_TIMES=['~20 min','~30 min','~15 min','~15 min','~10 min'];
 
-const TIERS = [
-  {
-    id: 0,
-    name: 'Tier 0: Foundation',
-    color: '#4a5568',
-    desc: 'No structured approach to rule development and management. Rules are created and maintained ad-hoc, with little documentation, peer review, stakeholder communication, or personnel training.',
-    criteria: [
-      {
-        id: 'c0-1',
-        title: 'Structured Approach to Rule Development & Management',
-        context: 'Assess whether you have a defined, repeatable process for creating and managing detection rules — including documentation, schema alignment, and approval workflows.',
-        qualitative: [
-          'No structured approach; rules created randomly without documentation.',
-          'Minimal structure; some rules created with primary documentation.',
-          'Standardised process for rule creation with detailed documentation and alignment with defined schemas.',
-          'Regularly reviewed and updated rules ensuring consistency and adherence to documented standards, with stakeholder involvement.',
-          'Continuous improvement based on feedback and evolving threats, with automated rule creation and management processes.'
-        ],
-        quantitative: [
-          'No formal activities for rule creation.',
-          'Sporadic rule creation; <20% of rules have complete docs; <10% aligned to schema; no formal approval process.',
-          'Regular creation and documentation; 50–70% schema alignment; peer review processes in place.',
-          'Comprehensive activities; 70–90% of rules have complete docs and formal approval.',
-          'Fully automated; 90–100% schema alignment; continuous documentation updates.'
-        ]
-      },
-      {
-        id: 'c0-2',
-        title: 'Creation and Maintenance of Detection Rules',
-        context: 'Evaluate the systematic nature of how rules are created, updated, versioned, and peer-reviewed over time.',
-        qualitative: [
-          'Rules created and modified ad hoc, without version control.',
-          'Occasional updates to rules, but still need a systematic process.',
-          'Systematic process for rule updates, including version control and regular documentation.',
-          'Regular, structured updates with detailed documentation, version control, and stakeholder communication.',
-          'Continuous rule improvement with automated updates, comprehensive documentation, and proactive stakeholder engagement.'
-        ],
-        quantitative: [
-          'No formal activities to maintain detection rules.',
-          '<50% of rules reviewed annually; >30% missing/incomplete docs; <20% peer-reviewed; <15% with tracking metadata.',
-          '50–70% reviewed annually; detailed docs for most rules; 50% peer-reviewed.',
-          '70–90% reviewed annually; complete docs for most; 70% peer-reviewed.',
-          'Automated; 90–100% reviewed annually; 90–100% peer-reviewed with escalation guides.'
-        ]
-      },
-      {
-        id: 'c0-3',
-        title: 'Roadmap Documented or Planned',
-        context: 'Do you have a structured roadmap covering rule development priorities, update schedules, and stakeholder communication?',
-        qualitative: [
-          'No roadmap documented or planned.',
-          'Basic roadmap exists for some rules, with occasional updates.',
-          'Comprehensive roadmap documented for most rules with regular stakeholder involvement.',
-          'Detailed, regularly updated roadmap covering all rules with proactive stakeholder communication.',
-          'Dynamic, continuously updated roadmap integrated into organisational processes with full stakeholder engagement.'
-        ],
-        quantitative: [
-          'No documented roadmap.',
-          'Roadmap for <30% of rules; <2 updates/stakeholder meetings per year; <20% with a planned update schedule.',
-          'Roadmap for 50–70% of rules; regular updates; 50% with planned update schedule.',
-          'Roadmap for 70–90% of rules; frequent updates; 70% tracked progress.',
-          'Fully integrated; 90–100% coverage; continuous updates; formal tracking processes.'
-        ]
-      },
-      {
-        id: 'c0-4',
-        title: 'Threat Modeling Performed',
-        context: 'Assess whether threat modeling is systematically performed and directly influences rule creation, including data and environment specifics.',
-        qualitative: [
-          'No threat modeling performed.',
-          'Occasional, ad-hoc threat modeling with minimal impact on rule creation.',
-          'Regular threat modeling with structured processes influencing rule creation.',
-          'Comprehensive threat modeling integrated into rule creation and updates with stakeholder involvement.',
-          'Continuous, proactive threat modeling with real-time data integration across all aspects of rule management.'
-        ],
-        quantitative: [
-          'No formal threat modeling activities.',
-          '<1 exercise/year; minimal documentation; threat models reviewed <2×/year; <10% of new rules based on threat modeling.',
-          '1–2 annual exercises; documented impact analysis; models reviewed quarterly; 50–70% of new rules based on threat modeling.',
-          '3–4 exercises/year; thorough documentation; models reviewed bi-monthly; 70–90% of new rules based on threat modeling.',
-          'Monthly exercises with real-time documentation; 90–100% of new rules based on threat modeling outcomes.'
-        ]
-      }
-    ]
-  },
-  {
-    id: 1,
-    name: 'Tier 1: Basic',
-    color: '#3d7eff',
-    desc: 'Establishment of baseline rules, systematic rule management, version control, documentation, regular reviews of the threat landscape, and initial personnel training.',
-    criteria: [
-      {
-        id: 'c1-1',
-        title: 'Creating a Baseline Ruleset',
-        context: 'Assess whether you have a foundational set of rules covering critical tactics (initial access, execution, persistence, privilege escalation, C2) aligned to your threat model.',
-        qualitative: [
-          'A few baseline rules created to set the foundation.',
-          'Some baseline rules created covering key tactics for well-documented threats.',
-          'Comprehensive baseline rules covering significant threats (e.g., ransomware, data exfiltration, unauthorised access).',
-          'Queries and rules validated against the defined schema that aligns with the security product before release.',
-          'Continuous improvement and fine-tuning of baseline rules with advanced threat modeling and automation.'
-        ],
-        quantitative: [
-          '5–10 baseline rules created per ruleset.',
-          '>10 baseline rules per ruleset; at least 10% go through a diagnostic phase.',
-          '60–70% coverage of ATT&CK techniques per data source; 70–80% tested as diagnostic (beta) before production.',
-          '90%+ coverage; 100% undergo diagnostic phase; comprehensive docs and continuous improvement.',
-          '100% coverage; automated diagnostic and validation; CI/CD for rule updates.'
-        ]
-      },
-      {
-        id: 'c1-2',
-        title: 'Managing and Maintaining Rulesets',
-        context: 'Evaluate your systematic approach to rule management: version control, documentation, validation, and Detections as Code (DAC) principles.',
-        qualitative: [
-          'No rule management.',
-          'Occasional rule processes with some documentation and a recurring release cycle.',
-          'Regular rule management with comprehensive documentation and version control.',
-          'Applies a Detections as Code (schema validation, query validation, versioning, automation) approach.',
-          'Advanced automated processes with continuous weekly rule management and validation.'
-        ],
-        quantitative: [
-          'No rule management activities.',
-          'Quarterly activities; <20% of rules have version control.',
-          'Monthly updates and documentation; 50–70% with version control and comprehensive docs.',
-          'Bi-weekly automated processes; 80–90% managed using DAC principles.',
-          'Continuous weekly management; 100% managed using DAC with complete docs and version control.'
-        ]
-      },
-      {
-        id: 'c1-3',
-        title: 'Improving and Maintaining Telemetry Quality',
-        context: 'Assess your collaboration with telemetry/data teams and integration of cyber threat intelligence (CTI) to enrich detection capabilities.',
-        qualitative: [
-          'No updates or improvements to telemetry for the ruleset.',
-          'Occasional manual updates and minimal ad hoc collaboration.',
-          'Regular updates with significant integration and formalised collaboration, including CTI data.',
-          'Comprehensive updates and collaboration with consistent CTI data integration.',
-          'Advanced CTI workflow integration with real-time enrichment and automated responses.'
-        ],
-        quantitative: [
-          'No telemetry updates or improvements.',
-          'Sporadic updates; <30% of rule types produce telemetry/internal data.',
-          'Quarterly updates; 50–70% of telemetry integrated with CTI; initial docs on enhancements.',
-          'Semi-automated updates; 70–90% CTI integration; initial docs on quality enhancements.',
-          'Fully automated; 100% CTI integration; real-time enrichment and automated responses.'
-        ]
-      },
-      {
-        id: 'c1-4',
-        title: 'Reviewing Threat Landscape Changes',
-        context: 'Evaluate how regularly you review and update rules based on changes in the threat landscape, including new intelligence and organisational changes.',
-        qualitative: [
-          'No reviews of threat landscape changes.',
-          'Occasional reviews with minimal updates and limited threat modeling.',
-          'Regular reviews and updates incorporating threat modeling.',
-          'Adaptive response to emerging threats with comprehensive threat modeling and cross-correlation of new intelligence.',
-          'Continuous monitoring and real-time updates with dynamic threat modeling.'
-        ],
-        quantitative: [
-          'No reviews conducted.',
-          'Bi-annual reviews referencing cyber blogs; <30% of rules reviewed based on threat landscape changes.',
-          'Comprehensive quarterly reviews; 50–70% of rules reviewed based on threat landscape changes.',
-          'Continuous (monthly/weekly/daily) monitoring; 90–100% of rules reviewed and updated.',
-          'Real-time monitoring with automated intelligence integration; 100% continuous review.'
-        ]
-      },
-      {
-        id: 'c1-5',
-        title: 'Driving the Feature with Product Owners',
-        context: 'Assess your engagement with product owners (internal or external/vendors like Elastic) to ensure detection needs are on the product roadmap.',
-        qualitative: [
-          'No engagement with product owners.',
-          'Ad hoc occasional engagement with some influence on the roadmap.',
-          'Regular engagement and significant influence on the product roadmap.',
-          'Structured engagement leading to consistent integration of detection needs into the product roadmap.',
-          'Continuous, proactive engagement ensuring detection needs are fully integrated with real-time feedback.'
-        ],
-        quantitative: [
-          'No engagements with product owners.',
-          '1–2 engagements/requests per quarter; <20% result in roadmap changes.',
-          '>2 engagements/quarter; 50–70% result in roadmap changes; regular tracking and docs.',
-          'Frequent engagements; >70% result in roadmap changes; structured tracking of all outcomes.',
-          'Continuous engagement; 90–100% of requests lead to roadmap changes; proactive feedback loops.'
-        ]
-      },
-      {
-        id: 'c1-6',
-        title: 'End-to-End Release Testing and Validation',
-        context: 'Evaluate the robustness of your testing and validation pipeline before detection rules go to production.',
-        qualitative: [
-          'No formal testing or validation process.',
-          'Basic testing with minimal validation.',
-          'Comprehensive testing with internal validation processes and multiple gates.',
-          'Advanced testing with automated and external validation processes.',
-          'Continuous, automated testing and validation with real-time feedback and improvement mechanisms.'
-        ],
-        quantitative: [
-          'No testing or validation activities.',
-          '1–2 ruleset updates per release cycle; <20% of rules tested before deployment.',
-          'End-to-end test and release in <1 week; 50–70% tested before deployment.',
-          'Ability to deploy an emerging threat rule within 24 hours; 90–100% tested before deployment.',
-          'Real-time testing and validation; 100% of rules continuously tested and validated.'
-        ]
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: 'Tier 2: Intermediate',
-    color: '#00c9a7',
-    desc: 'Focus on continuously tuning rules to reduce false positives, identifying and documenting gaps, thorough internal testing and validation, and ongoing training and development.',
-    criteria: [
-      {
-        id: 'c2-1',
-        title: 'Continuously Tuning and Reducing False Positives',
-        context: 'Assess your systematic approach to minimising false positives and stale rules, including shared exception lists and documented FP analysis.',
-        qualitative: [
-          'Minimal tuning activities.',
-          'Reactive tuning based on alerts and ad hoc analyst feedback.',
-          'Proactive and systematic tuning with documented reductions in FP rates.',
-          'Continuously tuned activities with detailed documentation and regular stakeholder communication.',
-          'Automated and dynamic tuning processes integrated with advanced analytics and ML.'
-        ],
-        quantitative: [
-          'No reduction in FP rate.',
-          '10–25% reduction in FP rate over the last quarter.',
-          '>25% reduction in FP rate over the last quarter, with tracked metrics.',
-          'Consistent >50% FP reduction over multiple quarters with detailed reporting.',
-          'Near real-time reduction; >75% FP reduction with automated feedback loops.'
-        ]
-      },
-      {
-        id: 'c2-2',
-        title: 'Understanding and Documenting Gaps',
-        context: 'Evaluate your identification and documentation of gaps in ruleset or product coverage — missing fields, logging datasets, and outliers in data.',
-        qualitative: [
-          'No gap analysis.',
-          'Occasional gap analysis with some documentation.',
-          'Comprehensive and regular gap analysis with detailed documentation and stakeholder communication.',
-          'Systematic gap analysis integrated into regular workflows with proactive stakeholder communication.',
-          'Automated gap analysis using advanced analytics with real-time documentation.'
-        ],
-        quantitative: [
-          'No gaps documented.',
-          '1–3 gaps in threat coverage documented and communicated.',
-          '>3 gaps documented (including data blockers and outliers) and communicated to stakeholders.',
-          '>5 gaps documented with regular updates and action plans.',
-          'Continuous real-time gap analysis; all gaps tracked with proactive measures.'
-        ]
-      },
-      {
-        id: 'c2-3',
-        title: 'Testing and Validation (Internal)',
-        context: 'Assess your use of emulation tools, C2 frameworks, malware detonations, or other repeatable techniques to validate rule functionality.',
-        qualitative: [
-          'No testing or validation.',
-          'Occasional testing with emulation capabilities.',
-          'Regular and comprehensive testing with malware or emulation capabilities, validating all production rules.',
-          'Systematic testing and validation integrated into regular workflows.',
-          'Automated and continuous testing with advanced analytics, ensuring real-time validation.'
-        ],
-        quantitative: [
-          'No internal tests conducted.',
-          '40% emulation coverage of production ruleset.',
-          '80% automated testing coverage of production ruleset.',
-          '>90% automated testing coverage with continuous validation.',
-          '100% automated and continuous testing with real-time feedback loops.'
-        ]
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: 'Tier 3: Advanced',
-    color: '#f59e0b',
-    desc: 'Systematic identification and remediation of false negatives, engaging in external validation of rules, covering advanced TTPs (APTs, zero-days, emerging threats).',
-    criteria: [
-      {
-        id: 'c3-1',
-        title: 'Triaging False Negatives',
-        context: 'Evaluate your systematic processes for identifying and addressing instances where detection rules fail to trigger alerts for actual threats.',
-        qualitative: [
-          'No triage of false negatives.',
-          'Sporadic triage with some improvements.',
-          'Systematic and regular triage with documented reductions in FNs and comprehensive assessments.',
-          'Proactive triage with detailed documentation and stakeholder communication.',
-          'Continuous, automated triage and reduction of FNs using advanced analytics and ML.'
-        ],
-        quantitative: [
-          'No reduction in FN rate.',
-          '50% of tested samples/tools trigger an alert; <10% of rules reviewed for FNs quarterly.',
-          '70–90% of tested samples trigger an alert; 30–50% reduction in FNs over the past year; 50% of rules reviewed quarterly.',
-          '90–100% of tested samples trigger an alert; >50% reduction in FNs over multiple quarters.',
-          'Near real-time FN triage; >75% reduction in FNs; continuous documentation and proactive measures.'
-        ]
-      },
-      {
-        id: 'c3-2',
-        title: 'External Validation',
-        context: 'Assess your engagement with red teams, third-party assessors, penetration testers, and external threat intelligence providers to validate detection rules.',
-        qualitative: [
-          'No external validation.',
-          'Occasional external validation with some improvements.',
-          'Regular and comprehensive external validation with documented feedback and improvements — includes red teams, third-party assessments, pen testing, and external CTI.',
-          'Structured external validation with detailed documentation and continuous improvement.',
-          'Continuous external validation with automated feedback integration and proactive improvements.'
-        ],
-        quantitative: [
-          'No external validation conducted.',
-          '1 external validation exercise per year; <20% of identified gaps addressed annually.',
-          '>1 validation exercise per year (mix of methods); ≥80% of gaps addressed within a quarter; findings integrated into ≥50% of new rules.',
-          'Multiple exercises/year; >90% of gaps addressed within timelines.',
-          'Continuous real-time external validation; 100% of gaps proactively addressed.'
-        ]
-      },
-      {
-        id: 'c3-3',
-        title: 'Advanced TTP Coverage',
-        context: 'Evaluate your coverage of non-commodity malware (APTs, zero-days) and emerging threats (new malware families, abused offensive security tools).',
-        qualitative: [
-          'No advanced TTP coverage.',
-          'Response to some advanced TTPs based on third-party published research.',
-          'First-party coverage created for advanced TTPs based on threat intelligence and internal research.',
-          'Proactive coverage for advanced TTPs with detailed threat intelligence and continuous updates.',
-          'Continuous, automated coverage for advanced TTPs using analytics and ML; real-time updates for emerging threats.'
-        ],
-        quantitative: [
-          'No advanced TTP coverage.',
-          'Detection and response to 1–3 advanced TTPs/adversaries; <20% of rules cover advanced TTPs.',
-          '>3 advanced TTPs/adversaries uniquely targeted based on first-party intel; 50–70% of rules cover advanced TTPs; ≥70% flexible data ingestion for advanced threat detections.',
-          '>5 advanced TTPs/adversaries covered; 70–90% of rules cover advanced TTPs.',
-          'Real-time detection with automated updates; 100% of rules cover advanced TTPs with continuous telemetry integration.'
-        ]
-      }
-    ]
-  },
-  {
-    id: 4,
-    name: 'Tier 4: Expert',
-    color: '#c026d3',
-    desc: 'Advanced automation, seamless integration with other security tools, continuous improvement through regular updates and external collaboration, and proactive threat hunting.',
-    criteria: [
-      {
-        id: 'c4-1',
-        title: 'Hunting in Telemetry / Internal Data',
-        context: 'Assess your proactive threat hunting activities — queries, daily triage, and systematic hunting workflows that feed back into ruleset improvements.',
-        qualitative: [
-          'No hunting activities leading to ruleset improvement.',
-          'Occasional hunting activities with some findings.',
-          'Regular and systematic hunting with significant coverage findings per the Threat Hunting Maturity Model.',
-          'Continuous hunting with comprehensive documentation and integration of findings; feedback loops with detection engineering teams.',
-          'Automated, real-time hunting with advanced analytics and ML; continuous integration of findings to enhance rules.'
-        ],
-        quantitative: [
-          'No hunting activities conducted leading to ruleset improvement.',
-          'Bi-weekly hunting outcomes; <20% of findings documented; minimal integration into detection rules.',
-          'Weekly outcomes with documented improvements; 50–70% of findings documented and integrated; regular feedback loop established.',
-          'Daily hunting; >90% of findings documented and lead to updates; continuous collaboration with threat intelligence teams.',
-          'Real-time hunting; 100% of findings documented and lead to immediate rule updates.'
-        ]
-      },
-      {
-        id: 'c4-2',
-        title: 'Continuous Improvement and Automation (AI/LLM Integration)',
-        context: 'Evaluate your use of automation — ETL pipelines, generative AI, and LLMs — throughout the detection engineering lifecycle to improve rule accuracy, reduce FPs, and detect duplications.',
-        qualitative: [
-          'No automation.',
-          'Basic automation for rule management processes (e.g., ETL data plumbing).',
-          'Initial use of generative AI to assist in rule creation and assessment (e.g., AI assesses rule quality against predefined criteria).',
-          'Advanced use of AI/LLMs to detect rule duplications and overlaps, suggesting enhancements.',
-          'Full generative AI/LLM integration throughout the detection engineering lifecycle — continuous improvement, FP reduction, and rule effectiveness insights.'
-        ],
-        quantitative: [
-          'No automated processes implemented.',
-          '<30% of rule management tasks automated; initial setup of automated deployment and version control.',
-          'AI-driven quality checks on ≥80% of new rules before deployment; 40–60% of rule management tasks automated.',
-          'AI-driven duplication detection reducing duplication by 50% within first year; 70–80% of tasks automated; AI suggestions reduce FPs by 30–50%.',
-          '>90% of rule updates suggested by AI; fully automated management and deployment; 40% reduction in FPs; real-time AI-driven telemetry filtering.'
-        ]
-      }
-    ]
-  }
+// ── TIER / CRITERIA DATA ─────────────────────────────────────────────────
+const TIERS=[
+{id:0,name:'Tier 0: Foundation',color:'#4a5568',desc:'No structured approach to rule development and management. Rules are created and maintained ad-hoc, with little documentation, peer review, or stakeholder communication.',
+criteria:[
+{id:'c0-1',title:'Structured Approach to Rule Development & Management',
+context:'Assess whether you have a defined, repeatable process for creating and managing detection rules — including documentation, schema alignment, and approval workflows.',
+qualitative:['No structured approach; rules created randomly without documentation.','Minimal structure; some rules created with primary documentation.','Standardised process for rule creation with detailed documentation and schema alignment.','Regularly reviewed rules ensuring consistency with stakeholder involvement.','Continuous improvement with automated rule creation and management processes.'],
+quantitative:['No formal activities for rule creation.','Sporadic creation; <20% of rules have complete docs; <10% aligned to schema; no formal approval.','50–70% schema alignment; peer review processes in place.','70–90% of rules have complete docs and formal approval processes.','90–100% schema alignment; fully automated; continuous documentation updates.'],
+qStep:0,nextTarget:'Ensure >50% of rules have complete documentation and go through a peer-review gate.'},
+{id:'c0-2',title:'Creation and Maintenance of Detection Rules',
+context:'Evaluate the systematic nature of how rules are created, updated, versioned, and peer-reviewed over time.',
+qualitative:['Rules created and modified ad hoc, without version control.','Occasional updates to rules, but no systematic process.','Systematic process for rule updates with version control and regular docs.','Regular, structured updates with version control and stakeholder comms.','Continuous rule improvement with automated updates and proactive stakeholder engagement.'],
+quantitative:['No formal maintenance activities.','<50% of rules reviewed annually; >30% missing docs; <20% peer-reviewed.','50–70% reviewed annually; detailed docs for most rules; 50% peer-reviewed.','70–90% reviewed annually; complete docs; 70% peer-reviewed.','90–100% reviewed annually; all peer-reviewed with escalation guides.'],
+qStep:3,nextTarget:'Establish version control and review at least 50% of rules annually.'},
+{id:'c0-3',title:'Roadmap Documented or Planned',
+context:'Do you have a structured roadmap covering rule development priorities, update schedules, and stakeholder communication?',
+qualitative:['No roadmap documented or planned.','Basic roadmap for some rules with occasional updates.','Comprehensive roadmap for most rules with regular stakeholder involvement.','Detailed roadmap for all rules with proactive stakeholder communication.','Dynamic, continuously updated roadmap integrated into organisational processes.'],
+quantitative:['No documented roadmap.','Roadmap for <30% of rules; <2 stakeholder meetings per year.','Roadmap for 50–70% of rules; regular updates; 50% with planned update schedule.','Roadmap for 70–90% of rules; frequent updates; 70% tracked progress.','Fully integrated; 90–100% coverage; continuous updates; formal tracking.'],
+qStep:0,nextTarget:'Document a roadmap covering at least 50% of rules with a planned update schedule.'},
+{id:'c0-4',title:'Threat Modeling Performed',
+context:'Assess whether threat modeling is systematically performed and directly influences rule creation, including data and environment specifics.',
+qualitative:['No threat modeling performed.','Occasional, ad-hoc threat modeling with minimal impact on rules.','Regular threat modeling with structured processes influencing rule creation.','Comprehensive threat modeling integrated into rule creation and updates.','Continuous, proactive threat modeling with real-time data integration.'],
+quantitative:['No formal threat modeling activities.','<1 exercise/year; <10% of new rules based on threat modeling outcomes.','1–2 annual exercises; 50–70% of new rules based on threat modeling.','3–4 exercises/year; 70–90% of new rules based on threat modeling.','Monthly exercises; 90–100% of new rules based on threat modeling outcomes.'],
+qStep:0,nextTarget:'Conduct at least 1–2 formal threat modeling exercises per year and base 50%+ of new rules on outcomes.'}
+]},
+{id:1,name:'Tier 1: Basic',color:'#3d7eff',desc:'Establishment of baseline rules, systematic rule management, version control, documentation, regular reviews of the threat landscape, and initial personnel training.',
+criteria:[
+{id:'c1-1',title:'Creating a Baseline Ruleset',
+context:'Assess whether you have a foundational set of rules covering critical tactics (initial access, execution, persistence, privilege escalation, C2) aligned to your threat model.',
+qualitative:['A few baseline rules created to set the foundation.','Some baseline rules covering key tactics for well-documented threats.','Comprehensive baseline rules covering significant threats (ransomware, data exfiltration, unauthorised access).','Rules validated against the defined schema before release.','Continuous improvement with advanced threat modeling and automation.'],
+quantitative:['5–10 baseline rules created per ruleset.','> 10 baseline rules; at least 10% go through a diagnostic phase.','60–70% ATT&CK technique coverage per data source; 70–80% tested as beta first.','90%+ coverage; 100% undergo diagnostic phase before production.','100% coverage; automated diagnostic/validation; CI/CD for rule updates.'],
+qStep:2,nextTarget:'Achieve 60–70% ATT&CK technique coverage per data source; run 70–80% of rules through a beta/diagnostic phase.'},
+{id:'c1-2',title:'Managing and Maintaining Rulesets (DAC)',
+context:'Evaluate your systematic approach to rule management: version control, documentation, validation, and Detections as Code (DAC) principles.',
+qualitative:['No rule management.','Occasional rule processes with some documentation and a recurring release cycle.','Regular rule management with comprehensive documentation and version control.','Applies a Detections as Code (schema validation, versioning, automation) approach.','Advanced automated processes with continuous weekly management and validation.'],
+quantitative:['No rule management activities.','Quarterly activities; <20% of rules have version control.','Monthly updates; 50–70% with version control and comprehensive docs.','Bi-weekly automated processes; 80–90% managed using DAC principles.','Continuous weekly management; 100% using DAC with complete docs.'],
+qStep:3,nextTarget:'Move to monthly update cadence with 50–70% of rules under version control.'},
+{id:'c1-3',title:'Improving and Maintaining Telemetry Quality',
+context:'Assess your collaboration with telemetry/data teams and integration of cyber threat intelligence (CTI) to enrich detection capabilities.',
+qualitative:['No updates or improvements to telemetry for the ruleset.','Occasional manual updates and minimal ad hoc collaboration.','Regular updates with significant integration and formalised collaboration including CTI.','Comprehensive updates and collaboration with consistent CTI integration.','Advanced CTI integration with real-time enrichment and automated responses.'],
+quantitative:['No telemetry updates or improvements.','Sporadic updates; <30% of rule types produce telemetry/internal data.','Quarterly updates; 50–70% of telemetry integrated with CTI.','Semi-automated updates; 70–90% CTI integration.','Fully automated; 100% CTI integration; real-time enrichment.'],
+qStep:0,nextTarget:'Establish quarterly telemetry review cadence and integrate CTI into 50–70% of telemetry data.'},
+{id:'c1-4',title:'Reviewing Threat Landscape Changes',
+context:'Evaluate how regularly you review and update rules based on changes in the threat landscape, including new intelligence and organisational changes.',
+qualitative:['No reviews of threat landscape changes.','Occasional reviews with minimal updates and limited threat modeling.','Regular reviews and updates incorporating threat modeling.','Adaptive response to emerging threats with comprehensive threat modeling.','Continuous monitoring and real-time updates with dynamic threat modeling.'],
+quantitative:['No reviews conducted.','Bi-annual reviews; <30% of rules reviewed based on threat landscape changes.','Comprehensive quarterly reviews; 50–70% of rules reviewed.','Continuous monitoring; 90–100% of rules reviewed and updated.','Real-time monitoring; 100% continuous review and automated intelligence integration.'],
+qStep:0,nextTarget:'Move to quarterly reviews and ensure 50–70% of rules are reviewed based on threat landscape changes.'},
+{id:'c1-5',title:'Driving Features with Product Owners',
+context:'Assess your engagement with product owners (internal or external/vendors like Elastic) to ensure detection needs are on the product roadmap.',
+qualitative:['No engagement with product owners.','Ad hoc occasional engagement with some influence on the roadmap.','Regular engagement and significant influence on the product roadmap.','Structured engagement leading to consistent integration of detection needs.','Continuous, proactive engagement with real-time feedback and updates.'],
+quantitative:['No engagements with product owners.','1–2 engagements/requests per quarter; <20% result in roadmap changes.','> 2 engagements/quarter; 50–70% result in roadmap changes.','Frequent engagements; > 70% result in roadmap changes; structured tracking.','Continuous; 90–100% of requests lead to roadmap changes; proactive feedback loops.'],
+qStep:0,nextTarget:'Achieve > 2 engagements per quarter with product owners and track outcomes.'},
+{id:'c1-6',title:'End-to-End Release Testing and Validation',
+context:'Evaluate the robustness of your testing and validation pipeline before detection rules go to production.',
+qualitative:['No formal testing or validation process.','Basic testing with minimal validation.','Comprehensive testing with internal validation processes and multiple gates.','Advanced testing with automated and external validation processes.','Continuous, automated testing with real-time feedback and improvement.'],
+quantitative:['No testing or validation activities.','1–2 ruleset updates per release cycle; <20% of rules tested before deployment.','End-to-end test/release in < 1 week; 50–70% tested before deployment.','Ability to deploy emerging threat rule within 24 hours; 90–100% tested.','Real-time testing and validation; 100% continuously tested and validated.'],
+qStep:4,nextTarget:'Achieve end-to-end test and release in < 1 week; test 50–70% of rules before deployment.'}
+]},
+{id:2,name:'Tier 2: Intermediate',color:'#00c9a7',desc:'Focus on continuously tuning rules to reduce false positives, identifying and documenting gaps, thorough internal testing and validation, and ongoing training and development.',
+criteria:[
+{id:'c2-1',title:'Continuously Tuning and Reducing False Positives',
+context:'Assess your systematic approach to minimising false positives and stale rules, including shared exception lists and documented FP analysis.',
+qualitative:['Minimal tuning activities.','Reactive tuning based on alerts and ad hoc analyst feedback.','Proactive and systematic tuning with documented reductions in FP rates.','Continuously tuned with detailed documentation and stakeholder communication.','Automated and dynamic tuning with advanced analytics and ML.'],
+quantitative:['No reduction in FP rate.','10–25% reduction in FP rate over the last quarter.','> 25% reduction in FP rate over the last quarter with tracked metrics.','Consistent > 50% FP reduction over multiple quarters with detailed reporting.','Near real-time reduction; > 75% FP reduction with automated feedback loops.'],
+qStep:2,nextTarget:'Achieve > 25% reduction in FP rate over last quarter and document the methodology.'},
+{id:'c2-2',title:'Understanding and Documenting Gaps',
+context:'Evaluate your identification and documentation of gaps in ruleset or product coverage — missing fields, logging datasets, and outliers in data.',
+qualitative:['No gap analysis.','Occasional gap analysis with some documentation.','Comprehensive and regular gap analysis with detailed docs and stakeholder comms.','Systematic gap analysis integrated into regular workflows.','Automated gap analysis with real-time documentation and stakeholder engagement.'],
+quantitative:['No gaps documented.','1–3 gaps in threat coverage documented and communicated.','> 3 gaps documented (including data blockers and outliers).','> 5 gaps documented with regular updates and action plans.','Continuous real-time gap analysis; all gaps tracked proactively.'],
+qStep:2,nextTarget:'Document > 3 coverage gaps including data blockers and communicate them to stakeholders.'},
+{id:'c2-3',title:'Testing and Validation (Internal Emulation)',
+context:'Assess your use of emulation tools, C2 frameworks, malware detonations, or other repeatable techniques to validate rule functionality.',
+qualitative:['No testing or validation.','Occasional testing with emulation capabilities.','Regular, comprehensive testing with malware/emulation validating all production rules.','Systematic testing integrated into regular workflows with detailed documentation.','Automated and continuous testing with real-time validation and feedback.'],
+quantitative:['No internal tests conducted.','40% emulation coverage of production ruleset.','80% automated testing coverage of production ruleset.','> 90% automated testing coverage with continuous validation.','100% automated and continuous testing with real-time feedback loops.'],
+qStep:4,nextTarget:'Reach 80% automated emulation/testing coverage of the production ruleset.'}
+]},
+{id:3,name:'Tier 3: Advanced',color:'#f59e0b',desc:'Systematic identification and remediation of false negatives, external validation, and comprehensive coverage of advanced TTPs (APTs, zero-days, emerging threats).',
+criteria:[
+{id:'c3-1',title:'Triaging False Negatives',
+context:'Evaluate your systematic processes for identifying and addressing instances where detection rules fail to trigger alerts for actual threats.',
+qualitative:['No triage of false negatives.','Sporadic triage with some improvements.','Systematic and regular triage with documented reductions and comprehensive FN assessments.','Proactive triage with detailed documentation and regular stakeholder updates.','Continuous, automated triage using advanced analytics and ML.'],
+quantitative:['No reduction in FN rate.','50% of tested samples trigger an alert; <10% of rules reviewed for FNs quarterly.','70–90% of tested samples trigger an alert; 30–50% FN reduction over the past year.','90–100% of samples trigger an alert; > 50% FN reduction over multiple quarters.','Near real-time FN triage; > 75% FN reduction; continuous documentation.'],
+qStep:4,nextTarget:'Achieve 70–90% of tested samples triggering an alert; document a 30–50% FN reduction over the year.'},
+{id:'c3-2',title:'External Validation',
+context:'Assess your engagement with red teams, third-party assessors, penetration testers, and external threat intelligence providers to validate detection rules.',
+qualitative:['No external validation.','Occasional external validation with some improvements.','Regular, comprehensive external validation (red team, pen test, 3rd-party CTI) with documented feedback.','Structured external validation with detailed documentation and continuous improvement.','Continuous external validation with automated feedback and proactive improvements.'],
+quantitative:['No external validation conducted.','1 external validation exercise per year; <20% of identified gaps addressed.','> 1 exercise/year (mix of methods); ≥80% of gaps addressed within a quarter.','Multiple exercises/year; > 90% of gaps addressed within timelines.','Continuous real-time external validation; 100% of gaps proactively addressed.'],
+qStep:4,nextTarget:'Conduct > 1 external validation exercise per year and address ≥80% of identified gaps within a quarter.'},
+{id:'c3-3',title:'Advanced TTP Coverage (APTs / Zero-Days)',
+context:'Evaluate your coverage of non-commodity malware (APTs, zero-days) and emerging threats (new malware families, abused offensive security tools).',
+qualitative:['No advanced TTP coverage.','Response to some advanced TTPs based on third-party published research.','First-party coverage for advanced TTPs based on internal threat intelligence and research.','Proactive coverage with detailed threat intelligence and continuous updates.','Continuous, automated coverage with ML; real-time updates for emerging threats.'],
+quantitative:['No advanced TTP coverage.','Detection for 1–3 advanced TTPs/adversaries; <20% of rules cover advanced TTPs.','> 3 advanced TTPs uniquely targeted; 50–70% of rules cover advanced TTPs.','> 5 advanced TTPs covered; 70–90% of rules cover advanced TTPs.','Real-time detection; 100% of rules cover advanced TTPs with continuous telemetry integration.'],
+qStep:0,nextTarget:'Target > 3 advanced TTPs uniquely with first-party intel; achieve 50–70% rule coverage of advanced TTPs.'}
+]},
+{id:4,name:'Tier 4: Expert',color:'#c026d3',desc:'Advanced automation, seamless integration with other security tools, continuous improvement through regular updates and external collaboration, and proactive threat hunting.',
+criteria:[
+{id:'c4-1',title:'Hunting in Telemetry / Internal Data',
+context:'Assess your proactive threat hunting activities — queries, daily triage, and systematic hunting workflows that feed back into ruleset improvements.',
+qualitative:['No hunting activities leading to ruleset improvement.','Occasional hunting activities with some findings.','Regular, systematic hunting with significant coverage findings per the Threat Hunting Maturity Model.','Continuous hunting with comprehensive docs and feedback loops between hunting and detection teams.','Automated, real-time hunting with ML; continuous integration of findings.'],
+quantitative:['No hunting activities conducted.','Bi-weekly hunting outcomes; <20% of findings documented.','Weekly outcomes; 50–70% of findings documented and integrated into rules.','Daily hunting; > 90% of findings documented and lead to rule updates.','Real-time hunting; 100% of findings lead to immediate rule updates.'],
+qStep:0,nextTarget:'Achieve weekly hunting cadence with 50–70% of findings documented and integrated into rules.'},
+{id:'c4-2',title:'Continuous Improvement & Automation (AI/LLM)',
+context:'Evaluate your use of automation — ETL pipelines, generative AI, and LLMs — throughout the detection engineering lifecycle to improve rule accuracy, reduce FPs, and detect duplications.',
+qualitative:['No automation.','Basic automation for rule management (e.g., ETL data plumbing).','Initial use of generative AI to assist in rule creation and quality assessment.','Advanced use of AI/LLMs to detect rule duplications and suggest enhancements.','Full AI/LLM integration across the detection engineering lifecycle.'],
+quantitative:['No automated processes implemented.','<30% of rule management tasks automated; initial version control setup.','AI-driven quality checks on ≥80% of new rules; 40–60% of tasks automated.','AI duplication detection reducing overlap by 50%; 70–80% tasks automated; 30–50% FP reduction.','> 90% of rule updates AI-suggested; fully automated management; 40% FP reduction.'],
+qStep:5,nextTarget:'Implement AI-driven quality checks on ≥80% of new rules; automate 40–60% of rule management tasks.'}
+]}
 ];
 
-// ===== STATE =====
-let state = {};
-try { state = JSON.parse(localStorage.getItem('debmm-state') || '{}'); } catch(e) { state = {}; }
+// ── METRICS DATA ─────────────────────────────────────────────────────────
+const METRICS=[
+{id:'m-alert-vol',name:'Alert Volume (per week)',unit:'alerts',criterion:'c2-1',desc:'Total alerts generated across all production detection rules.',threshold:{1:'No baseline tracked',2:'Tracked; trending down vs prior period',3:'< 500/week with active reduction programme',4:'< 200/week; automated triage in place'}},
+{id:'m-fp-rate',name:'False Positive Rate',unit:'%',criterion:'c2-1',desc:'Percentage of alerts that are confirmed false positives.',threshold:{1:'> 50%',2:'< 50%',3:'< 25% and reducing quarter-on-quarter',4:'< 10% with automated suppression'}},
+{id:'m-mttd',name:'Mean Time to Detect (MTTD)',unit:'hrs',criterion:'c1-6',desc:'Average hours between threat activity and alert generation.',threshold:{1:'Not measured',2:'< 72 hrs',3:'< 24 hrs',4:'< 4 hrs with real-time validation'}},
+{id:'m-rules-deployed',name:'Rules Deployed (this period)',unit:'rules',criterion:'c1-2',desc:'Net new detection rules pushed to production this sprint/month.',threshold:{1:'< 2/month',2:'2–5/month',3:'> 5/month with validation gate',4:'CI/CD automated deployments'}},
+{id:'m-rules-depr',name:'Rules Deprecated',unit:'rules',criterion:'c2-1',desc:'Stale or redundant rules removed this period.',threshold:{1:'None tracked',2:'Ad hoc deprecation',3:'Quarterly deprecation review',4:'Automated staleness detection'}},
+{id:'m-coverage',name:'ATT&CK Coverage (%)',unit:'%',criterion:'c1-1',desc:'Percentage of relevant ATT&CK techniques with at least one detection rule.',threshold:{1:'< 30%',2:'30–60%',3:'60–80%',4:'> 80% with validated coverage'}},
+{id:'m-fn-rate',name:'False Negative Rate (emulation)',unit:'%',criterion:'c3-1',desc:'Percentage of emulation/red team exercises that did NOT trigger an alert.',threshold:{1:'Not measured',2:'> 50% missed',3:'< 30% missed',4:'< 10% missed with continuous validation'}},
+{id:'m-hunt-findings',name:'Hunting Findings → Rules',unit:'rules',criterion:'c4-1',desc:'Number of rules created as a direct output of threat hunting activities this period.',threshold:{1:'0',2:'1–2/month',3:'Weekly hunting cadence',4:'Daily hunting; all findings reviewed'}},
+{id:'m-peer-reviewed',name:'Rules Peer-Reviewed (%)',unit:'%',criterion:'c0-2',desc:'Percentage of production rules that have passed a peer review gate.',threshold:{1:'< 20%',2:'20–50%',3:'50–80%',4:'> 80% with formal approval trail'}}
+];
 
-function saveState() {
-  try { localStorage.setItem('debmm-state', JSON.stringify(state)); } catch(e) {}
+const ATT_TACTICS=['Initial Access','Execution','Persistence','Privilege Escalation','Defense Evasion','Credential Access','Discovery','Lateral Movement','Collection','Command & Control','Exfiltration','Impact','Reconnaissance','Resource Development'];
+
+const GLOSSARY=[
+{t:'DAC',d:'Detections as Code — treating detection rules like software: version-controlled, peer-reviewed, and automatically deployed.'},
+{t:'FP (False Positive)',d:'An alert that fires on benign activity. High FP rates cause alert fatigue in SOC analysts.'},
+{t:'FN (False Negative)',d:'A threat that exists in data but is NOT detected by any existing rule — the most dangerous gap.'},
+{t:'TTP',d:'Tactics, Techniques, and Procedures — the specific methods adversaries use, documented in MITRE ATT&CK.'},
+{t:'MTTD',d:'Mean Time to Detect — how long between a threat occurring and an alert being generated.'},
+{t:'CTI',d:'Cyber Threat Intelligence — structured information about adversaries, used to inform and validate detection rules.'},
+{t:'BBR',d:"Building Block Rule — a supporting rule in Elastic that doesn't alert on its own but feeds into other detection logic."},
+{t:'ATT&CK',d:'MITRE ATT&CK — a globally-accessible knowledge base of adversary tactics and techniques used as a detection coverage framework.'},
+{t:'Emulation',d:'Simulating adversary techniques (e.g. Atomic Red Team, C2 frameworks) to test whether detection rules fire correctly.'},
+{t:'Diagnostic Phase',d:'A beta period for new rules in production — typically generates alerts as informational only before being fully enabled.'},
+{t:'SOAR',d:'Security Orchestration, Automation and Response — platforms that automate alert triage, enrichment, and response workflows.'},
+{t:'Confidence-Adjusted Score',d:'A DEBMM score that weights self-assessed levels lower than peer-reviewed or externally validated levels.'}
+];
+
+const QUESTIONNAIRE=[
+{num:'01',title:'Identify Threat Landscape',tierRef:'Maps to: T0, T1',
+questions:['Do you regularly review the top 5 threats your organisation faces? (Yes / No)','Are relevant tactics and techniques identified for these threats? (Yes / No)','Is the threat landscape reviewed and updated regularly? (Monthly / Quarterly / Annually / No)','Have any emerging threats been recently identified? (Yes / No)','Is there a designated person responsible for monitoring the threat landscape? (Yes / No)','Do you have data sources that capture relevant threat traffic? (Yes / Partial / No)','Are critical assets likely to be affected by these threats identified? (Yes / No)','Are important assets and their locations documented? (Yes / No)','Are endpoints, APIs, IAM, network traffic, etc. in these locations identified? (Yes / Partial / No)','Are critical business operations identified and their maintenance ensured? (Yes / No)'],
+steps:['Establish a regular review cycle for threat landscape updates — align to at minimum quarterly cadence.','Engage with external threat intelligence providers for broader environmental insights.','Assign ownership: designate a named individual responsible for threat landscape monitoring.','Map critical assets and document expected behaviour baselines for high-value systems.'],
+related:'c0-4,c1-4'},
+{num:'02',title:'Define the Perfect Rule',tierRef:'Maps to: T0',
+questions:['Are required fields for a complete rule defined? (Yes / No)','Is there a process for documenting and validating rules? (Yes / No)','Is there a clear process for creating new rules? (Yes / No)','Are rules prioritised for creation and updates based on defined criteria? (Yes / No)','Are templates or guidelines available for rule creation? (Yes / No)','Are rules validated for a period before going into production? (Yes / No)'],
+steps:['Develop and standardise templates for rule creation covering all required metadata fields (name, author, description, MITRE mapping, severity, risk score, references, setup guide).','Implement a formal peer review and approval process before any rule enters production.','Define what "good" looks like for your organisation — schema, coverage, FP tolerance, and documentation completeness.','Introduce a diagnostic/beta phase for all new rules before full production promotion.'],
+related:'c0-1,c0-2'},
+{num:'03',title:'Define the Perfect Ruleset',tierRef:'Maps to: T1',
+questions:['Do you have baseline rules needed to cover key threats? (Yes / No)','Are major threat techniques covered by your ruleset? (Yes / Partial / No)','Is the effectiveness of the ruleset measured? (Yes — Comprehensively / Yes — Partially / No)','Do you have specific criteria used to determine if a rule should be included in the ruleset? (Yes / No)','Is the ruleset maintained and updated? (Programmatic & Frequent / Programmatic & Ad hoc / Manual & Frequent / Manual & Ad hoc / No)'],
+steps:['Perform a structured gap analysis against MITRE ATT&CK to identify missing technique coverage per data source.','Regularly update the ruleset based on new threat intelligence and analyst feedback from live alerts.','Define explicit inclusion criteria: which techniques, data sources, and threat actors are in scope.','Introduce measurable effectiveness metrics — true positive rate, FP rate, MTTD.'],
+related:'c1-1,c2-2'},
+{num:'04',title:'Maintain',tierRef:'Maps to: T0, T1',
+questions:['Are rules reviewed and updated regularly? (Monthly / Quarterly / Annually / No)','Is there a version control system in place? (Yes / No)','Are there documented processes for rule maintenance? (Yes / No)','How are changes to the ruleset communicated to stakeholders? (Regular Meetings / Emails / Documentation / No Communication)','Are there automated processes for rule updates and validation? (Yes / Partial / No)'],
+steps:['Implement version control for all rules — treat detection rules as code (Detections as Code / DAC).','Establish automated workflows for rule updates and schema validation on every change.','Create a recurring stakeholder communication rhythm (release notes, change logs, or changelog digests).','Set minimum review frequency targets per rule type: production rules reviewed at least quarterly.'],
+related:'c0-2,c1-2'},
+{num:'05',title:'Test & Release',tierRef:'Maps to: T1, T2, T3',
+questions:['Are tests performed before rule deployment? (Yes / No)','Is there a documented validation process? (Yes / No)','Are test results documented and used to improve rules? (Yes / No)','Is there a designated person responsible for testing and releasing rules? (Yes / No)','Are there automated testing frameworks in place? (Yes / Partial / No)'],
+steps:['Develop and maintain a testing framework for rule validation — include emulation tools (e.g. Atomic Red Team, C2 frameworks, malware detonation).','Document and systematically review test results to continuously improve rule quality and reduce FP/FN rates.','Define a named release owner with clear accountability for the end-to-end deployment pipeline.','Target: ability to deploy an emerging threat rule within 24 hours of identification as a key performance benchmark.'],
+related:'c1-6,c2-3,c3-1'},
+{num:'06',title:'Criteria Assessment',tierRef:'Maps to: T4',
+questions:['Are automated tools, including generative AI, used in the rule assessment process? (Yes / No)','How often are automated assessments conducted using defined criteria? (Monthly / Quarterly / Annually / Never)','What types of automation or AI tools are integrated into the rule assessment process?','How are automated insights used to optimise rules? (Regular Updates / Ad hoc Updates / Not Used)','What metrics are tracked to measure the effectiveness of automated assessments?'],
+steps:['Integrate automated tools — including generative AI and LLMs — into the rule quality assessment and optimisation process.','Regularly review and implement insights from automated assessments to enhance rule quality and reduce duplication.','Define a KPI dashboard tracking: FP rate, FN rate, coverage %, MTTD, and rule churn rate.','Evaluate AI-driven tooling for identifying rule overlaps and suggesting consolidation opportunities.'],
+related:'c4-2'},
+{num:'07',title:'Iterate',tierRef:'Maps to: All tiers',
+questions:['How frequently is the assessment process revisited? (Monthly / Quarterly / Annually / Never)','What improvements have been identified and implemented from previous assessments?','How is feedback from assessments incorporated into the ruleset? (Regular Updates / Ad hoc Updates / Not Used)','Who is responsible for iterating on the ruleset based on assessment feedback? (Designated Role / No Specific Role)','Are there metrics to track progress and improvements over time? (Yes / No)'],
+steps:['Establish a formal review and iteration cycle — minimum quarterly DEBMM re-assessment with tracking of score changes over time.','Track and document all improvements and their measured impact on detection effectiveness.','Assign a named role accountable for iterating on the ruleset based on assessment feedback.','Build a delta report on each assessment cycle: what changed, what improved, and what regressed.'],
+related:'c0-1,c1-2,c4-1'}
+];
+
+const APPLY_STEPS=[
+{n:'1',title:'Audit Your Current Maturity Tier',desc:'Evaluate your existing detection rulesets against the DEBMM criteria. Identify strengths, weaknesses, and the most significant risks to determine your current maturity tier. Use the assessment above.'},
+{n:'2',title:'Understand the Scope of Effort',desc:'Recognise the significant and sustained effort required to move from one tier to the next. Complexity, resources, and required skills all increase as you advance. Do not skip foundational tier criteria.'},
+{n:'3',title:'Set Goals for Progression',desc:'Define specific, measurable goals for advancing to the next tier. Use the qualitative and quantitative measures to set clear objectives for each criterion — not just high-level aspirations.'},
+{n:'4',title:'Develop a Roadmap',desc:'Create a detailed plan outlining the actions needed. Include timelines, resource requirements, and named responsible owners. Prioritise the most critical and highest-risk gaps first.'},
+{n:'5',title:'Implement Changes',desc:'Execute the plan, ensuring all team members are aligned with the objectives and understand their roles. Review and adjust the plan regularly as priorities shift and new intelligence emerges.'},
+{n:'6',title:'Monitor and Measure Progress',desc:'Continuously track and measure the performance of your detection rulesets against the DEBMM criteria. Use metrics and KPIs to monitor progress and identify areas for further improvement.'},
+{n:'7',title:'Iterate and Improve',desc:'Regularly review and update your improvement plan based on feedback, results, and the changing threat landscape. Iterate on your detection rulesets to enhance their effectiveness.'}
+];
+
+const GROUPINGS=[
+{label:'Rule Creation & Management',color:'var(--ac)',items:'Structured approach to rule development\nCreation and maintenance of detection rules\nRoadmap documentation and planning\nManaging and maintaining rulesets (DAC)'},
+{label:'Telemetry & Data Quality',color:'var(--t1)',items:'Improving and maintaining telemetry quality\nCTI integration and enrichment\nUnderstanding and documenting data gaps\nVendor/integration collaboration'},
+{label:'Threat Landscape Review',color:'var(--t2)',items:'Reviewing threat landscape changes\nThreat modeling performed\nAdvanced TTP coverage (APTs, zero-days)\nHunting in telemetry and internal data'},
+{label:'Stakeholder Engagement',color:'var(--t3)',items:'Driving features with product owners\nExternal validation (red team, pen test)\nEnd-to-end release testing and validation\nContinuous improvement and AI automation'}
+];
+
+// ── STATE ────────────────────────────────────────────────────────────────
+let state={};
+let metaState={team:'',assessor:'',scope:'',date:''};
+let metricsState={};
+let attckState={};
+let qReviewed={};
+let history=[];
+
+function loadState(){
+  try{
+    state=JSON.parse(localStorage.getItem('debmm-state')||'{}');
+    metaState=JSON.parse(localStorage.getItem('debmm-meta')||'{}');
+    metricsState=JSON.parse(localStorage.getItem('debmm-metrics')||'{}');
+    attckState=JSON.parse(localStorage.getItem('debmm-attck')||'{}');
+    qReviewed=JSON.parse(localStorage.getItem('debmm-qrev')||'{}');
+    history=JSON.parse(localStorage.getItem('debmm-history')||'[]');
+  }catch(e){state={};metaState={};metricsState={};attckState={};qReviewed={};history=[]}
+}
+function saveState(){try{localStorage.setItem('debmm-state',JSON.stringify(state))}catch(e){}}
+function saveMeta(){
+  metaState={
+    team:document.getElementById('meta-team').value,
+    assessor:document.getElementById('meta-assessor').value,
+    scope:document.getElementById('meta-scope').value,
+    date:document.getElementById('meta-date').value
+  };
+  try{localStorage.setItem('debmm-meta',JSON.stringify(metaState))}catch(e){}
+}
+function saveMetrics(){try{localStorage.setItem('debmm-metrics',JSON.stringify(metricsState))}catch(e){}}
+function saveAttck(){try{localStorage.setItem('debmm-attck',JSON.stringify(attckState))}catch(e){}}
+function saveQRev(){try{localStorage.setItem('debmm-qrev',JSON.stringify(qReviewed))}catch(e){}}
+
+// ── SCORING ──────────────────────────────────────────────────────────────
+function getStats(){
+  let total=0,answered=0,confSum=0,rawSum=0,ownedCount=0;
+  let tierStats={};
+  TIERS.forEach(tier=>{
+    let ts={total:tier.criteria.length,answered:0,scoreSum:0,confSum:0,avgScore:0,avgConf:0};
+    tier.criteria.forEach(crit=>{
+      total++;
+      const s=state[crit.id];
+      if(s?.level!==undefined){
+        answered++;ts.answered++;
+        const w=CONF_WEIGHTS[s.conf||'self']||0.8;
+        ts.scoreSum+=s.level;ts.confSum+=s.level*w;
+        rawSum+=s.level;confSum+=s.level*w;
+        if(s.owner&&s.owner.trim())ownedCount++;
+      }
+    });
+    if(ts.answered>0){ts.avgScore=ts.scoreSum/ts.answered;ts.avgConf=ts.confSum/ts.answered}
+    tierStats[tier.id]=ts;
+  });
+  const rawScore=answered>0?rawSum/answered:0;
+  const confScore=answered>0?confSum/answered:0;
+  const highConf=Object.values(state).filter(s=>s?.level!==undefined&&(s.conf==='data'||s.conf==='external')).length;
+  return{total,answered,rawScore,confScore,tierStats,ownedCount,highConf};
 }
 
-// ===== BUILD UI =====
-function buildUI() {
-  const panels = document.getElementById('panels');
-  panels.innerHTML = '';
+function determineTier(tierStats){
+  let cur=0;
+  for(let t=0;t<=4;t++){
+    const ts=tierStats[t];
+    if(!ts||ts.answered===0)break;
+    const good=TIERS[t].criteria.filter(c=>(state[c.id]?.level||0)>=2).length;
+    if(good/ts.total>=0.5)cur=t;else break;
+  }
+  return cur;
+}
 
-  TIERS.forEach(tier => {
-    const div = document.createElement('div');
-    div.className = 'tier-panel' + (tier.id === 0 ? ' active' : '');
-    div.id = 'tier-panel-' + tier.id;
+function blockingCriteria(tierStats,currentTier){
+  const nextT=Math.min(currentTier+1,4);
+  return TIERS[nextT].criteria.filter(c=>(state[c.id]?.level||0)<2).map(c=>c.id);
+}
 
-    div.innerHTML = `
-      <div class="tier-header" data-tier="${tier.id}">
+// ── BUILD UI ─────────────────────────────────────────────────────────────
+function buildUI(){
+  // meta
+  document.getElementById('meta-team').value=metaState.team||'';
+  document.getElementById('meta-assessor').value=metaState.assessor||'';
+  document.getElementById('meta-scope').value=metaState.scope||'';
+  document.getElementById('meta-date').value=metaState.date||new Date().toISOString().split('T')[0];
+
+  // onboard
+  if(localStorage.getItem('debmm-onboard-dismissed')){
+    document.getElementById('onboard-banner').classList.add('hidden');
+  }
+
+  buildAssessment();
+  buildMetrics();
+  buildQuestionnaire();
+  buildGlossary();
+  buildGrouping();
+  buildApplySteps();
+  buildHistory();
+  updateDashboard();
+}
+
+function buildAssessment(){
+  const panels=document.getElementById('panels');
+  panels.innerHTML='';
+  TIERS.forEach(tier=>{
+    const div=document.createElement('div');
+    div.className='tier-panel'+(tier.id===0?' active':'');
+    div.id='tp-'+tier.id;
+    div.innerHTML=`<div class="tier-hdr" data-tier="${tier.id}">
+      <div class="tier-hdr-info">
         <div class="tier-name">${tier.name}</div>
         <div class="tier-desc">${tier.desc}</div>
       </div>
-    `;
-
-    tier.criteria.forEach((crit, ci) => {
-      const card = document.createElement('div');
-      card.className = 'criterion' + (state[crit.id]?.level !== undefined ? ' answered' : '');
-      card.id = 'card-' + crit.id;
-
-      const currentLevel = state[crit.id]?.level;
-      const scoreText = currentLevel !== undefined ? LEVELS[currentLevel] : '—';
-
-      card.innerHTML = `
-        <div class="criterion-header" onclick="toggleCriterion('${crit.id}')">
-          <div class="criterion-title">${crit.title}</div>
-          <div class="criterion-score" id="score-${crit.id}">${scoreText}</div>
-          <div class="criterion-chevron">▶</div>
-        </div>
-        <div class="criterion-body">
-          <div class="context-text">${crit.context}</div>
-
-          <div class="section-label">Qualitative Behaviour — Select Your Current State</div>
-          <div class="level-grid">
-            ${LEVELS.map((lname, li) => `
-              <button class="level-btn ${currentLevel === li ? 'selected' : ''}"
-                onclick="selectLevel('${crit.id}', ${li})">
-                <span class="level-num">${li}</span>
-                <span class="level-name">${lname}</span>
-              </button>
-            `).join('')}
-          </div>
-
-          <div class="section-label">Qualitative Description</div>
-          <table class="quant-table">
-            <tr>
-              <th>Level</th>
-              <th>State of Ruleset</th>
-            </tr>
-            ${LEVELS.map((lname, li) => `
-              <tr>
-                <td><span class="level-badge lb-${lname.toLowerCase()}">${lname}</span></td>
-                <td>${crit.qualitative[li]}</td>
-              </tr>
-            `).join('')}
-          </table>
-
-          <div class="section-label">Quantitative Measurements — Activities to Maintain State</div>
-          <table class="quant-table">
-            <tr>
-              <th>Level</th>
-              <th>Target Activity Thresholds</th>
-            </tr>
-            ${LEVELS.map((lname, li) => `
-              <tr>
-                <td><span class="level-badge lb-${lname.toLowerCase()}">${lname}</span></td>
-                <td>${crit.quantitative[li]}</td>
-              </tr>
-            `).join('')}
-          </table>
-
-          <div class="section-label">Notes / Evidence</div>
-          <textarea class="notes-area" placeholder="Record evidence, context, or planned actions..."
-            onchange="saveNote('${crit.id}', this.value)">${state[crit.id]?.notes || ''}</textarea>
-        </div>
-      `;
-
-      div.appendChild(card);
+      <div class="tier-time">${TIER_TIMES[tier.id]}</div>
+    </div>`;
+    tier.criteria.forEach((crit,ci)=>{
+      div.appendChild(buildCriterion(crit,tier,ci));
     });
-
     panels.appendChild(div);
   });
-
-  updateDashboard();
 }
 
-// ===== INTERACTIONS =====
-function switchTier(id) {
-  document.querySelectorAll('.tier-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tier-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('tier-panel-' + id).classList.add('active');
-  document.querySelector(`.tier-tab[data-tier="${id}"]`).classList.add('active');
-}
+function buildCriterion(crit,tier,ci){
+  const s=state[crit.id]||{};
+  const lv=s.level;
+  const conf=s.conf||'self';
+  const card=document.createElement('div');
+  card.className='criterion'+(lv!==undefined?' answered':'');
+  card.id='crit-'+crit.id;
 
-function toggleCriterion(id) {
-  const card = document.getElementById('card-' + id);
-  card.classList.toggle('open');
-}
+  const scoreText=lv!==undefined?`${lv} — ${LEVELS[lv]}`:'—';
+  const confText=lv!==undefined?CONF_LABELS[conf]:'';
 
-function selectLevel(critId, level) {
-  if (!state[critId]) state[critId] = {};
-  state[critId].level = level;
-  saveState();
+  card.innerHTML=`
+    <div class="crit-hdr" onclick="toggleCrit('${crit.id}')">
+      <span class="crit-num">${ci+1}</span>
+      <span class="crit-title">${crit.title}</span>
+      <span class="start-here" id="start-${crit.id}" style="display:none">↓ Start here</span>
+      <span class="blocking-flag" id="blk-${crit.id}" style="display:none">Blocking tier progression</span>
+      <span class="crit-score-pill" id="sp-${crit.id}">${scoreText}</span>
+      <span class="crit-conf" id="cf-${crit.id}" style="${lv===undefined?'display:none':''}">${confText}</span>
+      <span class="crit-chevron">▶</span>
+    </div>
+    <div class="crit-body">
+      <div class="crit-inner">
+        <div class="crit-context">${crit.context}</div>
 
-  // Update button states
-  const card = document.getElementById('card-' + critId);
-  card.querySelectorAll('.level-btn').forEach((btn, i) => {
-    btn.classList.toggle('selected', i === level);
-  });
-
-  // Mark answered
-  card.classList.add('answered');
-  document.getElementById('score-' + critId).textContent = LEVELS[level];
-
-  updateDashboard();
-}
-
-function saveNote(critId, value) {
-  if (!state[critId]) state[critId] = {};
-  state[critId].notes = value;
-  saveState();
-}
-
-function resetAll() {
-  if (confirm('Reset all assessment data? This cannot be undone.')) {
-    state = {};
-    saveState();
-    buildUI();
-  }
-}
-
-// ===== CALCULATIONS =====
-function getStats() {
-  let total = 0, answered = 0;
-  let tierStats = {};
-
-  TIERS.forEach(tier => {
-    tierStats[tier.id] = { total: tier.criteria.length, answered: 0, scoreSum: 0, avgScore: 0 };
-    tier.criteria.forEach(crit => {
-      total++;
-      if (state[crit.id]?.level !== undefined) {
-        answered++;
-        tierStats[tier.id].answered++;
-        tierStats[tier.id].scoreSum += state[crit.id].level;
-      }
-    });
-    if (tierStats[tier.id].answered > 0) {
-      tierStats[tier.id].avgScore = tierStats[tier.id].scoreSum / tierStats[tier.id].answered;
-    }
-  });
-
-  const allLevels = Object.values(state).filter(s => s.level !== undefined).map(s => s.level);
-  const overallScore = allLevels.length > 0 ? allLevels.reduce((a,b) => a+b, 0) / allLevels.length : 0;
-
-  return { total, answered, overallScore, tierStats };
-}
-
-function determineTier(tierStats) {
-  // Current tier is highest tier where >50% criteria are at level >= 2 (Defined)
-  let currentTier = 0;
-  for (let t = 0; t <= 4; t++) {
-    const ts = tierStats[t];
-    if (ts.answered === 0) break;
-    const goodCriteria = TIERS[t].criteria.filter(c => (state[c.id]?.level || 0) >= 2).length;
-    const pct = goodCriteria / ts.total;
-    if (pct >= 0.5) currentTier = t;
-    else break;
-  }
-  return currentTier;
-}
-
-// ===== DASHBOARD UPDATE =====
-function updateDashboard() {
-  const { total, answered, overallScore, tierStats } = getStats();
-  const currentTier = determineTier(tierStats);
-  const pct = total > 0 ? Math.round(answered / total * 100) : 0;
-  const scorePct = Math.round(overallScore / 4 * 100);
-
-  document.getElementById('overall-score').textContent = scorePct + '%';
-  document.getElementById('answered-count').textContent = answered + ' / ' + total;
-  document.getElementById('progress-pct').textContent = pct + '%';
-  document.getElementById('progress-bar').style.width = pct + '%';
-
-  const tierEl = document.getElementById('current-tier');
-  tierEl.innerHTML = `<span class="tier-indicator" style="background:${TIER_COLORS[currentTier]}"></span>Tier ${currentTier}: ${TIER_NAMES[currentTier]}`;
-
-  const subEl = document.getElementById('tier-sub');
-  subEl.textContent = answered === 0 ? 'no criteria assessed' : `based on ${answered} criteria`;
-
-  // Meter
-  for (let i = 0; i <= 4; i++) {
-    const m = document.getElementById('m' + i);
-    m.classList.toggle('filled', i <= currentTier);
-  }
-
-  const levelNames = ['Ad-hoc','Establishing','Developing','Maturing','Advanced','Expert'];
-  document.getElementById('level-desc').textContent = answered > 0 ? levelNames[Math.min(currentTier, 5)] : 'complete assessment';
-
-  // Tier tabs — show completion
-  TIERS.forEach(tier => {
-    const tab = document.querySelector(`.tier-tab[data-tier="${tier.id}"]`);
-    const ts = tierStats[tier.id];
-    const existing = tab.querySelector('.tier-complete-badge');
-    if (existing) existing.remove();
-    if (ts.answered === ts.total && ts.answered > 0) {
-      const badge = document.createElement('span');
-      badge.className = 'tier-complete-badge';
-      badge.textContent = '✓';
-      tab.appendChild(badge);
-    }
-  });
-
-  updateResults(tierStats, currentTier, overallScore);
-  drawRadar(tierStats);
-}
-
-// ===== RESULTS =====
-function updateResults(tierStats, currentTier, overallScore) {
-  // Breakdown
-  const brows = document.getElementById('breakdown-rows');
-  brows.innerHTML = '';
-  TIERS.forEach(tier => {
-    const ts = tierStats[tier.id];
-    const pct = ts.answered > 0 ? Math.round(ts.avgScore / 4 * 100) : 0;
-    brows.innerHTML += `
-      <div class="breakdown-row">
-        <div class="breakdown-tier">T${tier.id}: ${TIER_NAMES[tier.id]}</div>
-        <div class="breakdown-bar-bg">
-          <div class="breakdown-bar-fill" style="width:${pct}%;background:${TIER_COLORS[tier.id]}"></div>
+        <div class="field-label">Select your current level (0 = Initial · 4 = Optimized)</div>
+        <div class="level-grid">
+          ${LEVELS.map((ln,li)=>`<button class="level-btn${lv===li?' selected':''}" onclick="selectLevel('${crit.id}',${li})"><span class="level-num">${li}</span><span class="level-name">${ln}</span></button>`).join('')}
         </div>
-        <div class="breakdown-pct">${ts.answered > 0 ? pct + '%' : '—'}</div>
+
+        <div class="field-label">Qualitative description</div>
+        <div id="qtable-${crit.id}">
+          <table class="level-table" style="margin-bottom:6px">
+            <tr><th>Level</th><th>State of Ruleset</th></tr>
+            ${LEVELS.map((ln,li)=>`<tr class="ltr-${crit.id}-${li}${lv===li?' row-selected':lv!==undefined?' row-muted':''}"><td><span class="lb lb-${li}">${ln}</span></td><td>${crit.qualitative[li]}</td></tr>`).join('')}
+          </table>
+          <button class="show-all-btn" id="showall-q-${crit.id}" onclick="toggleShowAll('${crit.id}','q')">Show all levels</button>
+        </div>
+
+        <div class="field-label" style="margin-top:14px">Quantitative measurements</div>
+        <div id="quant-${crit.id}">
+          <table class="level-table" style="margin-bottom:6px">
+            <tr><th>Level</th><th>Target activity thresholds</th></tr>
+            ${LEVELS.map((ln,li)=>`<tr class="ltr2-${crit.id}-${li}${lv===li?' row-selected':lv!==undefined?' row-muted':''}"><td><span class="lb lb-${li}">${ln}</span></td><td>${crit.quantitative[li]}</td></tr>`).join('')}
+          </table>
+          <button class="show-all-btn" id="showall-m-${crit.id}" onclick="toggleShowAll('${crit.id}','m')">Show all levels</button>
+        </div>
+
+        <div class="field-label" style="margin-top:14px">Confidence level</div>
+        <div class="conf-row">
+          <span class="conf-label">Validated by:</span>
+          <div class="conf-btns">
+            ${Object.entries(CONF_LABELS).map(([k,v])=>`<button class="conf-btn${conf===k?' selected':''}" onclick="selectConf('${crit.id}','${k}')">${v}</button>`).join('')}
+          </div>
+        </div>
+
+        <div class="field-label" style="margin-top:14px">Evidence &amp; planning</div>
+        <div class="notes-grid">
+          <div class="note-field">
+            <div class="note-flabel">Current Evidence</div>
+            <textarea class="note-ta" placeholder="What exists today that supports this level?" rows="3" onchange="saveNote('${crit.id}','evidence',this.value)">${s.evidence||''}</textarea>
+          </div>
+          <div class="note-field">
+            <div class="note-flabel">Gap to Next Level</div>
+            <textarea class="note-ta" id="gap-${crit.id}" placeholder="${crit.nextTarget}" rows="3" onchange="saveNote('${crit.id}','gap',this.value)">${s.gap||''}</textarea>
+          </div>
+          <div class="note-field">
+            <div class="note-flabel">Owner</div>
+            <textarea class="note-ta" placeholder="Name or role responsible" rows="2" onchange="saveNote('${crit.id}','owner',this.value)">${s.owner||''}</textarea>
+          </div>
+          <div class="note-field">
+            <div class="note-flabel">Target Date</div>
+            <textarea class="note-ta" placeholder="e.g. Q2 2025" rows="2" onchange="saveNote('${crit.id}','target',this.value)">${s.target||''}</textarea>
+          </div>
+        </div>
+
+        <div class="related-link" onclick="scrollToQStep(${crit.qStep})">
+          <span class="related-arrow">↗</span>
+          <span>Related questionnaire step: ${QUESTIONNAIRE[crit.qStep].title}</span>
+        </div>
       </div>
-    `;
+    </div>`;
+  return card;
+}
+
+function buildMetrics(){
+  const grid=document.getElementById('metrics-grid');
+  grid.innerHTML='';
+  METRICS.forEach(m=>{
+    const val=metricsState[m.id]||'';
+    const card=document.createElement('div');
+    card.className='metric-card';
+    const critLabel=m.criterion.replace('c','T').replace('-',': crit ');
+    card.innerHTML=`
+      <div class="metric-card-hdr">
+        <div class="metric-name">${m.name}</div>
+        <div class="metric-crit-tag">${m.criterion}</div>
+      </div>
+      <div class="metric-input-row">
+        <input type="number" class="metric-num-input" id="mi-${m.id}" value="${val}" placeholder="—" oninput="updateMetric('${m.id}',this.value)">
+        <span class="metric-unit">${m.unit}</span>
+      </div>
+      <div class="metric-sparkline" id="spark-${m.id}"></div>
+      <div class="metric-threshold" id="mthresh-${m.id}"></div>
+      <div class="metric-desc">${m.desc}</div>`;
+    grid.appendChild(card);
+    renderMetricThreshold(m,val);
   });
 
-  // Next Priority
-  const nextTierId = Math.min(currentTier + 1, 4);
-  const nextTier = TIERS[nextTierId];
-  const unmet = nextTier.criteria.filter(c => (state[c.id]?.level || 0) < 2);
-  let priorityText = '';
-  if (unmet.length > 0) {
-    priorityText = `<strong style="color:${TIER_COLORS[nextTierId]}">Tier ${nextTierId} — ${TIER_NAMES[nextTierId]}:</strong> Focus on `;
-    priorityText += unmet.slice(0, 2).map(c => `"${c.title}"`).join(' and ');
-    if (unmet.length > 2) priorityText += ` (+${unmet.length - 2} more)`;
-    priorityText += ` to progress to the next tier.`;
-  } else {
-    priorityText = `Strong performance across Tier ${nextTierId}. Consider advancing to refine Expert-level automation and hunting capabilities.`;
-  }
-  document.getElementById('next-priority').innerHTML = priorityText;
+  // ATT&CK
+  const ag=document.getElementById('attck-grid');
+  ag.innerHTML='';
+  ATT_TACTICS.forEach(tac=>{
+    const k='attck-'+tac.replace(/\s+/g,'-').toLowerCase();
+    const v=attckState[k]||0;
+    const row=document.createElement('div');
+    row.className='attck-row';
+    row.innerHTML=`
+      <span class="attck-tactic">${tac}</span>
+      <input type="number" class="attck-pct-input" min="0" max="100" value="${v}" id="${k}" oninput="updateAttck('${k}',this.value)">
+      <span style="font-size:10px;color:var(--tx3)">%</span>
+      <div class="attck-bar-bg"><div class="attck-bar-fill attck-tier-color" id="bar-${k}" style="width:${v}%"></div></div>`;
+    ag.appendChild(row);
+    updateAttckBarColor(k,v);
+  });
+}
 
-  // Recommendations
-  const recList = document.getElementById('rec-list');
-  const recs = generateRecommendations(tierStats, currentTier);
-  if (recs.length === 0) {
-    recList.textContent = 'Answer the questions above to generate personalised recommendations.';
+function updateMetric(id,val){
+  metricsState[id]=val;
+  saveMetrics();
+  const m=METRICS.find(x=>x.id===id);
+  if(m)renderMetricThreshold(m,val);
+}
+
+function renderMetricThreshold(m,val){
+  const el=document.getElementById('mthresh-'+m.id);
+  if(!el)return;
+  if(!val||val===''){el.innerHTML='<span class="mt-none">Enter a value to see threshold guidance</span>';return}
+  const thresholds=m.threshold;
+  let matched=1;
+  const v=parseFloat(val);
+  // Simple threshold match — compare to tier 3 and 4 thresholds
+  el.innerHTML=`<div style="font-size:10px;color:var(--tx3);line-height:1.6">
+    <span class="mt-none">T2 target: ${thresholds[2]||'—'}</span><br>
+    <span class="mt-none">T3 target: ${thresholds[3]||'—'}</span>
+  </div>`;
+}
+
+function updateAttck(k,v){
+  attckState[k]=v;
+  saveAttck();
+  document.getElementById('bar-'+k).style.width=Math.min(v,100)+'%';
+  updateAttckBarColor(k,v);
+}
+
+function updateAttckBarColor(k,v){
+  const bar=document.getElementById('bar-'+k);
+  if(!bar)return;
+  const pct=parseFloat(v)||0;
+  if(pct<30)bar.style.background='rgba(239,68,68,.6)';
+  else if(pct<60)bar.style.background='rgba(245,158,11,.7)';
+  else if(pct<80)bar.style.background='rgba(0,201,167,.7)';
+  else bar.style.background='rgba(0,229,200,.9)';
+}
+
+function buildQuestionnaire(){
+  const pb=document.getElementById('process-bar');
+  pb.innerHTML='';
+  QUESTIONNAIRE.forEach((q,i)=>{
+    const ps=document.createElement('div');
+    ps.className='ps'+(i===0?' active':'')+(qReviewed[i]?' reviewed':'');
+    ps.id='ps-'+i;
+    ps.onclick=()=>highlightPS(i);
+    ps.innerHTML=`<div class="ps-num">${q.num}</div><div class="ps-label">${q.title}</div><div class="ps-tier-ref">${q.tierRef}</div><div class="ps-tick">✓ Reviewed</div>`;
+    pb.appendChild(ps);
+  });
+
+  const qa=document.getElementById('q-areas');
+  qa.innerHTML='';
+  QUESTIONNAIRE.forEach((q,i)=>{
+    const div=document.createElement('div');
+    div.className='q-area'+(i===0?' qa-open':'')+(qReviewed[i]?' qa-reviewed':'');
+    div.id='qa-'+i;
+    const relCrits=q.related.split(',').map(id=>id.trim());
+    const relLinks=relCrits.map(id=>{
+      const tier=TIERS.find(t=>t.criteria.some(c=>c.id===id));
+      const crit=tier?.criteria.find(c=>c.id===id);
+      return crit?`<span style="cursor:pointer;color:var(--ac)" onclick="jumpToCrit('${id}')">${crit.title}</span>`:id;
+    }).join(', ');
+
+    div.innerHTML=`
+      <div class="q-area-hdr" onclick="toggleQArea(${i})">
+        <div class="qa-num">${q.num}</div>
+        <div class="qa-title">${q.title}</div>
+        <div class="qa-tier-ref">${q.tierRef}</div>
+        <div class="qa-chevron">▶</div>
+      </div>
+      <div class="q-body">
+        <div class="q-body-grid">
+          <div class="q-col q-questions">
+            <div class="q-col-label">Questions to ask</div>
+            <ul class="q-list">${q.questions.map(qu=>`<li><span class="q-marker">?</span>${qu}</li>`).join('')}</ul>
+          </div>
+          <div class="q-col q-steps">
+            <div class="q-col-label">Steps for improvement</div>
+            <ul class="q-list">${q.steps.map(st=>`<li><span class="step-marker">→</span>${st}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div style="padding:10px 18px 14px;border-top:1px solid var(--b1)">
+          <div class="q-related" onclick="markReviewed(${i})">
+            <span style="color:var(--ok)">✓</span> Mark as reviewed
+          </div>
+          <div style="margin-top:8px;font-size:10px;color:var(--tx3)">Related criteria: ${relLinks}</div>
+        </div>
+      </div>`;
+    qa.appendChild(div);
+  });
+}
+
+function buildGlossary(){
+  const body=document.getElementById('glossary-body');
+  body.innerHTML=GLOSSARY.map(g=>`<div class="glos-item"><div class="glos-term">${g.t}</div><div class="glos-def">${g.d}</div></div>`).join('');
+}
+
+function buildGrouping(){
+  const grid=document.getElementById('grouping-grid');
+  grid.innerHTML=GROUPINGS.map(g=>`
+    <div class="gc" style="border-left-color:${g.color}">
+      <div class="gc-label">${g.label}</div>
+      <div class="gc-items">${g.items.split('\n').map(i=>`• ${i}`).join('<br>')}</div>
+    </div>`).join('');
+}
+
+function buildApplySteps(){
+  const grid=document.getElementById('apply-steps');
+  grid.innerHTML=APPLY_STEPS.map(s=>`
+    <div class="apply-step">
+      <div class="as-num">${s.n}</div>
+      <div><div class="as-title">${s.title}</div><div class="as-desc">${s.desc}</div></div>
+    </div>`).join('');
+}
+
+function buildHistory(){
+  const bar=document.getElementById('history-bar');
+  if(history.length===0){
+    bar.innerHTML='<div style="font-size:10px;color:var(--b3);padding:8px 0">No previous assessments recorded. Complete and save an assessment to track progress over time.</div>';
     return;
   }
-  recList.innerHTML = recs.map(r => `
+  const toShow=history.slice(-3);
+  bar.innerHTML=toShow.map((h,i)=>`
+    <div class="hist-card">
+      <div class="hist-label">Assessment ${history.length-toShow.length+i+1}</div>
+      <div class="hist-val">${Math.round(h.score)}%</div>
+      <div class="hist-date">${h.date} · Tier ${h.tier}</div>
+    </div>`).join('')+
+    `<div style="display:flex;align-items:center;padding:0 4px"><button class="btn-print" style="white-space:nowrap;font-size:10px" onclick="saveSnapshot()">Save Snapshot</button></div>`;
+}
+
+// ── UPDATE DASHBOARD ─────────────────────────────────────────────────────
+function updateDashboard(){
+  const{total,answered,rawScore,confScore,tierStats,ownedCount,highConf}=getStats();
+  const currentTier=determineTier(tierStats);
+  const blocking=blockingCriteria(tierStats,currentTier);
+  const pct=total>0?Math.round(answered/total*100):0;
+  const rawPct=Math.round(rawScore/4*100);
+  const confPct=Math.round(confScore/4*100);
+  const confQuality=answered>0?Math.round(highConf/answered*100):0;
+
+  // Nav pills
+  document.getElementById('nav-score').textContent=answered>0?confPct+'%':'—%';
+  document.getElementById('nav-tier').textContent=answered>0?`T${currentTier}: ${TIER_NAMES[currentTier]}`:'Not assessed';
+
+  // Dashboard cards
+  document.getElementById('d-score').textContent=answered>0?confPct+'%':'—%';
+  document.getElementById('d-raw').textContent=answered>0?rawPct+'%':'—%';
+  document.getElementById('d-tier').textContent=answered>0?`T${currentTier}: ${TIER_NAMES[currentTier]}`:'Not assessed';
+  document.getElementById('d-tier-sub').textContent=answered>0?`based on ${answered} criteria`:'answer criteria to calculate';
+  document.getElementById('d-answered').textContent=`${answered} / ${total}`;
+  document.getElementById('d-owned').textContent=`${ownedCount} with owner assigned`;
+  document.getElementById('d-conf').textContent=answered>0?confQuality+'%':'—%';
+
+  // History delta
+  if(history.length>0){
+    const last=history[history.length-1];
+    const delta=confPct-Math.round(last.score);
+    const delEl=document.getElementById('d-delta');
+    if(delta>0)delEl.innerHTML=`<span class="delta-up">↑ +${delta}% vs last</span>`;
+    else if(delta<0)delEl.innerHTML=`<span class="delta-dn">↓ ${delta}% vs last</span>`;
+    else delEl.innerHTML=`<span class="delta-eq">→ No change vs last</span>`;
+  }
+
+  // Progress
+  document.getElementById('prog-pct').textContent=pct+'%';
+  document.getElementById('prog-fill').style.width=pct+'%';
+  TIERS.forEach(t=>{
+    const ts=tierStats[t.id];
+    const pip=document.getElementById('pip'+t.id);
+    if(ts.answered>0)pip.style.background=TIER_COLORS[t.id];
+    else pip.style.background='var(--b1)';
+  });
+
+  // Tab badges
+  TIERS.forEach(t=>{
+    const ts=tierStats[t.id];
+    const badge=document.getElementById('tbadge'+t.id);
+    if(ts.answered===ts.total&&ts.answered>0){
+      badge.textContent=ts.avgScore.toFixed(1);
+    }else if(ts.answered>0){
+      badge.textContent=`${ts.answered}/${ts.total}`;
+      badge.style.color='var(--tx3)';badge.style.fontFamily='\'DM Mono\',monospace';badge.style.fontSize='10px';
+    }else{badge.textContent=''}
+  });
+
+  // Blocking flags + start-here
+  const allAnswered=answered===total;
+  TIERS.forEach(t=>{
+    t.criteria.forEach((crit,ci)=>{
+      const card=document.getElementById('crit-'+crit.id);
+      if(!card)return;
+      const blk=document.getElementById('blk-'+crit.id);
+      const sh=document.getElementById('start-'+crit.id);
+      const isBlocking=blocking.includes(crit.id);
+      card.classList.toggle('blocking',isBlocking);
+      if(blk)blk.style.display=isBlocking?'':'none';
+      // Start here: first unanswered
+      if(sh)sh.style.display=(state[crit.id]?.level===undefined&&answered<total&&ci===0&&t.id===0&&answered===0)?'':'none';
+    });
+  });
+
+  updateResults(tierStats,currentTier,confScore,rawScore);
+  drawRadar(tierStats);
+  buildHeatmap(tierStats);
+  buildHistogram();
+}
+
+function updateResults(tierStats,currentTier,confScore,rawScore){
+  // Breakdown
+  const brows=document.getElementById('breakdown-rows');
+  brows.innerHTML='';
+  TIERS.forEach(tier=>{
+    const ts=tierStats[tier.id];
+    const pct=ts.answered>0?Math.round(ts.avgScore/4*100):0;
+    const passed=ts.answered>0&&TIERS[tier.id].criteria.filter(c=>(state[c.id]?.level||0)>=2).length/ts.total>=0.5;
+    brows.innerHTML+=`
+      <div class="bkd-row">
+        <div class="bkd-label" style="color:${TIER_COLORS[tier.id]}">T${tier.id}: ${TIER_NAMES[tier.id]}</div>
+        <div class="bkd-bar-bg"><div class="bkd-bar-fill" style="width:${pct}%;background:${TIER_COLORS[tier.id]}"></div></div>
+        <div class="bkd-pct">${ts.answered>0?pct+'%':'—'}</div>
+        ${ts.answered>0?`<span class="bkd-pass ${passed?'ok':'no'}">${passed?'✓ Pass':'↑ Needs work'}</span>`:''}
+      </div>`;
+    if(ts.answered>0){
+      const critDetail=TIERS[tier.id].criteria.map(c=>{const lv=state[c.id]?.level;return lv!==undefined?`${c.title.split(' ')[0]}: ${lv}`:null}).filter(Boolean).join(' · ');
+      brows.innerHTML+=`<div class="bkd-crit-detail">${critDetail}</div>`;
+    }
+  });
+
+  // Next priority
+  const nextT=Math.min(currentTier+1,4);
+  const unmet=TIERS[nextT].criteria.filter(c=>(state[c.id]?.level||0)<2);
+  let pt='';
+  if(unmet.length>0){
+    pt=`<strong style="color:${TIER_COLORS[nextT]}">T${nextT} — ${TIER_NAMES[nextT]}:</strong> Focus on `;
+    pt+=unmet.slice(0,2).map(c=>`"${c.title}"`).join(' and ');
+    if(unmet.length>2)pt+=` (+${unmet.length-2} more)`;
+    pt+='.';
+  }else{
+    pt=`All T${nextT} criteria met. Advance toward T${Math.min(nextT+1,4)} — ${TIER_NAMES[Math.min(nextT+1,4)]}.`;
+  }
+  document.getElementById('next-priority').innerHTML=pt;
+
+  // Recommendations
+  const recs=generateRecs(tierStats,currentTier);
+  const rl=document.getElementById('rec-list');
+  if(recs.length===0){rl.innerHTML='<span style="font-size:11px;color:var(--tx3)">Answer the assessment questions to generate personalised recommendations.</span>';return}
+  rl.innerHTML=recs.map(r=>`
     <div class="rec-item">
       <div class="rec-dot" style="background:${r.color}"></div>
       <div class="rec-content">
-        <div class="rec-label">${r.tier}</div>
+        <div class="rec-label">${r.label}</div>
         <div class="rec-text">${r.text}</div>
+        ${r.target?`<div class="rec-target">Target: ${r.target}</div>`:''}
+        ${r.action?`<div class="rec-action">→ ${r.action}</div>`:''}
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function generateRecommendations(tierStats, currentTier) {
-  const recs = [];
-
-  TIERS.forEach(tier => {
-    tier.criteria.forEach(crit => {
-      const level = state[crit.id]?.level;
-      if (level === undefined) return;
-
-      if (level === 0) {
-        recs.push({
-          tier: `Tier ${tier.id} — ${crit.title}`,
-          color: TIER_COLORS[tier.id],
-          text: `At Initial level. Priority: establish a basic repeatable process. Start by documenting current state and identify one measurable improvement.`
-        });
-      } else if (level === 1) {
-        recs.push({
-          tier: `Tier ${tier.id} — ${crit.title}`,
-          color: TIER_COLORS[tier.id],
-          text: `At Repeatable level. Formalise processes with documented standards and move toward the Defined threshold with schema alignment and peer review.`
-        });
-      }
-    });
-  });
-
-  // Highlight biggest gap
-  let worstCrit = null, worstLevel = 99;
-  TIERS.forEach(tier => {
-    tier.criteria.forEach(crit => {
-      const level = state[crit.id]?.level;
-      if (level !== undefined && level < worstLevel) {
-        worstLevel = level;
-        worstCrit = { crit, tier };
-      }
-    });
-  });
-
-  if (worstCrit && worstLevel <= 1) {
-    recs.unshift({
-      tier: `⚠ Highest Priority — ${worstCrit.crit.title}`,
-      color: '#ff6b35',
-      text: `This is your lowest-scored criterion (${LEVELS[worstLevel]}). Address this first as it may undermine maturity at higher tiers.`
-    });
+function generateRecs(tierStats,currentTier){
+  const recs=[];
+  // Worst criterion
+  let worst=null,worstLv=99;
+  TIERS.forEach(tier=>tier.criteria.forEach(crit=>{
+    const lv=state[crit.id]?.level;
+    if(lv!==undefined&&lv<worstLv){worstLv=lv;worst={crit,tier}}
+  }));
+  if(worst&&worstLv<=1){
+    recs.push({label:`⚠ Highest Priority — ${worst.crit.title}`,color:'#ef4444',
+      text:`Lowest-scored criterion at level ${worstLv} (${LEVELS[worstLv]}). Address this first — it may undermine progress at higher tiers.`,
+      target:worst.crit.nextTarget,action:`Review questionnaire step: ${QUESTIONNAIRE[worst.crit.qStep].title}`});
   }
-
-  return recs.slice(0, 6);
+  // Per-criterion recs for level 0–2
+  TIERS.forEach(tier=>tier.criteria.forEach(crit=>{
+    const lv=state[crit.id]?.level;
+    if(lv===undefined||lv===worst?.crit.id)return;
+    if(lv<=2){
+      recs.push({label:`T${tier.id} — ${crit.title}`,color:TIER_COLORS[tier.id],
+        text:lv===0?'At Initial level. Start by documenting current state and establishing one repeatable process.':
+             lv===1?'At Repeatable level. Formalise processes with documented standards and peer review.':
+             'At Defined level. Focus on measuring and tracking outcomes to reach Managed.',
+        target:crit.nextTarget,
+        action:`Questionnaire: ${QUESTIONNAIRE[crit.qStep].title}`});
+    }
+  }));
+  // Self-assessed high scores
+  TIERS.forEach(tier=>tier.criteria.forEach(crit=>{
+    const s=state[crit.id];
+    if(s?.level>=3&&(s.conf==='self'||!s.conf)){
+      recs.push({label:`Evidence gap — ${crit.title}`,color:'#f59e0b',
+        text:`Claimed level ${s.level} (${LEVELS[s.level]}) is self-assessed only. Consider gathering data evidence or scheduling an external validation exercise to confirm.`,
+        target:'Upgrade confidence level to "Data-evidenced" or "Externally validated"',action:''});
+    }
+  }));
+  return recs.slice(0,7);
 }
 
-// ===== RADAR CHART =====
-function drawRadar(tierStats) {
-  const svg = document.getElementById('radar-svg');
-  const W = 260, H = 260, cx = 130, cy = 130, R = 90;
-  const N = 5;
-  const labels = ['T0\nFoundation','T1\nBasic','T2\nIntermediate','T3\nAdvanced','T4\nExpert'];
+function buildHeatmap(tierStats){
+  const grid=document.getElementById('heatmap-grid');
+  grid.innerHTML='';
+  TIERS.forEach(tier=>{
+    const row=document.createElement('div');
+    row.className='hm-row';
+    row.innerHTML=`<div class="hm-tier-label" style="color:${TIER_COLORS[tier.id]}">T${tier.id}: ${TIER_NAMES[tier.id]}</div><div class="hm-cells">`;
+    const cells=document.createElement('div');
+    cells.className='hm-cells';
+    tier.criteria.forEach(crit=>{
+      const lv=state[crit.id]?.level;
+      const cell=document.createElement('div');
+      cell.className='hm-cell';
+      cell.title=crit.title+(lv!==undefined?` — Level ${lv}: ${LEVELS[lv]}`:'— Not answered');
+      if(lv!==undefined){cell.dataset.level=lv;cell.textContent=lv;}
+      else{cell.classList.add('unanswered');cell.textContent='?'}
+      cell.onclick=()=>{
+        const tier=TIERS.find(t=>t.criteria.some(c=>c.id===crit.id));
+        if(tier){switchTier(tier.id);setTimeout(()=>{const c=document.getElementById('crit-'+crit.id);if(c){c.classList.add('open');c.scrollIntoView({behavior:'smooth',block:'center'})}},200)}
+      };
+      cells.appendChild(cell);
+    });
+    row.appendChild(cells);
+    grid.appendChild(row);
+  });
+}
 
-  svg.innerHTML = '';
+function buildHistogram(){
+  const bars=document.getElementById('hist-bars');
+  const counts=[0,0,0,0,0];
+  TIERS.forEach(t=>t.criteria.forEach(c=>{
+    const lv=state[c.id]?.level;
+    if(lv!==undefined)counts[lv]++;
+  }));
+  const maxC=Math.max(...counts,1);
+  bars.innerHTML=LEVELS.map((ln,li)=>{
+    const h=Math.max(4,Math.round(counts[li]/maxC*70));
+    const colors=['rgba(74,85,104,.6)','rgba(61,126,255,.7)','rgba(0,201,167,.7)','rgba(245,158,11,.7)','rgba(192,38,211,.7)'];
+    return `<div class="hist-bar-col">
+      <div class="hist-bar-count">${counts[li]}</div>
+      <div class="hist-bar" style="height:${h}px;background:${colors[li]};border-color:${colors[li]}"></div>
+      <div class="hist-bar-label">${li}: ${ln}</div>
+    </div>`;
+  }).join('');
+}
 
-  const ns = 'http://www.w3.org/2000/svg';
-  const g = document.createElementNS(ns, 'g');
-
-  // Grid rings
-  [1,2,3,4].forEach(i => {
-    const r = R * (i/4);
-    const poly = document.createElementNS(ns, 'polygon');
-    const pts = Array.from({length: N}, (_,j) => {
-      const ang = (j / N) * 2 * Math.PI - Math.PI/2;
-      return `${cx + r * Math.cos(ang)},${cy + r * Math.sin(ang)}`;
-    }).join(' ');
-    poly.setAttribute('points', pts);
-    poly.setAttribute('fill', 'none');
-    poly.setAttribute('stroke', '#1e2530');
-    poly.setAttribute('stroke-width', '1');
+// ── RADAR ────────────────────────────────────────────────────────────────
+function drawRadar(tierStats){
+  const svg=document.getElementById('radar-svg');
+  const W=280,H=280,cx=140,cy=140,R=95,N=5;
+  const labels=['T0\nFoundation','T1\nBasic','T2\nInter-\nmediate','T3\nAdvanced','T4\nExpert'];
+  svg.innerHTML='';
+  const ns='http://www.w3.org/2000/svg';
+  const g=document.createElementNS(ns,'g');
+  [1,2,3,4].forEach(i=>{
+    const r=R*(i/4);
+    const poly=document.createElementNS(ns,'polygon');
+    const pts=Array.from({length:N},(_,j)=>{const a=(j/N)*2*Math.PI-Math.PI/2;return`${cx+r*Math.cos(a)},${cy+r*Math.sin(a)}`}).join(' ');
+    poly.setAttribute('points',pts);poly.setAttribute('fill','none');poly.setAttribute('stroke','#1e2530');poly.setAttribute('stroke-width','1');
     g.appendChild(poly);
+    const lt=document.createElementNS(ns,'text');
+    lt.setAttribute('x',cx+r*Math.cos(-Math.PI/2)-12);lt.setAttribute('y',cy+r*Math.sin(-Math.PI/2)+2);
+    lt.setAttribute('fill','#3a4a60');lt.setAttribute('font-size','8');lt.setAttribute('font-family','DM Mono,monospace');
+    lt.textContent=i;g.appendChild(lt);
   });
-
-  // Spokes + labels
-  for (let j = 0; j < N; j++) {
-    const ang = (j / N) * 2 * Math.PI - Math.PI/2;
-    const line = document.createElementNS(ns, 'line');
-    line.setAttribute('x1', cx); line.setAttribute('y1', cy);
-    line.setAttribute('x2', cx + R * Math.cos(ang));
-    line.setAttribute('y2', cy + R * Math.sin(ang));
-    line.setAttribute('stroke', '#1e2530');
-    line.setAttribute('stroke-width', '1');
-    g.appendChild(line);
-
-    // Label
-    const lx = cx + (R + 22) * Math.cos(ang);
-    const ly = cy + (R + 22) * Math.sin(ang);
-    const parts = labels[j].split('\n');
-    parts.forEach((part, pi) => {
-      const t = document.createElementNS(ns, 'text');
-      t.setAttribute('x', lx);
-      t.setAttribute('y', ly + pi * 13 - (parts.length - 1) * 6);
-      t.setAttribute('text-anchor', 'middle');
-      t.setAttribute('dominant-baseline', 'middle');
-      t.setAttribute('fill', '#5a6a7a');
-      t.setAttribute('font-size', '9');
-      t.setAttribute('font-family', 'DM Mono, monospace');
-      t.textContent = part;
-      g.appendChild(t);
+  for(let j=0;j<N;j++){
+    const a=(j/N)*2*Math.PI-Math.PI/2;
+    const line=document.createElementNS(ns,'line');
+    line.setAttribute('x1',cx);line.setAttribute('y1',cy);line.setAttribute('x2',cx+R*Math.cos(a));line.setAttribute('y2',cy+R*Math.sin(a));
+    line.setAttribute('stroke','#1e2530');line.setAttribute('stroke-width','1');g.appendChild(line);
+    const lx=cx+(R+28)*Math.cos(a),ly=cy+(R+28)*Math.sin(a);
+    labels[j].split('\n').forEach((part,pi)=>{
+      const t=document.createElementNS(ns,'text');
+      t.setAttribute('x',lx);t.setAttribute('y',ly+pi*12-((labels[j].split('\n').length-1)*6));
+      t.setAttribute('text-anchor','middle');t.setAttribute('dominant-baseline','middle');
+      t.setAttribute('fill','#5a6a7a');t.setAttribute('font-size','9');t.setAttribute('font-family','DM Mono,monospace');
+      t.textContent=part;g.appendChild(t);
     });
   }
-
-  // Data polygon
-  const scores = TIERS.map(tier => {
-    const ts = tierStats[tier.id];
-    return ts.answered > 0 ? ts.avgScore / 4 : 0;
-  });
-
-  const dataPts = scores.map((s, j) => {
-    const ang = (j / N) * 2 * Math.PI - Math.PI/2;
-    return `${cx + R * s * Math.cos(ang)},${cy + R * s * Math.sin(ang)}`;
-  }).join(' ');
-
-  const fill = document.createElementNS(ns, 'polygon');
-  fill.setAttribute('points', dataPts);
-  fill.setAttribute('fill', 'rgba(0,229,200,0.15)');
-  fill.setAttribute('stroke', 'rgba(0,229,200,0.7)');
-  fill.setAttribute('stroke-width', '1.5');
+  const scores=TIERS.map(tier=>{const ts=tierStats[tier.id];return ts.answered>0?ts.avgScore/4:0});
+  const dataPts=scores.map((s,j)=>{const a=(j/N)*2*Math.PI-Math.PI/2;return`${cx+R*s*Math.cos(a)},${cy+R*s*Math.sin(a)}`}).join(' ');
+  const fill=document.createElementNS(ns,'polygon');
+  fill.setAttribute('points',dataPts);fill.setAttribute('fill','rgba(0,229,200,0.12)');fill.setAttribute('stroke','rgba(0,229,200,0.6)');fill.setAttribute('stroke-width','1.5');
   g.appendChild(fill);
-
-  // Data points
-  scores.forEach((s, j) => {
-    const ang = (j / N) * 2 * Math.PI - Math.PI/2;
-    const circle = document.createElementNS(ns, 'circle');
-    circle.setAttribute('cx', cx + R * s * Math.cos(ang));
-    circle.setAttribute('cy', cy + R * s * Math.sin(ang));
-    circle.setAttribute('r', '4');
-    circle.setAttribute('fill', TIER_COLORS[j]);
-    circle.setAttribute('stroke', '#0a0c10');
-    circle.setAttribute('stroke-width', '1.5');
-    g.appendChild(circle);
+  scores.forEach((s,j)=>{
+    const a=(j/N)*2*Math.PI-Math.PI/2;
+    const c=document.createElementNS(ns,'circle');
+    c.setAttribute('cx',cx+R*s*Math.cos(a));c.setAttribute('cy',cy+R*s*Math.sin(a));c.setAttribute('r','4');
+    c.setAttribute('fill',TIER_COLORS[j]);c.setAttribute('stroke','#0a0c10');c.setAttribute('stroke-width','1.5');
+    g.appendChild(c);
   });
-
   svg.appendChild(g);
 }
 
-// ===== EXPORT =====
-function exportReport() {
-  const { total, answered, overallScore, tierStats } = getStats();
-  const currentTier = determineTier(tierStats);
-  const now = new Date().toLocaleDateString('en-IE', {year:'numeric',month:'long',day:'numeric'});
+// ── INTERACTIONS ─────────────────────────────────────────────────────────
+function switchTier(id){
+  document.querySelectorAll('.tier-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tier-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tp-'+id).classList.add('active');
+  document.querySelector(`.tier-tab[data-tier="${id}"]`).classList.add('active');
+  // Auto-open first unanswered
+  const firstUnanswered=TIERS[id].criteria.find(c=>state[c.id]?.level===undefined);
+  if(firstUnanswered){
+    const card=document.getElementById('crit-'+firstUnanswered.id);
+    if(card&&!card.classList.contains('open'))card.classList.add('open');
+  }
+}
 
-  let lines = [
-    '# DEBMM Self-Assessment Report',
+function toggleCrit(id){
+  const c=document.getElementById('crit-'+id);
+  c.classList.toggle('open');
+}
+
+function selectLevel(critId,level){
+  if(!state[critId])state[critId]={};
+  state[critId].level=level;
+  saveState();
+  // Update level buttons
+  const card=document.getElementById('crit-'+critId);
+  card.querySelectorAll('.level-btn').forEach((btn,i)=>btn.classList.toggle('selected',i===level));
+  card.classList.add('answered');
+  document.getElementById('sp-'+critId).textContent=`${level} — ${LEVELS[level]}`;
+  // Update table row highlights
+  const conf=state[critId].conf||'self';
+  document.getElementById('cf-'+critId).textContent=CONF_LABELS[conf];
+  document.getElementById('cf-'+critId).style.display='';
+  updateTableHighlight(critId,level,'ltr');
+  updateTableHighlight(critId,level,'ltr2');
+  // Pre-fill gap field with next-target
+  const tier=TIERS.find(t=>t.criteria.some(c=>c.id===critId));
+  const crit=tier?.criteria.find(c=>c.id===critId);
+  if(crit&&!state[critId].gap){
+    document.getElementById('gap-'+critId).placeholder=crit.nextTarget;
+  }
+  updateDashboard();
+}
+
+function updateTableHighlight(critId,level,prefix){
+  for(let li=0;li<5;li++){
+    const rows=document.querySelectorAll(`.${prefix}-${critId}-${li}`);
+    rows.forEach(row=>{
+      row.classList.toggle('row-selected',li===level);
+      row.classList.toggle('row-muted',li!==level);
+    });
+  }
+}
+
+function toggleShowAll(critId,type){
+  const prefix=type==='q'?'ltr':'ltr2';
+  const btn=document.getElementById(`showall-${type}-${critId}`);
+  const lv=state[critId]?.level;
+  const isHidden=btn.textContent.includes('Show');
+  if(isHidden){
+    for(let li=0;li<5;li++){document.querySelectorAll(`.${prefix}-${critId}-${li}`).forEach(r=>r.classList.remove('row-muted'))}
+    btn.textContent='Show selected only';
+  }else{
+    if(lv!==undefined)updateTableHighlight(critId,lv,prefix);
+    btn.textContent='Show all levels';
+  }
+}
+
+function selectConf(critId,conf){
+  if(!state[critId])state[critId]={};
+  state[critId].conf=conf;
+  saveState();
+  const card=document.getElementById('crit-'+critId);
+  card.querySelectorAll('.conf-btn').forEach(b=>b.classList.toggle('selected',b.textContent===CONF_LABELS[conf]));
+  document.getElementById('cf-'+critId).textContent=CONF_LABELS[conf];
+  updateDashboard();
+}
+
+function saveNote(critId,field,value){
+  if(!state[critId])state[critId]={};
+  state[critId][field]=value;
+  saveState();
+  if(field==='owner')updateDashboard();
+}
+
+function toggleQArea(i){
+  const area=document.getElementById('qa-'+i);
+  area.classList.toggle('qa-open');
+}
+
+function highlightPS(i){
+  document.querySelectorAll('.ps').forEach(p=>p.classList.remove('active'));
+  document.getElementById('ps-'+i).classList.add('active');
+  const area=document.getElementById('qa-'+i);
+  if(area){
+    if(!area.classList.contains('qa-open'))area.classList.add('qa-open');
+    setTimeout(()=>area.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  }
+}
+
+function markReviewed(i){
+  qReviewed[i]=true;saveQRev();
+  document.getElementById('qa-'+i).classList.add('qa-reviewed');
+  document.getElementById('ps-'+i).classList.add('reviewed');
+}
+
+function scrollToQStep(i){
+  document.getElementById('sec-questionnaire').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>highlightPS(i),400);
+}
+
+function jumpToCrit(id){
+  const tier=TIERS.find(t=>t.criteria.some(c=>c.id===id));
+  if(!tier)return;
+  switchTier(tier.id);
+  document.getElementById('sec-assessment').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>{
+    const card=document.getElementById('crit-'+id);
+    if(card){card.classList.add('open');card.scrollIntoView({behavior:'smooth',block:'center'})}
+  },400);
+}
+
+function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+
+function dismissOnboard(){
+  document.getElementById('onboard-banner').classList.add('hidden');
+  try{localStorage.setItem('debmm-onboard-dismissed','1')}catch(e){}
+}
+
+function toggleTierInfo(){
+  const box=document.getElementById('tier-info-box');
+  box.style.display=box.style.display==='none'?'block':'none';
+}
+
+function toggleGlossary(){
+  const body=document.getElementById('glossary-body');
+  const chev=document.getElementById('glos-chevron');
+  body.classList.toggle('open');
+  chev.textContent=body.classList.contains('open')?'▼ Hide':'▶ Show';
+}
+
+function saveSnapshot(){
+  const{confScore,tierStats}=getStats();
+  const currentTier=determineTier(tierStats);
+  history.push({date:new Date().toLocaleDateString('en-IE'),score:Math.round(confScore/4*100),tier:currentTier,scope:metaState.scope||''});
+  if(history.length>10)history=history.slice(-10);
+  try{localStorage.setItem('debmm-history',JSON.stringify(history))}catch(e){}
+  buildHistory();
+  updateDashboard();
+}
+
+function resetAll(){
+  if(confirm('Reset all assessment data? This cannot be undone.')){{state={};saveState();loadState();buildUI()}}
+}
+
+// ── EXPORT ───────────────────────────────────────────────────────────────
+function exportReport(){
+  const{total,answered,rawScore,confScore,tierStats,ownedCount}=getStats();
+  const currentTier=determineTier(tierStats);
+  const now=new Date().toLocaleDateString('en-IE',{year:'numeric',month:'long',day:'numeric'});
+  const lines=[
+    '# DEBMM Detection Engineering Maturity Assessment Report',
     `Generated: ${now}`,
-    `Overall Score: ${Math.round(overallScore/4*100)}% | Current Tier: Tier ${currentTier} — ${TIER_NAMES[currentTier]}`,
+    '',
+    '## Session',
+    `Team: ${metaState.team||'—'}`,
+    `Assessor: ${metaState.assessor||'—'}`,
+    `Ruleset scope: ${metaState.scope||'—'}`,
+    `Assessment date: ${metaState.date||'—'}`,
+    '',
+    '## Summary',
+    `Overall Score (confidence-adjusted): ${Math.round(confScore/4*100)}%`,
+    `Raw Self-Assessed Score: ${Math.round(rawScore/4*100)}%`,
+    `Current Tier: T${currentTier} — ${TIER_NAMES[currentTier]}`,
     `Criteria Answered: ${answered} / ${total}`,
+    `Criteria with Owner Assigned: ${ownedCount}`,
     '',
     '---',
     ''
   ];
-
-  TIERS.forEach(tier => {
+  TIERS.forEach(tier=>{
     lines.push(`## Tier ${tier.id}: ${TIER_NAMES[tier.id]}`);
-    tier.criteria.forEach(crit => {
-      const level = state[crit.id]?.level;
-      const notes = state[crit.id]?.notes || '';
+    tier.criteria.forEach(crit=>{
+      const s=state[crit.id]||{};
+      const lv=s.level;
       lines.push(`### ${crit.title}`);
-      lines.push(`Level: ${level !== undefined ? `${level} — ${LEVELS[level]}` : 'Not assessed'}`);
-      if (notes) lines.push(`Notes: ${notes}`);
+      lines.push(`Level: ${lv!==undefined?`${lv} — ${LEVELS[lv]}`:'Not assessed'}`);
+      lines.push(`Confidence: ${CONF_LABELS[s.conf||'self']}`);
+      if(s.evidence)lines.push(`Evidence: ${s.evidence}`);
+      if(s.gap)lines.push(`Gap to next level: ${s.gap}`);
+      else lines.push(`Gap to next level: ${crit.nextTarget}`);
+      if(s.owner)lines.push(`Owner: ${s.owner}`);
+      if(s.target)lines.push(`Target date: ${s.target}`);
       lines.push('');
     });
   });
-
+  lines.push('## Team Metrics');
+  METRICS.forEach(m=>{
+    const v=metricsState[m.id];
+    if(v)lines.push(`${m.name}: ${v} ${m.unit}`);
+  });
+  lines.push('');
   lines.push('---');
   lines.push('Reference: https://www.elastic.co/security-labs/elastic-releases-debmm');
 
-  const blob = new Blob([lines.join('\n')], {type:'text/markdown'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `debmm-assessment-${new Date().toISOString().split('T')[0]}.md`;
-  a.click();
-  URL.revokeObjectURL(url);
+  const blob=new Blob([lines.join('\n')],{type:'text/markdown'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`debmm-report-${new Date().toISOString().split('T')[0]}.md`;
+  a.click();URL.revokeObjectURL(url);
 }
 
-// ===== INIT =====
+// ── SCROLL-SPY ───────────────────────────────────────────────────────────
+const sections=['sec-assessment','sec-results','sec-metrics','sec-questionnaire'];
+const navLinks=document.querySelectorAll('.nav-link');
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY+80;
+  let active=0;
+  sections.forEach((id,i)=>{const el=document.getElementById(id);if(el&&el.offsetTop<=y)active=i});
+  navLinks.forEach((l,i)=>l.classList.toggle('active',i===active));
+  // Back to top
+  document.getElementById('back-top').classList.toggle('visible',window.scrollY>400);
+},{passive:true});
+
+// ── INIT ─────────────────────────────────────────────────────────────────
+loadState();
 buildUI();
 </script>
 </body>
