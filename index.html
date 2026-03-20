@@ -394,29 +394,12 @@ h1 span{color:var(--ac)}
 /* Report modal */
 .report-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:800;display:flex;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;backdrop-filter:blur(4px)}
 .report-modal-overlay.hidden{display:none}
-.report-modal{background:var(--s1);border:1px solid var(--b2);width:100%;max-width:860px;min-height:200px;position:relative;margin-top:20px}
+.report-modal{background:var(--s1);border:1px solid var(--b2);width:100%;max-width:900px;min-height:200px;position:relative;margin-top:20px}
 .report-modal-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--b1);background:var(--s2)}
 .report-modal-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--txb)}
 .report-modal-close{background:none;border:1px solid var(--b1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;padding:4px 12px;transition:all .15s}
 .report-modal-close:hover{border-color:var(--danger);color:var(--danger)}
-.report-modal-body{padding:24px;font-size:12px;color:var(--tx);line-height:1.8}
-.report-modal-body h2{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--txb);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b1)}
-.report-modal-body h2:first-child{margin-top:0}
-.report-modal-body h3{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--tx2);margin:18px 0 8px}
-.report-modal-body h4{font-size:11px;font-weight:500;color:var(--ac);margin:14px 0 5px;letter-spacing:.06em;text-transform:uppercase}
-.report-modal-body p{margin-bottom:10px;color:var(--tx2)}
-.report-modal-body ul{margin:8px 0 12px 16px;color:var(--tx3)}
-.report-modal-body li{margin-bottom:4px}
-.report-modal-body table{width:100%;border-collapse:collapse;margin:12px 0;font-size:11px}
-.report-modal-body th{text-align:left;padding:7px 10px;background:var(--s2);color:var(--tx3);font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:10px;border:1px solid var(--b1)}
-.report-modal-body td{padding:8px 10px;border:1px solid var(--b1);color:var(--tx2);vertical-align:top}
-.report-modal-body tr:nth-child(even) td{background:var(--s2)}
-.report-score-badge{display:inline-block;padding:2px 9px;border-radius:2px;font-size:11px;font-weight:500;margin-left:8px}
-.rsbg-0{background:rgba(74,85,104,.3);color:#888}
-.rsbg-1{background:rgba(61,126,255,.2);color:#7aa8ff}
-.rsbg-2{background:rgba(0,201,167,.2);color:#00c9a7}
-.rsbg-3{background:rgba(245,158,11,.2);color:#f59e0b}
-.rsbg-4{background:rgba(192,38,211,.2);color:#d946ef}
+.report-modal-body{padding:0;font-size:12px;color:var(--tx);line-height:1.8}
 .report-generating{padding:40px 20px;text-align:center}
 .report-completeness-warn{margin:16px 20px 0;padding:12px 16px;background:rgba(61,126,255,.08);border:1px solid rgba(61,126,255,.25);font-size:11px;color:var(--tx2);line-height:1.8}
 .report-completeness-warn strong{color:var(--t1);font-weight:500}
@@ -426,11 +409,109 @@ h1 span{color:var(--ac)}
 .report-completeness-list li.warn-item::before{content:'◐';color:var(--t1)}
 .report-spinner{width:32px;height:32px;border:2px solid var(--b2);border-top-color:var(--ac);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.report-actions{display:flex;gap:8px;padding:16px 20px;border-top:1px solid var(--b1);background:var(--s2)}
-.report-copy-btn{padding:8px 16px;background:var(--acd);border:1px solid rgba(0,229,200,.4);color:var(--ac);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s}
+.report-actions{display:flex;gap:8px;padding:14px 20px;border-top:1px solid var(--b1);background:var(--s2);flex-wrap:wrap;align-items:center}
+.report-copy-btn{padding:7px 14px;background:var(--acd);border:1px solid rgba(0,229,200,.4);color:var(--ac);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s}
 .report-copy-btn:hover{background:rgba(0,229,200,.2)}
-.report-dl-btn{padding:8px 16px;background:var(--s1);border:1px solid var(--b1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s}
+.report-dl-btn{padding:7px 14px;background:var(--s1);border:1px solid var(--b1);color:var(--tx3);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;transition:all .15s}
 .report-dl-btn:hover{border-color:var(--b2);color:var(--tx)}
+
+/* Mode picker */
+.mode-picker{display:grid;grid-template-columns:1fr 1fr;gap:0}
+@media(max-width:600px){.mode-picker{grid-template-columns:1fr}}
+.mode-card{padding:28px 28px 24px;cursor:pointer;border-right:1px solid var(--b1);transition:background .15s;display:flex;flex-direction:column;gap:10px}
+.mode-card:last-child{border-right:none}
+.mode-card:hover{background:var(--s2)}
+.mode-card-icon{font-size:22px;line-height:1;margin-bottom:2px}
+.mode-card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--txb);display:flex;align-items:center;gap:8px}
+.mode-card-badge{font-size:9px;padding:2px 7px;border-radius:2px;letter-spacing:.08em;font-family:'DM Mono',monospace;font-weight:400}
+.badge-instant{background:rgba(34,197,94,.12);color:var(--ok);border:1px solid rgba(34,197,94,.25)}
+.badge-ai{background:var(--acd);color:var(--ac);border:1px solid rgba(0,229,200,.25)}
+.mode-card-desc{font-size:11px;color:var(--tx3);line-height:1.7}
+.mode-card-features{display:flex;flex-direction:column;gap:4px;margin-top:4px}
+.mcf-item{font-size:10px;color:var(--tx3);display:flex;align-items:center;gap:6px}
+.mcf-item::before{content:'';width:4px;height:4px;border-radius:50%;background:var(--b3);flex-shrink:0}
+.mcf-item.mcf-ok::before{background:var(--ok)}
+.mcf-item.mcf-ac::before{background:var(--ac)}
+.mode-card-cta{margin-top:auto;padding:8px 14px;font-size:11px;font-family:'DM Mono',monospace;border:1px solid var(--b2);background:var(--s2);color:var(--tx2);cursor:pointer;transition:all .15s;align-self:flex-start}
+.mode-card:hover .mode-card-cta{border-color:var(--b3);color:var(--txb)}
+.mode-card.mc-ai .mode-card-cta{border-color:rgba(0,229,200,.3);color:var(--ac);background:var(--acd)}
+.mode-card.mc-ai:hover .mode-card-cta{background:rgba(0,229,200,.2)}
+.mode-divider{border:none;border-top:1px solid var(--b1);margin:0}
+.ai-key-setup{padding:20px 28px 24px;background:var(--s2);border-top:1px solid var(--b1)}
+.ai-key-label{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--tx3);margin-bottom:10px}
+.ai-key-steps{display:flex;flex-direction:column;gap:6px}
+.ai-key-step{display:flex;gap:10px;align-items:flex-start;font-size:11px;color:var(--tx3);line-height:1.6}
+.ai-key-num{width:18px;height:18px;border:1px solid var(--b2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--tx3);flex-shrink:0;margin-top:1px}
+.ai-key-step code{color:var(--ac);background:rgba(0,229,200,.06);padding:1px 5px;border-radius:2px;font-family:'DM Mono',monospace}
+.ai-key-step a{color:var(--ac);text-decoration:none}
+
+/* Local report content */
+.lr-body{padding:32px 32px 28px}
+@media(max-width:600px){.lr-body{padding:20px 16px}}
+.lr-header{margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid var(--b1)}
+.lr-org{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--txb);line-height:1.1;margin-bottom:4px}
+.lr-meta{font-size:11px;color:var(--tx3);display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+.lr-meta-item{display:flex;align-items:center;gap:5px}
+.lr-score-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:20px}
+.lr-score-card{background:var(--s2);border:1px solid var(--b1);padding:12px 14px}
+.lr-score-label{font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--tx3);margin-bottom:5px}
+.lr-score-val{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--txb);line-height:1}
+.lr-score-sub{font-size:10px;color:var(--tx3);margin-top:3px}
+.lr-section{margin-bottom:32px}
+.lr-section-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--txb);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--b1);display:flex;align-items:center;gap:10px}
+.lr-section-num{font-size:10px;color:var(--tx3);border:1px solid var(--b1);padding:1px 7px;font-family:'DM Mono',monospace;flex-shrink:0}
+.lr-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px}
+.lr-table th{text-align:left;padding:7px 10px;background:var(--s2);color:var(--tx3);font-weight:400;letter-spacing:.1em;text-transform:uppercase;font-size:9px;border:1px solid var(--b1)}
+.lr-table td{padding:8px 10px;border:1px solid var(--b1);color:var(--tx2);vertical-align:top;line-height:1.5}
+.lr-table tr:nth-child(even) td{background:var(--s2)}
+.lr-lv-badge{display:inline-block;padding:1px 7px;font-size:9px;letter-spacing:.08em;text-transform:uppercase;border-radius:1px;white-space:nowrap}
+.lv0{background:rgba(74,85,104,.3);color:#888}
+.lv1{background:rgba(61,126,255,.2);color:#7aa8ff}
+.lv2{background:rgba(0,201,167,.2);color:#00c9a7}
+.lv3{background:rgba(245,158,11,.2);color:#f59e0b}
+.lv4{background:rgba(192,38,211,.2);color:#d946ef}
+.lvna{background:var(--s2);color:var(--tx3);border:1px solid var(--b1)}
+.lr-status-pass{color:var(--ok);font-size:10px}
+.lr-status-work{color:var(--warn);font-size:10px}
+.lr-status-part{color:var(--tx3);font-size:10px}
+.lr-crit-block{background:var(--s2);border:1px solid var(--b1);padding:12px 14px;margin-bottom:8px}
+.lr-crit-title{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--txb);margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.lr-crit-row{display:flex;gap:6px;font-size:10px;color:var(--tx3);margin-bottom:3px;align-items:flex-start;line-height:1.5}
+.lr-crit-key{color:var(--tx3);min-width:68px;flex-shrink:0}
+.lr-crit-val{color:var(--tx2)}
+.lr-crit-val.good{color:var(--ok)}
+.lr-crit-val.gap{color:var(--warn)}
+.lr-tier-header{display:flex;align-items:center;gap:10px;padding:10px 14px;margin-bottom:10px;border-left:3px solid}
+.lr-tier-score{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-left:auto;line-height:1}
+.lr-q-row{display:flex;gap:8px;padding:7px 10px;background:var(--s2);border:1px solid var(--b1);margin-bottom:4px;font-size:11px;align-items:flex-start}
+.lr-q-label{min-width:16px;font-size:9px;color:var(--tx3);flex-shrink:0;margin-top:1px}
+.lr-q-text{color:var(--tx3);flex:1;line-height:1.5}
+.lr-q-ans{color:var(--ac);font-size:10px;padding:1px 7px;border:1px solid rgba(0,229,200,.25);white-space:nowrap;align-self:flex-start;flex-shrink:0}
+.lr-q-ans.ans-warn{color:var(--warn);border-color:rgba(245,158,11,.3)}
+.lr-q-ans.ans-none{color:var(--tx3);border-color:var(--b1)}
+.lr-metric-row{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--s2);border:1px solid var(--b1);margin-bottom:4px}
+.lr-metric-name{font-size:11px;color:var(--tx2);flex:1}
+.lr-metric-val{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;color:var(--txb)}
+.lr-metric-unit{font-size:10px;color:var(--tx3)}
+.lr-metric-crit{font-size:9px;color:var(--tx3);border:1px solid var(--b1);padding:1px 6px}
+.lr-attck-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.lr-attck-name{font-size:10px;color:var(--tx2);width:140px;flex-shrink:0}
+.lr-attck-bar-bg{flex:1;height:6px;background:var(--b1);position:relative}
+.lr-attck-bar-fill{position:absolute;left:0;top:0;height:100%}
+.lr-attck-pct{font-size:10px;color:var(--tx3);width:32px;text-align:right}
+.lr-roadmap-phase{margin-bottom:20px}
+.lr-roadmap-label{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--tx3);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.lr-roadmap-label::after{content:'';flex:1;height:1px;background:var(--b1)}
+.lr-action{display:flex;gap:10px;padding:9px 12px;background:var(--s2);border:1px solid var(--b1);margin-bottom:5px;font-size:11px;color:var(--tx2);line-height:1.5;align-items:flex-start}
+.lr-action-num{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--b3);flex-shrink:0;min-width:18px;line-height:1.4}
+.lr-missing-note{padding:10px 14px;background:rgba(61,126,255,.06);border:1px solid rgba(61,126,255,.2);font-size:10px;color:var(--tx3);line-height:1.7;margin-bottom:14px}
+
+@media print{
+  .report-modal-overlay{position:static!important;background:none!important;padding:0!important;display:block!important}
+  .report-modal{border:none!important;max-width:none!important;margin:0!important}
+  .report-modal-header,.report-actions,.mode-picker,.ai-key-setup{display:none!important}
+  .lr-body{padding:20px!important}
+}
 
 /* Apply steps */
 .apply-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:20px}
@@ -716,18 +797,14 @@ h1 span{color:var(--ac)}
 <div class="report-modal-overlay hidden" id="report-overlay" onclick="closeReportModal(event)">
   <div class="report-modal" id="report-modal">
     <div class="report-modal-header">
-      <div class="report-modal-title" id="report-modal-title">Generating Report…</div>
+      <div class="report-modal-title" id="report-modal-title">Export Report</div>
       <button class="report-modal-close" onclick="closeReportModal()">✕ Close</button>
     </div>
-    <div class="report-modal-body" id="report-modal-body">
-      <div class="report-generating">
-        <div class="report-spinner"></div>
-        <div style="font-size:12px;color:var(--tx3)">Analysing your assessment data…</div>
-      </div>
-    </div>
+    <div class="report-modal-body" id="report-modal-body"></div>
     <div class="report-actions" id="report-actions" style="display:none">
-      <button class="report-copy-btn" onclick="copyReport()">⎘ Copy as Markdown</button>
+      <button class="report-copy-btn" onclick="copyReport()">⎘ Copy Markdown</button>
       <button class="report-dl-btn" onclick="downloadReport()">↓ Download .md</button>
+      <button class="report-dl-btn" onclick="window.print()" style="margin-left:auto">⎙ Print / PDF</button>
     </div>
   </div>
 </div>
@@ -1949,6 +2026,560 @@ function downloadReport(){
   a.click();URL.revokeObjectURL(url);
 }
 
+// ── MODE PICKER ───────────────────────────────────────────────────────────
+function exportReport(){
+  const overlay=document.getElementById('report-overlay');
+  const body=document.getElementById('report-modal-body');
+  const title=document.getElementById('report-modal-title');
+  const actions=document.getElementById('report-actions');
+  overlay.classList.remove('hidden');
+  title.textContent='Export Report';
+  actions.style.display='none';
+
+  const hasKey=!!ANTHROPIC_API_KEY;
+  const{answered,total}=getStats();
+  const missing=getMissingCriteria();
+  const warnText=missing.length>0
+    ?`<div class="lr-missing-note"><strong style="color:var(--t1)">${missing.length} criteria unanswered.</strong> Both report types will mark these as "Not assessed" rather than zero.</div>`
+    :'';
+
+  body.innerHTML=`
+    ${warnText}
+    <div class="mode-picker">
+      <div class="mode-card" onclick="runLocalReport()">
+        <div class="mode-card-icon">◈</div>
+        <div class="mode-card-title">Local Report <span class="mode-card-badge badge-instant">Instant</span></div>
+        <div class="mode-card-desc">Structured, visually formatted report built directly from your assessment data — no internet connection or API key needed.</div>
+        <div class="mode-card-features">
+          <div class="mcf-item mcf-ok">Works offline, no key required</div>
+          <div class="mcf-item mcf-ok">Scorecard, tier findings, metrics, ATT&CK</div>
+          <div class="mcf-item mcf-ok">90-day roadmap from your gap data</div>
+          <div class="mcf-item mcf-ok">Print to PDF directly from browser</div>
+        </div>
+        <button class="mode-card-cta" onclick="event.stopPropagation();runLocalReport()">Generate local report →</button>
+      </div>
+      <div class="mode-card mc-ai" onclick="${hasKey?'runAIReport()':'void(0)'}">
+        <div class="mode-card-icon">✦</div>
+        <div class="mode-card-title">AI Report <span class="mode-card-badge badge-ai">Claude Sonnet</span></div>
+        <div class="mode-card-desc">Full narrative report written by Claude — executive summary, risk assessment, questionnaire analysis, and strategic recommendations tailored to your specific data.</div>
+        <div class="mode-card-features">
+          <div class="mcf-item mcf-ac">CISO-ready executive summary</div>
+          <div class="mcf-item mcf-ac">Narrative risk assessment</div>
+          <div class="mcf-item mcf-ac">Contextual analysis of questionnaire answers</div>
+          <div class="mcf-item mcf-ac">Strategic 12-month roadmap with owner types</div>
+        </div>
+        <button class="mode-card-cta" onclick="event.stopPropagation();runAIReport()" ${hasKey?'':'disabled style="opacity:.5;cursor:not-allowed"'}>${hasKey?'Generate AI report →':'API key required'}</button>
+      </div>
+    </div>
+    ${!hasKey?`<div class="ai-key-setup">
+      <div class="ai-key-label">How to enable AI reports</div>
+      <div class="ai-key-steps">
+        <div class="ai-key-step"><span class="ai-key-num">1</span>Get a free API key at <a href="https://console.anthropic.com/settings/keys" target="_blank">console.anthropic.com</a></div>
+        <div class="ai-key-step"><span class="ai-key-num">2</span>Open <code>debmm-assessment.html</code> in a text editor</div>
+        <div class="ai-key-step"><span class="ai-key-num">3</span>Find line ~740 and set: <code>const ANTHROPIC_API_KEY = 'sk-ant-...';</code></div>
+        <div class="ai-key-step"><span class="ai-key-num">4</span>Save and reload — the AI report option will be enabled. Keep this file in a <strong>private</strong> repository.</div>
+      </div>
+    </div>`:''}`;
+}
+
+// ── LOCAL REPORT ──────────────────────────────────────────────────────────
+function levelBadge(lv){
+  if(lv===undefined)return`<span class="lr-lv-badge lvna">Not assessed</span>`;
+  const cls=['lv0','lv1','lv2','lv3','lv4'][lv];
+  return`<span class="lr-lv-badge ${cls}">${lv} — ${LEVELS[lv]}</span>`;
+}
+
+function attckBarColor(pct){
+  if(pct<30)return'rgba(239,68,68,.7)';
+  if(pct<60)return'rgba(245,158,11,.8)';
+  if(pct<80)return'rgba(0,201,167,.8)';
+  return'rgba(0,229,200,.9)';
+}
+
+function runLocalReport(){
+  const body=document.getElementById('report-modal-body');
+  const title=document.getElementById('report-modal-title');
+  const actions=document.getElementById('report-actions');
+  title.textContent='Maturity Report';
+  actions.style.display='flex';
+
+  const{total,answered,rawScore,confScore,tierStats,ownedCount,highConf}=getStats();
+  const currentTier=determineTier(tierStats);
+  const rawPct=Math.round(rawScore/4*100);
+  const confPct=Math.round(confScore/4*100);
+  const now=new Date().toLocaleDateString('en-IE',{year:'numeric',month:'long',day:'numeric'});
+  const missing=getMissingCriteria();
+
+  // Build markdown for copy/download
+  reportMarkdown=buildFallbackReport();
+
+  // ── HEADER ───────────────────────────────────────────────────────────────
+  let h=`<div class="lr-body">`;
+  h+=`<div class="lr-header">
+    <div class="lr-org">${metaState.team||'Detection Engineering Team'}</div>
+    <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--ac);margin-top:2px;letter-spacing:.04em">DEBMM Maturity Assessment Report</div>
+    <div class="lr-meta">
+      <div class="lr-meta-item">◷ ${metaState.date||now}</div>
+      ${metaState.assessor?`<div class="lr-meta-item">◎ ${metaState.assessor}</div>`:''}
+      ${metaState.scope?`<div class="lr-meta-item">⊞ ${metaState.scope}</div>`:''}
+      <div class="lr-meta-item" style="color:var(--t1)">${answered<total?`◐ ${answered}/${total} criteria assessed`:''}</div>
+    </div>
+    <div class="lr-score-row">
+      <div class="lr-score-card" style="border-top:2px solid var(--ac)">
+        <div class="lr-score-label">Adjusted Score</div>
+        <div class="lr-score-val">${confPct}%</div>
+        <div class="lr-score-sub">confidence-weighted</div>
+      </div>
+      <div class="lr-score-card" style="border-top:2px solid var(--b2)">
+        <div class="lr-score-label">Raw Score</div>
+        <div class="lr-score-val">${rawPct}%</div>
+        <div class="lr-score-sub">self-assessed avg</div>
+      </div>
+      <div class="lr-score-card" style="border-top:2px solid ${TIER_COLORS[currentTier]}">
+        <div class="lr-score-label">Current Tier</div>
+        <div class="lr-score-val" style="font-size:16px;color:${TIER_COLORS[currentTier]}">T${currentTier}: ${TIER_NAMES[currentTier]}</div>
+        <div class="lr-score-sub">${answered<total?'partial assessment':''}</div>
+      </div>
+      <div class="lr-score-card" style="border-top:2px solid var(--b2)">
+        <div class="lr-score-label">Criteria Answered</div>
+        <div class="lr-score-val">${answered}<span style="font-size:14px;color:var(--tx3)">/${total}</span></div>
+        <div class="lr-score-sub">${ownedCount} with owner</div>
+      </div>
+      <div class="lr-score-card" style="border-top:2px solid var(--b2)">
+        <div class="lr-score-label">Evidence Quality</div>
+        <div class="lr-score-val">${answered>0?Math.round(highConf/answered*100):0}%</div>
+        <div class="lr-score-sub">data or externally validated</div>
+      </div>
+    </div>
+  </div>`;
+
+  if(missing.length>0){
+    h+=`<div class="lr-missing-note"><strong style="color:var(--t1)">${missing.length} criteria not yet assessed</strong> — marked below. Scores reflect answered criteria only.</div>`;
+  }
+
+  // ── SCORECARD ─────────────────────────────────────────────────────────────
+  h+=`<div class="lr-section">
+    <div class="lr-section-title"><span class="lr-section-num">01</span>Maturity Scorecard</div>
+    <table class="lr-table">
+      <tr><th>Tier</th><th>Name</th><th>Score</th><th>Status</th><th>Criteria</th></tr>`;
+  TIERS.forEach(tier=>{
+    const ts=tierStats[tier.id];
+    const pct=ts.answered>0?Math.round(ts.avgScore/4*100):null;
+    const answeredC=TIERS[tier.id].criteria.filter(c=>state[c.id]?.level!==undefined);
+    const goodC=answeredC.filter(c=>state[c.id].level>=2).length;
+    const unanswC=TIERS[tier.id].criteria.length-ts.answered;
+    let status='';
+    if(ts.answered===0)status=`<span class="lr-status-part">— Not assessed</span>`;
+    else if(unanswC>0)status=`<span class="lr-status-part">◐ ${unanswC} unanswered</span>`;
+    else if(goodC/answeredC.length>=0.5)status=`<span class="lr-status-pass">✓ Passing</span>`;
+    else status=`<span class="lr-status-work">↑ Needs work</span>`;
+    h+=`<tr>
+      <td style="color:${TIER_COLORS[tier.id]};font-weight:500">T${tier.id}</td>
+      <td>${TIER_NAMES[tier.id]}</td>
+      <td style="font-family:'Syne',sans-serif;font-weight:700;color:${pct!==null?TIER_COLORS[tier.id]:'var(--tx3)'}">${pct!==null?pct+'%':'—'}</td>
+      <td>${status}</td>
+      <td style="color:var(--tx3)">${ts.answered}/${TIERS[tier.id].criteria.length}</td>
+    </tr>`;
+  });
+  h+=`</table></div>`;
+
+  // ── TIER FINDINGS ─────────────────────────────────────────────────────────
+  h+=`<div class="lr-section">
+    <div class="lr-section-title"><span class="lr-section-num">02</span>Detailed Findings by Tier</div>`;
+  TIERS.forEach(tier=>{
+    const ts=tierStats[tier.id];
+    const pct=ts.answered>0?Math.round(ts.avgScore/4*100):null;
+    h+=`<div style="margin-bottom:20px">
+      <div class="lr-tier-header" style="border-left-color:${TIER_COLORS[tier.id]};background:var(--s2)">
+        <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:${TIER_COLORS[tier.id]}">T${tier.id}: ${TIER_NAMES[tier.id]}</div>
+        <div style="font-size:11px;color:var(--tx3);margin-left:8px">${tier.desc.substring(0,80)}…</div>
+        ${pct!==null?`<div class="lr-tier-score" style="color:${TIER_COLORS[tier.id]}">${pct}%</div>`:''}
+      </div>`;
+    tier.criteria.forEach(crit=>{
+      const s=state[crit.id]||{};
+      const lv=s.level;
+      h+=`<div class="lr-crit-block">
+        <div class="lr-crit-title">
+          ${levelBadge(lv)}
+          <span style="flex:1">${crit.title}</span>
+          ${s.conf&&lv!==undefined?`<span style="font-size:9px;color:var(--tx3);border:1px solid var(--b1);padding:1px 6px">${CONF_LABELS[s.conf]}</span>`:''}
+        </div>`;
+      if(lv!==undefined){
+        if(s.evidence)h+=`<div class="lr-crit-row"><span class="lr-crit-key">Evidence</span><span class="lr-crit-val good">${s.evidence}</span></div>`;
+        h+=`<div class="lr-crit-row"><span class="lr-crit-key">Gap</span><span class="lr-crit-val gap">${s.gap||crit.nextTarget}</span></div>`;
+        if(s.owner)h+=`<div class="lr-crit-row"><span class="lr-crit-key">Owner</span><span class="lr-crit-val">${s.owner}</span></div>`;
+        if(s.target)h+=`<div class="lr-crit-row"><span class="lr-crit-key">Target date</span><span class="lr-crit-val">${s.target}</span></div>`;
+      }else{
+        h+=`<div class="lr-crit-row"><span class="lr-crit-val" style="color:var(--tx3)">Not yet assessed</span></div>`;
+      }
+      h+=`</div>`;
+    });
+    h+=`</div>`;
+  });
+  h+=`</div>`;
+
+  // ── QUESTIONNAIRE ─────────────────────────────────────────────────────────
+  const anyQAnswered=QUESTIONNAIRE.some((q,i)=>q.questions.some((_,qi)=>qAnswers[getQKey(i,qi)]!==undefined));
+  if(anyQAnswered){
+    h+=`<div class="lr-section">
+      <div class="lr-section-title"><span class="lr-section-num">03</span>Questionnaire Responses</div>`;
+    QUESTIONNAIRE.forEach((q,i)=>{
+      const answeredQ=q.questions.filter((_,qi)=>qAnswers[getQKey(i,qi)]!==undefined).length;
+      if(answeredQ===0)return;
+      h+=`<div style="margin-bottom:16px">
+        <div style="font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--txb);margin-bottom:6px">${q.num}. ${q.title} <span style="font-size:10px;color:var(--tx3);font-family:'DM Mono',monospace">${q.tierRef}</span></div>`;
+      q.questions.forEach((qu,qi)=>{
+        const ans=qAnswers[getQKey(i,qi)];
+        if(!ans)return;
+        const text=parseAnswerOptions(qu)?stripOptions(qu):qu;
+        const cls=classifyAnswer(ans)==='ok'?'':classifyAnswer(ans)==='warn'?'ans-warn':'';
+        h+=`<div class="lr-q-row">
+          <span class="lr-q-label">Q</span>
+          <span class="lr-q-text">${text}</span>
+          <span class="lr-q-ans ${cls}">${ans}</span>
+        </div>`;
+      });
+      const doneSteps=q.steps.filter((_,si)=>qAnswers[`qs${i}-${si}`]).length;
+      if(doneSteps>0)h+=`<div style="font-size:10px;color:var(--ok);margin-top:5px;padding-left:4px">✓ ${doneSteps}/${q.steps.length} improvement steps completed</div>`;
+      h+=`</div>`;
+    });
+    h+=`</div>`;
+  }
+
+  // ── METRICS ───────────────────────────────────────────────────────────────
+  const anyMetrics=METRICS.some(m=>metricsState[m.id]);
+  if(anyMetrics){
+    h+=`<div class="lr-section">
+      <div class="lr-section-title"><span class="lr-section-num">04</span>Team Performance Metrics</div>`;
+    METRICS.forEach(m=>{
+      const v=metricsState[m.id];
+      if(!v)return;
+      h+=`<div class="lr-metric-row">
+        <span class="lr-metric-name">${m.name}</span>
+        <span class="lr-metric-val">${v}</span>
+        <span class="lr-metric-unit">${m.unit}</span>
+        <span class="lr-metric-crit">${m.criterion}</span>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+  // ── ATT&CK COVERAGE ───────────────────────────────────────────────────────
+  const anyAttck=ATT_TACTICS.some(tac=>{const k='attck-'+tac.replace(/\s+/g,'-').toLowerCase();return(attckState[k]||0)>0;});
+  if(anyAttck){
+    h+=`<div class="lr-section">
+      <div class="lr-section-title"><span class="lr-section-num">05</span>ATT&CK Tactic Coverage</div>`;
+    ATT_TACTICS.forEach(tac=>{
+      const k='attck-'+tac.replace(/\s+/g,'-').toLowerCase();
+      const pct=parseFloat(attckState[k])||0;
+      if(pct===0)return;
+      h+=`<div class="lr-attck-row">
+        <span class="lr-attck-name">${tac}</span>
+        <div class="lr-attck-bar-bg"><div class="lr-attck-bar-fill" style="width:${Math.min(pct,100)}%;background:${attckBarColor(pct)}"></div></div>
+        <span class="lr-attck-pct">${pct}%</span>
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+  // ── ROADMAP ───────────────────────────────────────────────────────────────
+  h+=`<div class="lr-section">
+    <div class="lr-section-title"><span class="lr-section-num">06</span>Improvement Roadmap</div>`;
+
+  // Immediate: answered criteria at level 0 or 1, sorted by tier
+  const immediate=[];
+  const medium=[];
+  TIERS.forEach(tier=>{
+    tier.criteria.forEach(crit=>{
+      const lv=state[crit.id]?.level;
+      if(lv===0)immediate.push({tier:tier.id,crit});
+      else if(lv===1)medium.push({tier:tier.id,crit});
+    });
+  });
+  const unanswered=getMissingCriteria();
+
+  h+=`<div class="lr-roadmap-phase">
+    <div class="lr-roadmap-label">Immediate — 0 to 90 days</div>`;
+  if(immediate.length===0&&unanswered.length===0){
+    h+=`<div class="lr-action"><span class="lr-action-num">—</span><span>No criteria at Initial level. Focus on completing any unanswered criteria and progressing level 1 items to level 2.</span></div>`;
+  }
+  immediate.slice(0,5).forEach((item,i)=>{
+    h+=`<div class="lr-action">
+      <span class="lr-action-num">${i+1}</span>
+      <div>
+        <div style="font-weight:500;color:var(--txb);margin-bottom:3px">T${item.tier} — ${item.crit.title}</div>
+        <div style="color:var(--tx3)">${item.crit.nextTarget}</div>
+        ${item.crit.criteria?.owner?`<div style="color:var(--tx3);margin-top:2px">Owner: ${item.crit.criteria.owner}</div>`:''}
+      </div>
+    </div>`;
+  });
+  if(unanswered.length>0){
+    h+=`<div class="lr-action" style="border-color:rgba(61,126,255,.2)">
+      <span class="lr-action-num" style="color:var(--t1)">!</span>
+      <div style="color:var(--tx3)">Complete ${unanswered.length} unanswered criteria to establish an accurate baseline for all tiers: ${unanswered.slice(0,3).map(m=>`T${m.tier} ${m.title}`).join(', ')}${unanswered.length>3?` (+${unanswered.length-3} more)`:''}</div>
+    </div>`;
+  }
+  h+=`</div>`;
+
+  h+=`<div class="lr-roadmap-phase">
+    <div class="lr-roadmap-label">Medium term — 3 to 6 months</div>`;
+  medium.slice(0,6).forEach((item,i)=>{
+    h+=`<div class="lr-action">
+      <span class="lr-action-num">${i+1}</span>
+      <div>
+        <div style="font-weight:500;color:var(--txb);margin-bottom:3px">T${item.tier} — ${item.crit.title}</div>
+        <div style="color:var(--tx3)">Advance from Repeatable to Defined. ${item.crit.nextTarget}</div>
+      </div>
+    </div>`;
+  });
+  if(medium.length===0)h+=`<div class="lr-action"><span class="lr-action-num">—</span><span>No criteria at Repeatable level. Focus on advancing existing level 2 criteria to Managed.</span></div>`;
+  h+=`</div>`;
+
+  const nextT=Math.min(currentTier+1,4);
+  h+=`<div class="lr-roadmap-phase">
+    <div class="lr-roadmap-label">Strategic — 6 to 12 months — targeting T${nextT}: ${TIER_NAMES[nextT]}</div>
+    <div class="lr-action"><span class="lr-action-num">1</span><div><div style="font-weight:500;color:var(--txb);margin-bottom:3px">Establish external validation programme</div><div style="color:var(--tx3)">Schedule at least one red team or third-party assessment per year. Document and integrate findings into ruleset updates within the quarter.</div></div></div>
+    <div class="lr-action"><span class="lr-action-num">2</span><div><div style="font-weight:500;color:var(--txb);margin-bottom:3px">Implement Detections as Code pipeline</div><div style="color:var(--tx3)">Version-control all rules, introduce schema validation and automated deployment gates. Target: 80–90% of rules managed using DAC principles.</div></div></div>
+    <div class="lr-action"><span class="lr-action-num">3</span><div><div style="font-weight:500;color:var(--txb);margin-bottom:3px">Build regular threat hunting cadence</div><div style="color:var(--tx3)">Establish weekly hunting workflow with documented hypotheses and findings. Target: 50–70% of hunting findings integrated as detection rules.</div></div></div>
+  </div>`;
+  h+=`</div>`;
+
+  // ── HISTORY ───────────────────────────────────────────────────────────────
+  if(assessHistory.length>1){
+    h+=`<div class="lr-section">
+      <div class="lr-section-title"><span class="lr-section-num">07</span>Assessment History</div>
+      <table class="lr-table">
+        <tr><th>#</th><th>Date</th><th>Score</th><th>Tier</th><th>Scope</th></tr>`;
+    assessHistory.slice(-5).forEach((snap,i)=>{
+      h+=`<tr><td style="color:var(--tx3)">${assessHistory.length-assessHistory.slice(-5).length+i+1}</td><td>${snap.date}</td><td style="font-family:'Syne',sans-serif;font-weight:700;color:var(--txb)">${Math.round(snap.score)}%</td><td style="color:${TIER_COLORS[snap.tier]}">T${snap.tier}: ${TIER_NAMES[snap.tier]}</td><td style="color:var(--tx3)">${snap.scope||'—'}</td></tr>`;
+    });
+    h+=`</table></div>`;
+  }
+
+  // ── FOOTER ────────────────────────────────────────────────────────────────
+  h+=`<div style="border-top:1px solid var(--b1);margin-top:24px;padding-top:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div style="font-size:10px;color:var(--b3)">Based on the Elastic Detection Engineering Behavior Maturity Model — elastic.co/security-labs/elastic-releases-debmm</div>
+    <div style="font-size:10px;color:var(--b3)">Generated ${now}</div>
+  </div>`;
+  h+=`</div>`; // lr-body
+
+  body.innerHTML=h;
+}
+
+// ── AI REPORT PATH ────────────────────────────────────────────────────────
+async function runAIReport(){
+  const body=document.getElementById('report-modal-body');
+  const title=document.getElementById('report-modal-title');
+  const actions=document.getElementById('report-actions');
+  title.textContent='Generating AI Report…';
+  actions.style.display='none';
+
+  const missing=getMissingCriteria();
+  const{total,answered}=getStats();
+  let warningHtml='';
+  if(missing.length>0){
+    const byTier={};
+    missing.forEach(m=>{if(!byTier[m.tier])byTier[m.tier]={name:m.tierName,items:[]};byTier[m.tier].items.push(m.title);});
+    const tierLines=Object.entries(byTier).map(([tid,t])=>`<li class="warn-item">T${tid} ${t.name}: ${t.items.join(', ')}</li>`).join('');
+    warningHtml=`<div class="report-completeness-warn"><strong>${missing.length} of ${total} criteria unanswered</strong> — the report will note these as not yet assessed.<ul class="report-completeness-list">${tierLines}</ul></div>`;
+  }
+  body.innerHTML=`${warningHtml}<div class="report-generating" style="padding-top:${missing.length?'24px':'40px'}">
+    <div class="report-spinner"></div>
+    <div style="font-size:12px;color:var(--tx3);margin-bottom:6px">Claude is analysing your assessment and writing the report…</div>
+    <div style="font-size:10px;color:var(--b3)">~15 seconds</div>
+  </div>`;
+
+  const{rawScore,confScore,tierStats}=getStats();
+  const currentTier=determineTier(tierStats);
+  const context=buildReportContext();
+
+  const prompt=`You are a senior detection engineering consultant and security maturity assessor. You have been given the results of a DEBMM (Detection Engineering Behavior Maturity Model) self-assessment for a security team.
+
+Your task is to produce a comprehensive, professional maturity report in Markdown. The report must be structured for two audiences:
+1. A **management audience** (CISO, Head of Security, VP Engineering) who need a clear executive summary, risk narrative, and strategic recommendations without deep technical detail.
+2. A **technical audience** (Detection Engineering team lead, SOC Manager, Security Architects) who need specific criterion-level gaps, measurable targets, and a concrete implementation roadmap.
+
+**Important:** If the assessment is partial (some criteria unanswered), clearly note this in the report. Do NOT treat unanswered criteria as scoring zero — treat them as gaps in the assessment data that need to be completed. Flag them explicitly as "Not yet assessed" in findings. The overall scores and tier reflect only what has been answered.
+
+---
+
+ASSESSMENT DATA:
+${context}
+
+---
+
+Write the full report in Markdown. Use the following exact section structure — do not deviate:
+
+# Detection Engineering Maturity Report
+## [Team name] — DEBMM Assessment
+*[Date] | Assessor: [name] | Scope: [scope]*
+
+---
+
+## Executive Summary
+Write 3–4 paragraphs suitable for a CISO or board-level reader. Cover:
+- The team's current maturity tier and what that means in plain language (not technical jargon)
+- The single most critical risk exposure created by the current maturity gaps
+- The business impact of improving (risk reduction, faster incident response, reduced SOC fatigue)
+- A clear verdict: is this team protecting the organisation adequately at its current tier?
+
+## Maturity Scorecard
+Produce a Markdown table with columns: Tier | Name | Score | Status | Key Strength | Biggest Gap
+Include all 5 tiers. Score as X/100. Status as one of: ✓ Passing / ⚠ Needs Work / — Not Assessed.
+
+## Risk Assessment
+Write a short risk narrative (2–3 paragraphs) covering:
+- What threat categories are currently undetected or under-detected based on the coverage gaps
+- The operational risk of high false positive rates, missing external validation, or lack of threat hunting
+- Any criteria scored at level 0 or 1 and what that means for incident response capability
+
+## Detailed Findings by Tier
+For each of the 5 tiers (Foundation through Expert), write:
+### Tier N: [Name]
+- **Status**: Passing / Needs Work / Not Assessed
+- **Score**: X/100
+- For each criterion in that tier: name, current level (with label), confidence, specific gap to next level, and owner/target if provided
+- **Tier verdict**: 1–2 sentences on whether this tier is solid, fragile, or at risk
+
+## Questionnaire Findings
+Summarise the 7 questionnaire phases. For each phase, note:
+- What the answers reveal about the team's current practices
+- Any "No" or partial answers that indicate process gaps
+- Which improvement steps have been completed vs outstanding
+
+## Team Metrics Analysis
+If metrics were provided, analyse them:
+- Which metrics indicate strong performance vs gaps
+- How the metrics validate or challenge the self-assessed maturity scores
+- ATT&CK coverage analysis: which tactics are well-covered, which are blind spots
+
+## Prioritised Improvement Roadmap
+Write a 90-day / 6-month / 12-month roadmap:
+### Immediate (0–90 days)
+List the 3–5 highest-priority actions with specific measurable targets, named owner type (e.g. "Detection Engineering Lead"), and the DEBMM criterion each action addresses.
+
+### Medium Term (3–6 months)
+List 4–6 actions for reaching the next maturity tier, with quantitative targets drawn directly from the DEBMM quantitative thresholds.
+
+### Strategic (6–12 months)
+List 3–4 strategic investments (tooling, process, headcount, external partnerships) that would unlock T3/T4 maturity.
+
+## Key Performance Indicators to Track
+List 8–10 specific, measurable KPIs the team should track monthly, drawn from the DEBMM quantitative measurements. Format as a table: KPI | Current (if known) | T2 Target | T3 Target | Owner.
+
+## Conclusion
+2 paragraphs: one for management (what needs to happen and why it matters), one for the technical team (the path forward and the most important single action to take next week).
+
+---
+
+Write the full report now. Be specific — reference actual criterion names, actual scores, actual questionnaire answers, and actual metrics from the data above. Do not use generic placeholder text. Make the report genuinely useful for this specific team's data.`;
+
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:4000,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await response.json();
+    if(data.error)throw new Error(data.error.message||'API error');
+    const md=data.content?.map(b=>b.type==='text'?b.text:'').join('\n')||'';
+    reportMarkdown=md;
+    renderReportHTML(md);
+    title.textContent='AI Maturity Report';
+    actions.style.display='flex';
+  }catch(err){
+    body.innerHTML=`<div style="padding:28px 24px;text-align:center">
+      <div style="font-size:13px;color:var(--danger);margin-bottom:10px">AI report failed</div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">${err.message||'Check your network and API key.'}</div>
+      <button onclick="runLocalReport()" style="padding:8px 16px;background:var(--acd);border:1px solid rgba(0,229,200,.4);color:var(--ac);cursor:pointer;font-family:'DM Mono',monospace;font-size:11px">Generate local report instead →</button>
+    </div>`;
+  }
+}
+
+function renderReportHTML(md){
+  const body=document.getElementById('report-modal-body');
+  let html=md
+    .replace(/^#{1}\s+(.+)$/gm,'<h2 style="font-family:\'Syne\',sans-serif;font-size:20px;font-weight:800;color:var(--txb);margin:28px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--b1)">$1</h2>')
+    .replace(/^#{2}\s+(.+)$/gm,'<h2 style="font-family:\'Syne\',sans-serif;font-size:17px;font-weight:700;color:var(--txb);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--b1)">$1</h2>')
+    .replace(/^#{3}\s+(.+)$/gm,'<h3 style="font-family:\'Syne\',sans-serif;font-size:13px;font-weight:700;color:var(--tx2);margin:18px 0 8px">$1</h3>')
+    .replace(/^#{4}\s+(.+)$/gm,'<h4 style="font-size:11px;font-weight:500;color:var(--ac);margin:14px 0 5px;letter-spacing:.06em;text-transform:uppercase">$1</h4>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^---$/gm,'<hr style="border:none;border-top:1px solid var(--b1);margin:16px 0">')
+    .replace(/^- (.+)$/gm,'<li style="margin-bottom:4px;color:var(--tx2)">$1</li>')
+    .replace(/(<li[^>]*>.*<\/li>\n?)+/g,m=>`<ul style="margin:8px 0 12px 16px">${m}</ul>`);
+  html=html.replace(/(\|.+\|\n)+/g,tableStr=>{
+    const rows=tableStr.trim().split('\n');
+    let tbl='<table style="width:100%;border-collapse:collapse;margin:12px 0;font-size:11px">';
+    rows.forEach((row,ri)=>{
+      if(row.match(/^\|[-| ]+\|$/))return;
+      const cells=row.split('|').filter((_,i,a)=>i>0&&i<a.length-1);
+      const tag=ri===0?'th':'td';
+      const style=ri===0?'style="text-align:left;padding:7px 10px;background:var(--s2);color:var(--tx3);font-weight:400;letter-spacing:.08em;text-transform:uppercase;font-size:10px;border:1px solid var(--b1)"':'style="padding:8px 10px;border:1px solid var(--b1);color:var(--tx2);vertical-align:top"';
+      tbl+=`<tr>${cells.map(c=>`<${tag} ${style}>${c.trim()}</${tag}>`).join('')}</tr>`;
+    });
+    return tbl+'</table>';
+  });
+  body.innerHTML=`<div style="padding:28px 32px 24px;font-size:12px;color:var(--tx);line-height:1.8">${html}</div>`;
+}
+
+function buildFallbackReport(){
+  const{total,answered,rawScore,confScore,tierStats,ownedCount}=getStats();
+  const currentTier=determineTier(tierStats);
+  const now=new Date().toLocaleDateString('en-IE',{year:'numeric',month:'long',day:'numeric'});
+  const missing=getMissingCriteria();
+  const lines=[
+    `# Detection Engineering Maturity Report`,
+    `## ${metaState.team||'Team'} — DEBMM Assessment`,
+    `*${now} | Assessor: ${metaState.assessor||'—'} | Scope: ${metaState.scope||'—'}*\n`,
+    `---\n`,
+    answered<total?`> **Partial assessment** — ${missing.length} criteria not yet assessed. Scores reflect answered criteria only.\n`:'',
+    `## Summary\n`,
+    `Current Tier: **T${currentTier} — ${TIER_NAMES[currentTier]}**`,
+    `Confidence-adjusted score: **${Math.round(confScore/4*100)}%** | Raw: ${Math.round(rawScore/4*100)}%`,
+    `Criteria answered: ${answered}/${total} | With owner: ${ownedCount}\n`,
+    `## Maturity Scorecard\n`,
+    `| Tier | Name | Score | Status |`,
+    `|------|------|-------|--------|`,
+  ];
+  TIERS.forEach(tier=>{
+    const ts=tierStats[tier.id];
+    const pct=ts.answered>0?Math.round(ts.avgScore/4*100):0;
+    const answeredC=TIERS[tier.id].criteria.filter(c=>state[c.id]?.level!==undefined);
+    const passed=answeredC.length>0&&answeredC.filter(c=>state[c.id].level>=2).length/answeredC.length>=0.5;
+    const unanswC=TIERS[tier.id].criteria.length-ts.answered;
+    const status=ts.answered===0?'— Not Assessed':unanswC>0?`◐ ${unanswC} unanswered`:passed?'✓ Passing':'⚠ Needs Work';
+    lines.push(`| T${tier.id} | ${TIER_NAMES[tier.id]} | ${ts.answered>0?pct+'%':'—'} | ${status} |`);
+  });
+  lines.push('\n## Detailed Findings\n');
+  TIERS.forEach(tier=>{
+    lines.push(`### Tier ${tier.id}: ${TIER_NAMES[tier.id]}\n`);
+    tier.criteria.forEach(crit=>{
+      const s=state[crit.id]||{};
+      const lv=s.level;
+      lines.push(`**${crit.title}**`);
+      lines.push(`- Level: ${lv!==undefined?lv+' — '+LEVELS[lv]:'Not assessed'}`);
+      if(lv!==undefined){
+        lines.push(`- Confidence: ${CONF_LABELS[s.conf||'self']}`);
+        if(s.evidence)lines.push(`- Evidence: ${s.evidence}`);
+        lines.push(`- Gap: ${s.gap||crit.nextTarget}`);
+        if(s.owner)lines.push(`- Owner: ${s.owner}`);
+        if(s.target)lines.push(`- Target: ${s.target}`);
+      }
+      lines.push('');
+    });
+  });
+  const anyMetrics=METRICS.some(m=>metricsState[m.id]);
+  if(anyMetrics){
+    lines.push('## Team Metrics\n');
+    METRICS.forEach(m=>{const v=metricsState[m.id];if(v)lines.push(`- **${m.name}**: ${v} ${m.unit} (${m.criterion})`);});
+    lines.push('');
+  }
+  lines.push('---');
+  lines.push('Reference: https://www.elastic.co/security-labs/elastic-releases-debmm');
+  return lines.filter(l=>l!=='').join('\n');
+}
+
 // Build the full data context string for the AI prompt
 function buildReportContext(){
   const{total,answered,rawScore,confScore,tierStats,ownedCount,highConf}=getStats();
@@ -2039,251 +2670,6 @@ function buildReportContext(){
   }
 
   return ctx;
-}
-
-async function exportReport(){
-  const overlay=document.getElementById('report-overlay');
-  const body=document.getElementById('report-modal-body');
-  const title=document.getElementById('report-modal-title');
-  const actions=document.getElementById('report-actions');
-  overlay.classList.remove('hidden');
-  title.textContent='Generating Report…';
-  actions.style.display='none';
-
-  if(!ANTHROPIC_API_KEY){
-    body.innerHTML=`<div class="report-generating">
-      <div style="font-size:13px;color:var(--warn);margin-bottom:10px">API key not set</div>
-      <div style="font-size:11px;color:var(--tx3);line-height:1.8;max-width:420px;margin:0 auto">
-        Open <code style="color:var(--ac)">debmm-assessment.html</code> in a text editor and set your key at the top of the &lt;script&gt; block:<br><br>
-        <code style="color:var(--ac)">const ANTHROPIC_API_KEY = 'sk-ant-...';</code><br><br>
-        Get a key at <a href="https://console.anthropic.com/settings/keys" style="color:var(--ac)">console.anthropic.com</a>
-      </div>
-    </div>`;
-    title.textContent='API key required';
-    return;
-  }
-
-  // Check completeness and show warning if anything is missing
-  const missing=getMissingCriteria();
-  const{total,answered}=getStats();
-  let warningHtml='';
-  if(missing.length>0){
-    const byTier={};
-    missing.forEach(m=>{
-      if(!byTier[m.tier])byTier[m.tier]={name:m.tierName,items:[]};
-      byTier[m.tier].items.push(m.title);
-    });
-    const tierLines=Object.entries(byTier).map(([tid,t])=>
-      `<li class="warn-item">T${tid} ${t.name}: ${t.items.join(', ')}</li>`
-    ).join('');
-    warningHtml=`<div class="report-completeness-warn">
-      <strong>${missing.length} of ${total} criteria unanswered</strong> — the report will note these gaps and treat missing criteria as unassessed rather than scored. For a more accurate report, complete the outstanding criteria first.
-      <ul class="report-completeness-list">${tierLines}</ul>
-    </div>`;
-  }
-
-  body.innerHTML=`${warningHtml}<div class="report-generating" style="padding-top:${missing.length?'24px':'40px'}">
-    <div class="report-spinner"></div>
-    <div style="font-size:12px;color:var(--tx3);margin-bottom:6px">Analysing your assessment and building report…</div>
-    <div style="font-size:10px;color:var(--b3)">This uses the Anthropic API and takes ~15 seconds</div>
-  </div>`;
-
-  const{rawScore,confScore,tierStats}=getStats();
-  const currentTier=determineTier(tierStats);
-  const confPct=Math.round(confScore/4*100);
-  const context=buildReportContext();
-
-  const prompt=`You are a senior detection engineering consultant and security maturity assessor. You have been given the results of a DEBMM (Detection Engineering Behavior Maturity Model) self-assessment for a security team.
-
-Your task is to produce a comprehensive, professional maturity report in Markdown. The report must be structured for two audiences:
-1. A **management audience** (CISO, Head of Security, VP Engineering) who need a clear executive summary, risk narrative, and strategic recommendations without deep technical detail.
-2. A **technical audience** (Detection Engineering team lead, SOC Manager, Security Architects) who need specific criterion-level gaps, measurable targets, and a concrete implementation roadmap.
-
-**Important:** If the assessment is partial (some criteria unanswered), clearly note this in the report. Do NOT treat unanswered criteria as scoring zero — treat them as gaps in the assessment data that need to be completed. Flag them explicitly as "Not yet assessed" in findings. The overall scores and tier reflect only what has been answered.
-
----
-
-ASSESSMENT DATA:
-${context}
-
----
-
-Write the full report in Markdown. Use the following exact section structure — do not deviate:
-
-# Detection Engineering Maturity Report
-## [Team name] — DEBMM Assessment
-*[Date] | Assessor: [name] | Scope: [scope]*
-
----
-
-## Executive Summary
-Write 3–4 paragraphs suitable for a CISO or board-level reader. Cover:
-- The team's current maturity tier and what that means in plain language (not technical jargon)
-- The single most critical risk exposure created by the current maturity gaps
-- The business impact of improving (risk reduction, faster incident response, reduced SOC fatigue)
-- A clear verdict: is this team protecting the organisation adequately at its current tier?
-
-## Maturity Scorecard
-Produce a Markdown table with columns: Tier | Name | Score | Status | Key Strength | Biggest Gap
-Include all 5 tiers. Score as X/100. Status as one of: ✓ Passing / ⚠ Needs Work / — Not Assessed.
-
-## Risk Assessment
-Write a short risk narrative (2–3 paragraphs) covering:
-- What threat categories are currently undetected or under-detected based on the coverage gaps
-- The operational risk of high false positive rates, missing external validation, or lack of threat hunting
-- Any criteria scored at level 0 or 1 and what that means for incident response capability
-
-## Detailed Findings by Tier
-For each of the 5 tiers (Foundation through Expert), write:
-### Tier N: [Name]
-- **Status**: Passing / Needs Work / Not Assessed
-- **Score**: X/100
-- For each criterion in that tier: name, current level (with label), confidence, specific gap to next level, and owner/target if provided
-- **Tier verdict**: 1–2 sentences on whether this tier is solid, fragile, or at risk
-
-## Questionnaire Findings
-Summarise the 7 questionnaire phases. For each phase, note:
-- What the answers reveal about the team's current practices
-- Any "No" or partial answers that indicate process gaps
-- Which improvement steps have been completed vs outstanding
-
-## Team Metrics Analysis
-If metrics were provided, analyse them:
-- Which metrics indicate strong performance vs gaps
-- How the metrics validate or challenge the self-assessed maturity scores
-- ATT&CK coverage analysis: which tactics are well-covered, which are blind spots
-
-## Prioritised Improvement Roadmap
-Write a 90-day / 6-month / 12-month roadmap:
-### Immediate (0–90 days)
-List the 3–5 highest-priority actions with specific measurable targets, named owner type (e.g. "Detection Engineering Lead"), and the DEBMM criterion each action addresses.
-
-### Medium Term (3–6 months)
-List 4–6 actions for reaching the next maturity tier, with quantitative targets drawn directly from the DEBMM quantitative thresholds.
-
-### Strategic (6–12 months)
-List 3–4 strategic investments (tooling, process, headcount, external partnerships) that would unlock T3/T4 maturity.
-
-## Key Performance Indicators to Track
-List 8–10 specific, measurable KPIs the team should track monthly, drawn from the DEBMM quantitative measurements. Format as a table: KPI | Current (if known) | T2 Target | T3 Target | Owner.
-
-## Conclusion
-2 paragraphs: one for management (what needs to happen and why it matters), one for the technical team (the path forward and the most important single action to take next week).
-
----
-
-Write the full report now. Be specific — reference actual criterion names, actual scores, actual questionnaire answers, and actual metrics from the data above. Do not use generic placeholder text. Make the report genuinely useful for this specific team's data.`;
-
-  try{
-    const response=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version':'2023-06-01'
-      },
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:4000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data=await response.json();
-    if(data.error){throw new Error(data.error.message||'API error');}
-    const md=data.content?.map(b=>b.type==='text'?b.text:'').join('\n')||'';
-    reportMarkdown=md;
-    renderReportHTML(md);
-    title.textContent='Maturity Report';
-    actions.style.display='flex';
-  }catch(err){
-    body.innerHTML=`<div style="padding:32px 20px;text-align:center">
-      <div style="font-size:13px;color:var(--danger);margin-bottom:12px">Report generation failed</div>
-      <div style="font-size:11px;color:var(--tx3);margin-bottom:16px">${err.message||'Unknown error — check your network connection.'}</div>
-      <div style="font-size:11px;color:var(--tx3)">Falling back to plain text export…</div>
-    </div>`;
-    // Fallback: generate plain text report
-    reportMarkdown=buildFallbackReport();
-    setTimeout(()=>{renderReportHTML(reportMarkdown);title.textContent='Maturity Report (offline)';actions.style.display='flex';},1500);
-  }
-}
-
-function renderReportHTML(md){
-  // Convert markdown to HTML for display in the modal
-  const body=document.getElementById('report-modal-body');
-  let html=md
-    .replace(/^#{1}\s+(.+)$/gm,'<h2>$1</h2>')
-    .replace(/^#{2}\s+(.+)$/gm,'<h2>$1</h2>')
-    .replace(/^#{3}\s+(.+)$/gm,'<h3>$1</h3>')
-    .replace(/^#{4}\s+(.+)$/gm,'<h4>$1</h4>')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*(.+?)\*/g,'<em>$1</em>')
-    .replace(/^---$/gm,'<hr style="border-color:var(--b1);margin:16px 0">')
-    .replace(/^- (.+)$/gm,'<li>$1</li>')
-    .replace(/(<li>.*<\/li>\n?)+/g,m=>`<ul>${m}</ul>`)
-    .replace(/\n\n/g,'</p><p>')
-    .replace(/^([^<\n].+)$/gm,(m,p1)=>{
-      if(p1.startsWith('<')||p1.trim()==='')return m;
-      return `<p>${p1}</p>`;
-    });
-
-  // Handle tables
-  html=html.replace(/(\|.+\|\n)+/g,tableStr=>{
-    const rows=tableStr.trim().split('\n');
-    let tbl='<table>';
-    rows.forEach((row,ri)=>{
-      if(row.match(/^\|[-| ]+\|$/))return; // skip separator
-      const cells=row.split('|').filter((_,i,a)=>i>0&&i<a.length-1);
-      const tag=ri===0?'th':'td';
-      tbl+=`<tr>${cells.map(c=>`<${tag}>${c.trim()}</${tag}>`).join('')}</tr>`;
-    });
-    return tbl+'</table>';
-  });
-
-  body.innerHTML=`<div>${html}</div>`;
-}
-
-function buildFallbackReport(){
-  const{total,answered,rawScore,confScore,tierStats,ownedCount}=getStats();
-  const currentTier=determineTier(tierStats);
-  const now=new Date().toLocaleDateString('en-IE',{year:'numeric',month:'long',day:'numeric'});
-  const lines=[
-    `# Detection Engineering Maturity Report`,
-    `## ${metaState.team||'Team'} — DEBMM Assessment`,
-    `*${now} | Assessor: ${metaState.assessor||'—'} | Scope: ${metaState.scope||'—'}*\n`,
-    `---\n`,
-    `## Executive Summary\n`,
-    `The team is currently operating at **Tier ${currentTier} — ${TIER_NAMES[currentTier]}** with a confidence-adjusted maturity score of **${Math.round(confScore/4*100)}%** (raw self-assessed: ${Math.round(rawScore/4*100)}%). ${answered} of ${total} criteria have been assessed.\n`,
-    `## Maturity Scorecard\n`,
-    `| Tier | Name | Score | Status |`,
-    `|------|------|-------|--------|`,
-  ];
-  TIERS.forEach(tier=>{
-    const ts=tierStats[tier.id];
-    const pct=ts.answered>0?Math.round(ts.avgScore/4*100):0;
-    const passed=ts.answered>0&&TIERS[tier.id].criteria.filter(c=>state[c.id]?.level!==undefined&&state[c.id].level>=2).length/Math.max(ts.answered,1)>=0.5;
-    lines.push(`| T${tier.id} | ${TIER_NAMES[tier.id]} | ${ts.answered>0?pct+'%':'—'} | ${ts.answered===0?'— Not Assessed':passed?'✓ Passing':'⚠ Needs Work'} |`);
-  });
-  lines.push('\n## Criteria Detail\n');
-  TIERS.forEach(tier=>{
-    lines.push(`### Tier ${tier.id}: ${TIER_NAMES[tier.id]}\n`);
-    tier.criteria.forEach(crit=>{
-      const s=state[crit.id]||{};
-      const lv=s.level;
-      lines.push(`**${crit.title}**`);
-      lines.push(`- Level: ${lv!==undefined?lv+' — '+LEVELS[lv]:'Not assessed'}`);
-      lines.push(`- Confidence: ${CONF_LABELS[s.conf||'self']}`);
-      if(s.evidence)lines.push(`- Evidence: ${s.evidence}`);
-      lines.push(`- Gap: ${s.gap||crit.nextTarget}`);
-      if(s.owner)lines.push(`- Owner: ${s.owner}`);
-      if(s.target)lines.push(`- Target: ${s.target}`);
-      lines.push('');
-    });
-  });
-  lines.push('## Team Metrics\n');
-  METRICS.forEach(m=>{const v=metricsState[m.id];if(v)lines.push(`- **${m.name}**: ${v} ${m.unit}`)});
-  lines.push('\n---');
-  lines.push('Reference: https://www.elastic.co/security-labs/elastic-releases-debmm');
-  return lines.join('\n');
 }
 
 // ── SCROLL-SPY ───────────────────────────────────────────────────────────
