@@ -999,15 +999,22 @@ function determineTier(tierStats){
   for(let t=0;t<=4;t++){
     const ts=tierStats[t];
     if(!ts||ts.answered===0)break;
-    const good=TIERS[t].criteria.filter(c=>(state[c.id]?.level||0)>=2).length;
-    if(good/ts.total>=0.5)cur=t;else break;
+    // Only count criteria that have actually been answered
+    const answeredCrits=TIERS[t].criteria.filter(c=>state[c.id]?.level!==undefined);
+    const good=answeredCrits.filter(c=>state[c.id].level>=2).length;
+    // Need at least half of answered criteria at level 2+, and at least 1 answered
+    if(answeredCrits.length>0&&good/answeredCrits.length>=0.5)cur=t;else break;
   }
   return cur;
 }
 
 function blockingCriteria(tierStats,currentTier){
   const nextT=Math.min(currentTier+1,4);
-  return TIERS[nextT].criteria.filter(c=>(state[c.id]?.level||0)<2).map(c=>c.id);
+  // Only flag criteria that have been answered AND are below level 2
+  // Unanswered criteria are "not yet assessed", not "failing"
+  return TIERS[nextT].criteria
+    .filter(c=>state[c.id]?.level!==undefined&&state[c.id].level<2)
+    .map(c=>c.id);
 }
 
 // ── BUILD UI ─────────────────────────────────────────────────────────────
@@ -1529,7 +1536,10 @@ function updateResults(tierStats,currentTier,confScore,rawScore){
   TIERS.forEach(tier=>{
     const ts=tierStats[tier.id];
     const pct=ts.answered>0?Math.round(ts.avgScore/4*100):0;
-    const passed=ts.answered>0&&TIERS[tier.id].criteria.filter(c=>(state[c.id]?.level||0)>=2).length/ts.total>=0.5;
+    // Pass = ≥50% of answered criteria are at level 2+
+    const answeredCrits=TIERS[tier.id].criteria.filter(c=>state[c.id]?.level!==undefined);
+    const goodCount=answeredCrits.filter(c=>state[c.id].level>=2).length;
+    const passed=answeredCrits.length>0&&goodCount/answeredCrits.length>=0.5;
     brows.innerHTML+=`
       <div class="bkd-row">
         <div class="bkd-label" style="color:${TIER_COLORS[tier.id]}">T${tier.id}: ${TIER_NAMES[tier.id]}</div>
@@ -1543,9 +1553,9 @@ function updateResults(tierStats,currentTier,confScore,rawScore){
     }
   });
 
-  // Next priority
+  // Next priority — only show answered criteria below level 2 as unmet
   const nextT=Math.min(currentTier+1,4);
-  const unmet=TIERS[nextT].criteria.filter(c=>(state[c.id]?.level||0)<2);
+  const unmet=TIERS[nextT].criteria.filter(c=>state[c.id]?.level!==undefined&&state[c.id].level<2);
   let pt='';
   if(unmet.length>0){
     pt=`<strong style="color:${TIER_COLORS[nextT]}">T${nextT} — ${TIER_NAMES[nextT]}:</strong> Focus on `;
@@ -1917,7 +1927,7 @@ function buildReportContext(){
   TIERS.forEach(tier=>{
     const ts=tierStats[tier.id];
     const pct=ts.answered>0?Math.round(ts.avgScore/4*100):0;
-    const passed=ts.answered>0&&TIERS[tier.id].criteria.filter(c=>(state[c.id]?.level||0)>=2).length/ts.total>=0.5;
+    const passed=ts.answered>0&&TIERS[tier.id].criteria.filter(c=>state[c.id]?.level!==undefined&&state[c.id].level>=2).length/Math.max(ts.answered,1)>=0.5;
     ctx+=`- T${tier.id} ${TIER_NAMES[tier.id]}: ${ts.answered>0?pct+'% ('+( passed?'PASSING':'NEEDS WORK')+')':'Not assessed'}\n`;
   });
   ctx+='\n';
@@ -2177,7 +2187,7 @@ function buildFallbackReport(){
   TIERS.forEach(tier=>{
     const ts=tierStats[tier.id];
     const pct=ts.answered>0?Math.round(ts.avgScore/4*100):0;
-    const passed=ts.answered>0&&TIERS[tier.id].criteria.filter(c=>(state[c.id]?.level||0)>=2).length/ts.total>=0.5;
+    const passed=ts.answered>0&&TIERS[tier.id].criteria.filter(c=>state[c.id]?.level!==undefined&&state[c.id].level>=2).length/Math.max(ts.answered,1)>=0.5;
     lines.push(`| T${tier.id} | ${TIER_NAMES[tier.id]} | ${ts.answered>0?pct+'%':'—'} | ${ts.answered===0?'— Not Assessed':passed?'✓ Passing':'⚠ Needs Work'} |`);
   });
   lines.push('\n## Criteria Detail\n');
